@@ -1,37 +1,42 @@
-# Compiled source #
-###################
-*.com
-*.class
-*.dll
-*.exe
-*.o
-*.so
+# compiled output
+/dist
+/tmp
+/out-tsc
 
-# Packages #
-############
-# it's better to unpack these files and commit the raw source
-# git has its own built in compression methods
-*.7z
-*.dmg
-*.gz
-*.iso
-*.jar
-*.rar
-*.tar
-*.zip
+# dependencies
+node_modules
 
-# Logs and databases #
-######################
-*.log
-*.sql
-*.sqlite
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 
-# OS generated files #
+# IDE - VSCode
+.vscode/*
+!.vscode/launch.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+testem.log
+/typings
+package-lock.json
+yarn-error.log
+yarn.lock
+debug.log
+
+# e2e
+/e2e/*.js
+/e2e/*.map
+
+# System Files #
 ######################
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
