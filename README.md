@@ -3,11 +3,18 @@
 # <application_license_badge>
 <!--- [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE) --->
 
-# <application_name>
-<!--- Description of the application. ---> 
+# bcgov/nr-fom-admin
+Administrative front-end for the FOM application.
 
 ## Technical Details
-<!--- Technology Stack Used. ---> 
+| Technology | Version | Website                 | Description |
+|------------|---------|-------------------------|-------------------------------------------|
+| node       | 10.x.x  | https://nodejs.org/en/  | JavaScript Runtime                        |
+| npm        | 6.x.x   | https://www.npmjs.com/  | Node Package Manager                      |
+| ng         | 6.x.x   | https://cli.angular.io/ | Angular CLI                               |
+| yarn       | latest  | https://yarnpkg.com/en/ | Package Manager (more efficient than npm) |
+
+_Note: This app also requires [bcgov/nr-fom-api](https://github.com/bcgov/nr-fom-api) to handle its requests and authentication._
 
 ## Third-Party Products/Libraries used and the licenses they are covered by
 <!--- product/library and path to the LICENSE --->
