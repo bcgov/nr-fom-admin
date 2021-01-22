@@ -1,4 +1,4 @@
-import { StatusCodes, ReasonCodes, RegionCodes, PurposeCodes, LandUseTypeCodes } from './application';
+import { StatusCodes, ReasonCodes, RegionCodes, LandUseTypeCodes } from './application';
 
 describe('application constants', () => {
   describe('StatusCodes', () => {
@@ -40,37 +40,6 @@ describe('application constants', () => {
         expect(codeGroups).toContain(RegionCodes.SKEENA);
         expect(codeGroups).toContain(RegionCodes.SOUTHERN_INTERIOR);
         expect(codeGroups).toContain(RegionCodes.VANCOUVER_ISLAND);
-      });
-    });
-  });
-
-  describe('PurposeCodes', () => {
-    describe('getCodeGroups()', () => {
-      it('returns all 22 code groups', () => {
-        const codeGroups = new PurposeCodes().getCodeGroups();
-        expect(codeGroups.length).toEqual(22);
-        expect(codeGroups).toContain(PurposeCodes.AGRICULTURE);
-        expect(codeGroups).toContain(PurposeCodes['ALL SEASONS RESORT']);
-        expect(codeGroups).toContain(PurposeCodes['ALPINE SKIING']);
-        expect(codeGroups).toContain(PurposeCodes.AQUACULTURE);
-        expect(codeGroups).toContain(PurposeCodes.COMMERCIAL);
-        expect(codeGroups).toContain(PurposeCodes['COMMERCIAL RECREATION']);
-        expect(codeGroups).toContain(PurposeCodes.COMMUNICATION);
-        expect(codeGroups).toContain(PurposeCodes.COMMUNITY);
-        expect(codeGroups).toContain(PurposeCodes['ENERGY PRODUCTION']);
-        expect(codeGroups).toContain(PurposeCodes['ENVIRONMENT, CONSERVATION, & RECR']);
-        expect(codeGroups).toContain(PurposeCodes['FIRST NATIONS']);
-        expect(codeGroups).toContain(PurposeCodes.INDUSTRIAL);
-        expect(codeGroups).toContain(PurposeCodes.INSTITUTIONAL);
-        expect(codeGroups).toContain(PurposeCodes['MISCELLANEOUS LAND USES']);
-        expect(codeGroups).toContain(PurposeCodes['OCEAN ENERGY']);
-        expect(codeGroups).toContain(PurposeCodes.QUARRYING);
-        expect(codeGroups).toContain(PurposeCodes['RESIDENTIAL']);
-        expect(codeGroups).toContain(PurposeCodes['SOLAR POWER']);
-        expect(codeGroups).toContain(PurposeCodes['TRANSPORTATION']);
-        expect(codeGroups).toContain(PurposeCodes['UTILITY']);
-        expect(codeGroups).toContain(PurposeCodes.WATERPOWER);
-        expect(codeGroups).toContain(PurposeCodes.WINDPOWER);
       });
     });
   });

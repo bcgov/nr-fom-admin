@@ -12,13 +12,6 @@
             <option *ngFor="let regionCode of regionCodes" [value]="regionCode.param"
               [selected]="regionCodeFilter === regionCode.param">{{regionCode.text.long}}</option>
           </select>
-          <select class="form-control filter-select" (change)="setPurposeFilter($event.target.value)"
-            [disabled]="searching || exporting" title="Filter by Purpose">
-            <option value="">Filter by Purpose</option>
-            <option *ngFor="let purposeCode of purposeCodes" [value]="purposeCode.param"
-              [selected]="purposeCodeFilters[0] === purposeCode.param">{{purposeCode.text.long}}</option>
-          </select>
-
         </div>
 
         <div>
@@ -121,11 +114,6 @@
                 [ngClass]="{'sort-asc': (sorting.column == 'createdDate' && sorting.direction < 0), 'sort-desc': (sorting.column == 'createdDate' && sorting.direction > 0) }"
                 aria-hidden="true" title="Sort by created date"></i>
             </th>
-            <th class="sortable" (click)="sort('purpose')">Purpose / Subpurpose
-              <i class="sort"
-                [ngClass]="{'sort-asc': (sorting.column == 'purpose' && sorting.direction < 0), 'sort-desc': (sorting.column == 'purpose' && sorting.direction > 0) }"
-                aria-hidden="true" title="Sort by purpose"></i>
-            </th>
             <th>Status</th>
             <th>Retired</th>
             <th>Commenting</th>
@@ -149,9 +137,6 @@
               </td>
               <td data-label="Created">
                 <span>{{getFormattedDate(app.createdDate) || '-'}}</span>
-              </td>
-              <td data-label="Purpose / Subpurpose">
-                <span>{{(app.purpose | titlecase) || '-'}} / {{(app.subpurpose | titlecase) || '-'}}</span>
               </td>
               <td data-label="Status">
                 <span>{{getStatusStringLong(app) || '-'}}</span>

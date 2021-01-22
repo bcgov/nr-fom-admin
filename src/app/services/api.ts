@@ -97,11 +97,9 @@ export interface IApplicationQueryParamSet {
   cpEnd?: IQueryParamValue<Date>;
   cpStart?: IQueryParamValue<Date>;
   publishDate?: IQueryParamValue<Date>;
-  purpose?: IQueryParamValue<string[]>;
   reason?: IQueryParamValue<string[]>;
   status?: IQueryParamValue<string[]>;
   statusHistoryEffectiveDate?: IQueryParamValue<Date>;
-  subpurpose?: IQueryParamValue<string[]>;
   subtype?: IQueryParamValue<string>;
   tantalisID?: IQueryParamValue<number>;
   tenureStage?: IQueryParamValue<string>;
@@ -238,11 +236,9 @@ export class ApiService {
       'name',
       'createdDate',
       'publishDate',
-      'purpose',
       'status',
       'reason',
       'statusHistoryEffectiveDate',
-      'subpurpose',
       'subtype',
       'tantalisID',
       'tenureStage',
@@ -272,11 +268,9 @@ export class ApiService {
       'name',
       'createdDate',
       'publishDate',
-      'purpose',
       'status',
       'reason',
       'statusHistoryEffectiveDate',
-      'subpurpose',
       'subtype',
       'tantalisID',
       'tenureStage',
@@ -320,11 +314,9 @@ export class ApiService {
       'name',
       'createdDate',
       'publishDate',
-      'purpose',
       'status',
       'reason',
       'statusHistoryEffectiveDate',
-      'subpurpose',
       'subtype',
       'tantalisID',
       'tenureStage',
@@ -349,11 +341,9 @@ export class ApiService {
       'name',
       'createdDate',
       'publishDate',
-      'purpose',
       'status',
       'reason',
       'statusHistoryEffectiveDate',
-      'subpurpose',
       'subtype',
       'tantalisID',
       'tenureStage',
@@ -799,16 +789,6 @@ export class ApiService {
 
     if (params.cl_file && params.cl_file.value >= 0) {
       queryString += `cl_file=${params.cl_file.value}&`;
-    }
-
-    if (params.purpose && params.purpose.value && params.purpose.value.length) {
-      params.purpose.value.forEach((purpose: string) => (queryString += `purpose[eq]=${encodeURIComponent(purpose)}&`));
-    }
-
-    if (params.subpurpose && params.subpurpose.value && params.subpurpose.value.length) {
-      params.subpurpose.value.forEach(
-        (subpurpose: string) => (queryString += `subpurpose[eq]=${encodeURIComponent(subpurpose)}&`)
-      );
     }
 
     if (params.status && params.status.value && params.status.value.length) {

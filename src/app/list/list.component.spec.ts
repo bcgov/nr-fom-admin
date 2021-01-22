@@ -93,7 +93,6 @@ describe('ListComponent', () => {
     it('returns application query parameters', () => {
       component.pagination.currentPage = 7;
       component.pagination.itemsPerPage = 17;
-      component.purposeCodeFilters = ['AGRICULTURE'];
       component.statusCodeFilters = ['APPLICATION REVIEW COMPLETE'];
       component.regionCodeFilter = 'SK - LAND MGMNT - SKEENA FIELD OFFICE';
 
@@ -102,7 +101,6 @@ describe('ListComponent', () => {
       expect(queryParameters.isDeleted).toEqual(false);
       expect(queryParameters.pageNum).toEqual(6);
       expect(queryParameters.pageSize).toEqual(17);
-      expect(queryParameters.purpose).toEqual({ value: ['AGRICULTURE'], modifier: QueryParamModifier.Equal });
       expect(queryParameters.status).toEqual({
         value: ['OFFER ACCEPTED', 'OFFERED'],
         modifier: QueryParamModifier.Equal
@@ -196,7 +194,6 @@ describe('ListComponent', () => {
 
         component.pagination.currentPage = 8;
         component.pagination.itemsPerPage = 18;
-        component.purposeCodeFilters = ['purposeFilterF'];
         component.statusCodeFilters = ['UNKNOWN'];
         component.regionCodeFilter = 'regionFilterF';
         component.exporting = true;
@@ -261,7 +258,6 @@ describe('ListComponent', () => {
       component.pagination.currentPage = 7;
       component.sorting.column = 'columnC';
       component.sorting.direction = 2;
-      component.purposeCodeFilters = ['purposeFilterC'];
       component.statusCodeFilters = ['statusFilterC'];
       component.regionCodeFilter = 'regionFilterC';
       // component.commentCodeFilters = ['commentFilterC'];
@@ -271,7 +267,6 @@ describe('ListComponent', () => {
       expect(component.pagination.currentPage).toEqual(1);
       expect(component.sorting.column).toEqual(null);
       expect(component.sorting.direction).toEqual(0);
-      expect(component.purposeCodeFilters).toEqual([]);
       expect(component.statusCodeFilters).toEqual([]);
       expect(component.regionCodeFilter).toEqual('');
       // expect(component.commentCodeFilters).toEqual([]);
@@ -282,7 +277,6 @@ describe('ListComponent', () => {
       activatedRouteStub.setQueryParamMap({
         page: 3,
         sortBy: '+columnD',
-        purpose: 'purpose1|purpose2',
         status: 'status1|status2|status3',
         region: 'region1',
         comment: 'comment1'
@@ -293,7 +287,6 @@ describe('ListComponent', () => {
       component.pagination.currentPage = 77;
       component.sorting.column = 'columnCC';
       component.sorting.direction = 22;
-      component.purposeCodeFilters = ['purposeFilterCC'];
       component.statusCodeFilters = ['statusFilterCC'];
       component.regionCodeFilter = 'regionFilterCC';
       // component.commentCodeFilters = ['commentFilterCC'];
@@ -303,7 +296,6 @@ describe('ListComponent', () => {
       expect(component.pagination.currentPage).toEqual(3);
       expect(component.sorting.column).toEqual('columnD');
       expect(component.sorting.direction).toEqual(1);
-      expect(component.purposeCodeFilters).toEqual(['purpose1', 'purpose2']);
       expect(component.statusCodeFilters).toEqual(['status1', 'status2', 'status3']);
       expect(component.regionCodeFilter).toEqual('region1');
       // expect(component.commentCodeFilters).toEqual(['comment1']);
@@ -321,7 +313,6 @@ describe('ListComponent', () => {
         expect(args[1].queryParams).toEqual({
           page: 4,
           sortBy: '-columnA',
-          purpose: 'purposeFilterA',
           region: 'regionFilterA',
           status: 'statusFilterA'
           // comment: 'commentFilterA'
@@ -339,7 +330,6 @@ describe('ListComponent', () => {
       component.pagination.currentPage = 4;
       component.sorting.column = 'columnA';
       component.sorting.direction = -1;
-      component.purposeCodeFilters = ['purposeFilterA'];
       component.statusCodeFilters = ['statusFilterA'];
       component.regionCodeFilter = 'regionFilterA';
       // component.commentCodeFilters = ['commentFilterA'];
@@ -373,7 +363,6 @@ describe('ListComponent', () => {
       component.pagination.totalItems = 11;
       component.sorting.column = 'columnB';
       component.sorting.direction = -1;
-      component.purposeCodeFilters = ['purposeFilterB'];
       component.statusCodeFilters = ['statusFilterB'];
       component.regionCodeFilter = 'regionFilterB';
       // component.commentCodeFilters = ['commentFilterB'];
@@ -384,87 +373,11 @@ describe('ListComponent', () => {
       expect(component.pagination.totalItems).toEqual(0);
       expect(component.sorting.column).toEqual(null);
       expect(component.sorting.direction).toEqual(0);
-      expect(component.purposeCodeFilters).toEqual([]);
       expect(component.statusCodeFilters).toEqual([]);
       expect(component.regionCodeFilter).toEqual('');
       // expect(component.commentCodeFilters).toEqual([]);
 
       expect(spyLocation.go).toHaveBeenCalledWith('I was called 2');
-    });
-  });
-
-  describe('setPurposeFilter', () => {
-    let component;
-    beforeEach(() => {
-      ({ component } = createComponent());
-    });
-
-    describe('purposeCode is undefined', () => {
-      beforeEach(() => {
-        component.purposeCodeFilters = ['oldFilter'];
-        component.filterChanged = false;
-
-        component.setPurposeFilter(undefined);
-      });
-
-      it('sets purposeCodeFilters to empty array', () => {
-        expect(component.purposeCodeFilters).toEqual([]);
-      });
-
-      it('sets filterChanged to true', () => {
-        expect(component.filterChanged).toEqual(true);
-      });
-    });
-
-    describe('purposeCode is null', () => {
-      beforeEach(() => {
-        component.purposeCodeFilters = ['oldFilter'];
-        component.filterChanged = false;
-
-        component.setPurposeFilter(null);
-      });
-
-      it('sets purposeCodeFilters to empty array', () => {
-        expect(component.purposeCodeFilters).toEqual([]);
-      });
-
-      it('sets filterChanged to true', () => {
-        expect(component.filterChanged).toEqual(true);
-      });
-    });
-
-    describe('purposeCode is empty string', () => {
-      beforeEach(() => {
-        component.purposeCodeFilters = ['oldFilter'];
-        component.filterChanged = false;
-
-        component.setPurposeFilter('');
-      });
-
-      it('sets purposeCodeFilters to empty array', () => {
-        expect(component.purposeCodeFilters).toEqual([]);
-      });
-
-      it('sets filterChanged to true', () => {
-        expect(component.filterChanged).toEqual(true);
-      });
-    });
-
-    describe('purposeCode is valid', () => {
-      beforeEach(() => {
-        component.purposeCodeFilters = ['oldFilter'];
-        component.filterChanged = false;
-
-        component.setPurposeFilter('newFilter');
-      });
-
-      it('sets purposeCodeFilters to array containing new filter', () => {
-        expect(component.purposeCodeFilters).toEqual(['newFilter']);
-      });
-
-      it('sets filterChanged to true', () => {
-        expect(component.filterChanged).toEqual(true);
-      });
     });
   });
 

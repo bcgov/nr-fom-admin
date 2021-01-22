@@ -88,8 +88,6 @@ export class SearchService {
           }
 
           const app = new Application({
-            purpose: searchResult.TENURE_PURPOSE,
-            subpurpose: searchResult.TENURE_SUBPURPOSE,
             type: searchResult.TENURE_TYPE,
             subtype: searchResult.TENURE_SUBTYPE,
             status: searchResult.TENURE_STATUS,
@@ -191,8 +189,6 @@ export class SearchService {
           }
 
           const app = new Application({
-            purpose: searchResult.TENURE_PURPOSE,
-            subpurpose: searchResult.TENURE_SUBPURPOSE,
             type: searchResult.TENURE_TYPE,
             subtype: searchResult.TENURE_SUBTYPE,
             status: searchResult.TENURE_STATUS,

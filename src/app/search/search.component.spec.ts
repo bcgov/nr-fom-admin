@@ -269,8 +269,6 @@ describe('SearchComponent', () => {
       _id: '111111',
       cl_file: '66666',
       tantalisID: '123456',
-      purpose: 'Shred',
-      subpurpose: 'Powder',
       status: 'Application Under Review',
       meta: {
         applicants: 'Mr Moneybags',

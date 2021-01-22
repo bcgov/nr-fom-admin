@@ -4,7 +4,7 @@ import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
 import { Application } from 'app/models/application';
 import { IApplicationQueryParamSet, QueryParamModifier } from 'app/services/api';
 import { ApplicationService } from 'app/services/application.service';
-import { RegionCodes, StatusCodes, ReasonCodes, PurposeCodes } from 'app/utils/constants/application';
+import { RegionCodes, StatusCodes, ReasonCodes } from 'app/utils/constants/application';
 import { CodeType, ConstantUtils } from 'app/utils/constants/constantUtils';
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -40,14 +40,12 @@ export class ListComponent implements OnInit, OnDestroy {
   public applications: Application[] = [];
 
   // drop down filter values
-  public purposeCodes = new PurposeCodes().getCodeGroups();
   public regionCodes = new RegionCodes().getCodeGroups();
   public statusCodes = new StatusCodes().getCodeGroups();
   // enforce specific comment filter order for esthetics
   // public commentCodes = [CommentCodes.NOT_STARTED, CommentCodes.OPEN, CommentCodes.CLOSED, CommentCodes.NOT_OPEN];
 
   // selected drop down filters
-  public purposeCodeFilters: string[] = [];
   public regionCodeFilter = '';
   public statusCodeFilters: string[] = [];
   public applicantFilter = '';
@@ -132,10 +130,8 @@ export class ListComponent implements OnInit, OnDestroy {
           "location": "Porcher Island",
           "name": "6406200",
           "publishDate": "2018-11-07T21:59:58.000Z",
-          "purpose": "COMMERCIAL",
           "status": "ACCEPTED",
           "reason": "OFFER NOT ACCEPTED",
-          "subpurpose": "MARINA",
           "subtype": "LICENCE OF OCCUPATION",
           "tantalisID": 926028,
           "tenureStage": "APPLICATION",
@@ -214,8 +210,6 @@ export class ListComponent implements OnInit, OnDestroy {
             { label: 'Area (hectares)', value: 'areaHectares' },
             { label: 'Created Date', value: this.getExportDateFormatter('createdDate') },
             { label: 'Publish Date', value: this.getExportDateFormatter('publishDate') },
-            { label: 'Purpose', value: 'purpose' },
-            { label: 'Subpurpose', value: 'subpurpose' },
             { label: 'Status', value: this.getExportStatusFormatter('status', 'reason') },
             { label: 'Last Status Update Date', value: this.getExportDateFormatter('statusHistoryEffectiveDate') },
             { label: 'Type', value: 'type' },
@@ -332,7 +326,6 @@ export class ListComponent implements OnInit, OnDestroy {
     this.sorting.direction =
       (this.paramMap.get('sortBy') && (this.paramMap.get('sortBy').charAt(0) === '-' ? -1 : 1)) || 0;
 
-    this.purposeCodeFilters = (this.paramMap.get('purpose') && this.paramMap.get('purpose').split('|')) || [];
     this.regionCodeFilter = this.paramMap.get('region') || '';
     this.statusCodeFilters = (this.paramMap.get('status') && this.paramMap.get('status').split('|')) || [];
     this.applicantFilter = this.paramMap.get('applicant') || '';
@@ -358,12 +351,6 @@ export class ListComponent implements OnInit, OnDestroy {
       isDeleted: false,
       pageNum: this.pagination.currentPage - 1, // API starts at 0, while this component starts at 1
       pageSize: this.pagination.itemsPerPage,
-      purpose: {
-        value: _.flatMap(
-          this.purposeCodeFilters.map(purposeCode => ConstantUtils.getCode(CodeType.PURPOSE, purposeCode))
-        ),
-        modifier: QueryParamModifier.Equal
-      },
       businessUnit: {
         value: ConstantUtils.getCode(CodeType.REGION, this.regionCodeFilter),
         modifier: QueryParamModifier.Equal
@@ -462,9 +449,6 @@ export class ListComponent implements OnInit, OnDestroy {
       params['sortBy'] = `${this.sorting.direction === -1 ? '-' : '+'}${this.sorting.column}`;
     }
 
-    if (this.purposeCodeFilters && this.purposeCodeFilters.length) {
-      params['purpose'] = this.convertArrayIntoPipeString(this.purposeCodeFilters);
-    }
     if (this.regionCodeFilter) {
       params['region'] = this.regionCodeFilter;
     }
@@ -494,7 +478,6 @@ export class ListComponent implements OnInit, OnDestroy {
     this.sorting.column = null;
     this.sorting.direction = 0;
 
-    this.purposeCodeFilters = [];
     this.regionCodeFilter = '';
     this.statusCodeFilters = [];
     this.applicantFilter = '';
@@ -505,17 +488,6 @@ export class ListComponent implements OnInit, OnDestroy {
 
   // Filters
 
-  /**
-   * Set application purpose filter.
-   *
-   * @param {string} purposeCode
-   * @memberof ListComponent
-   */
-  public setPurposeFilter(purposeCode: string): void {
-    this.purposeCodeFilters = purposeCode ? [purposeCode] : [];
-    this.filterChanged = true;
-    this.saveQueryParameters();
-  }
 
   /**
    * Set application status filter.

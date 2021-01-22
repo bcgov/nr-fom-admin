@@ -17,8 +17,6 @@ export class Feature {
     TENURE_REASON: string;
     TENURE_TYPE: string;
     TENURE_SUBTYPE: string;
-    TENURE_PURPOSE: string;
-    TENURE_SUBPURPOSE: string;
     CROWN_LANDS_FILE: string;
     TENURE_DOCUMENT: string;
     TENURE_EXPIRY: string; // TODO: convert to date?

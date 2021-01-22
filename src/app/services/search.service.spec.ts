@@ -147,12 +147,10 @@ describe('SearchService', () => {
                 CROWN_LANDS_FILE: '11',
                 DISPOSITION_TRANSACTION_SID: '33',
                 RESPONSIBLE_BUSINESS_UNIT: 'KO - LAND MGMNT - KOOTENAY FIELD OFFICE',
-                TENURE_PURPOSE: 'tenure-purpose-1',
                 TENURE_LOCATION: 'tenure-location-1',
                 TENURE_STAGE: 'tenure-stage-1',
                 TENURE_STATUS: StatusCodes.ABANDONED.code,
                 TENURE_REASON: ReasonCodes.AMENDMENT_APPROVED.code,
-                TENURE_SUBPURPOSE: 'tenure-subpurpose-1',
                 TENURE_SUBTYPE: 'tenure-subtype-1',
                 TENURE_TYPE: 'tenure-type-1'
               }),
@@ -170,12 +168,10 @@ describe('SearchService', () => {
                 CROWN_LANDS_FILE: '22',
                 DISPOSITION_TRANSACTION_SID: '55',
                 RESPONSIBLE_BUSINESS_UNIT: 'OM - LAND MGMNT - NORTHERN SERVICE REGION',
-                TENURE_PURPOSE: 'tenure-purpose-2',
                 TENURE_LOCATION: 'tenure-location-2',
                 TENURE_STAGE: 'tenure-stage-2',
                 TENURE_STATUS: StatusCodes.APPLICATION_REVIEW_COMPLETE.code,
                 TENURE_REASON: ReasonCodes.AMENDMENT_APPROVED.code,
-                TENURE_SUBPURPOSE: 'tenure-subpurpose-2',
                 TENURE_SUBTYPE: 'tenure-subtype-2',
                 TENURE_TYPE: 'tenure-type-2'
               })
@@ -208,8 +204,6 @@ describe('SearchService', () => {
           });
 
           it('sets certain values of the application', () => {
-            expect(prcResult[0].purpose).toBe('tenure-purpose-1');
-            expect(prcResult[0].subpurpose).toBe('tenure-subpurpose-1');
             expect(prcResult[0].type).toBe('tenure-type-1');
             expect(prcResult[0].subtype).toBe('tenure-subtype-1');
             expect(prcResult[0].status).toBe('ABANDONED');
@@ -221,8 +215,6 @@ describe('SearchService', () => {
             expect(prcResult[0].tantalisID).toBe(33);
             expect(prcResult[0].meta.region).toBe('Kootenay, Cranbrook');
 
-            expect(prcResult[1].purpose).toBe('tenure-purpose-2');
-            expect(prcResult[1].subpurpose).toBe('tenure-subpurpose-2');
             expect(prcResult[1].type).toBe('tenure-type-2');
             expect(prcResult[1].subtype).toBe('tenure-subtype-2');
             expect(prcResult[1].status).toBe('APPLICATION REVIEW COMPLETE');
@@ -341,12 +333,10 @@ describe('SearchService', () => {
                 CROWN_LANDS_FILE: '11',
                 DISPOSITION_TRANSACTION_SID: '33',
                 RESPONSIBLE_BUSINESS_UNIT: 'CA - LAND MGMNT - CARIBOO FIELD OFFICE',
-                TENURE_PURPOSE: 'tenure-purpose-1',
                 TENURE_LOCATION: 'tenure-location-1',
                 TENURE_STAGE: 'tenure-stage-1',
                 TENURE_STATUS: StatusCodes.DECISION_APPROVED.code,
                 TENURE_REASON: 'tenure-reason-1',
-                TENURE_SUBPURPOSE: 'tenure-subpurpose-1',
                 TENURE_SUBTYPE: 'tenure-subtype-1',
                 TENURE_TYPE: 'tenure-type-1'
               })
@@ -379,8 +369,6 @@ describe('SearchService', () => {
           });
 
           it('sets certain values of the application', () => {
-            expect(tantalisResult[0].purpose).toBe('tenure-purpose-1');
-            expect(tantalisResult[0].subpurpose).toBe('tenure-subpurpose-1');
             expect(tantalisResult[0].type).toBe('tenure-type-1');
             expect(tantalisResult[0].subtype).toBe('tenure-subtype-1');
             expect(tantalisResult[0].status).toBe('DECISION APPROVED');

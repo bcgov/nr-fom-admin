@@ -32,7 +32,6 @@
           <th class="cl-file" name="Crowns land File Number">CL File</th>
           <th class="disp">Disp. ID</th>
           <th class="client">Applicant(s)</th>
-          <th class="purpose">Purpose/Subpurpose</th>
           <th class="status">Status</th>
           <th class="actions"></th>
         </tr>
@@ -47,9 +46,6 @@
           </td>
           <td
             [innerHTML]="application.meta.applicants ? (application.meta.applicants | titlecase) : '<em>No Applicant on this File</em>'">
-          </td>
-          <td>
-            {{application.purpose | titlecase}} / {{application.subpurpose | titlecase}}
           </td>
           <td>
             {{getStatusStringLong(application) || 'Unknown'}}

@@ -19,8 +19,6 @@ export class ApplicationDetailResolver implements Resolve<Application> {
     if (appId === '0') {
       // create new application
       const application = new Application({
-        purpose: route.queryParamMap.get('purpose'),
-        subpurpose: route.queryParamMap.get('subpurpose'),
         type: route.queryParamMap.get('type'),
         subtype: route.queryParamMap.get('subtype'),
         status: route.queryParamMap.get('status'),
@@ -89,10 +87,8 @@ export class ApplicationDetailResolver implements Resolve<Application> {
           "location": "Porcher Island",
           "name": "6406200",
           "publishDate": "2018-11-07T21:59:58.000Z",
-          "purpose": "COMMERCIAL",
           "status": "ACCEPTED",
           "reason": "OFFER NOT ACCEPTED",
-          "subpurpose": "MARINA",
           "subtype": "LICENCE OF OCCUPATION",
           "tantalisID": 926028,
           "tenureStage": "APPLICATION",

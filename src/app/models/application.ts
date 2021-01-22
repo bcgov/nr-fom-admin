@@ -20,10 +20,8 @@ export class Application {
   name: string;
   createdDate: Date = null;
   publishDate: Date = null;
-  purpose: string;
   status: string;
   reason: string;
-  subpurpose: string;
   subtype: string;
   tantalisID: number;
   tenureStage: string;
@@ -84,10 +82,8 @@ export class Application {
     this.client = (obj && obj.client) || null;
     this.location = (obj && obj.location) || null;
     this.name = (obj && obj.name) || null;
-    this.purpose = (obj && obj.purpose) || null;
     this.status = (obj && obj.status) || null;
     this.reason = (obj && obj.reason) || null;
-    this.subpurpose = (obj && obj.subpurpose) || null;
     this.subtype = (obj && obj.subtype) || null;
     this.tantalisID = (obj && obj.tantalisID) || null; // not zero
     this.tenureStage = (obj && obj.tenureStage) || null;

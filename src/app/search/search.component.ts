@@ -118,8 +118,6 @@ export class SearchComponent implements OnInit, OnDestroy {
       // save application data from search results
       const params = {
         // initial data
-        purpose: application.purpose,
-        subpurpose: application.subpurpose,
         type: application.type,
         subtype: application.subtype,
         status: application.status,

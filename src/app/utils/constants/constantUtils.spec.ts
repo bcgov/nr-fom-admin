@@ -1,5 +1,5 @@
 import { ConstantUtils, CodeType } from './constantUtils';
-import { StatusCodes, LandUseTypeCodes, PurposeCodes, RegionCodes, ReasonCodes } from './application';
+import { StatusCodes, LandUseTypeCodes, RegionCodes, ReasonCodes } from './application';
 import { CommentCodes } from './comment';
 
 describe('constantUtils', () => {
@@ -27,11 +27,6 @@ describe('constantUtils', () => {
     it('returns RegionCodes if REGION codeType provided', () => {
       const codeSet = ConstantUtils.getCodeSet(CodeType.REGION);
       expect(codeSet.getCodeGroups()).toEqual(new RegionCodes().getCodeGroups());
-    });
-
-    it('returns PurposeCodes if PURPOSE codeType provided', () => {
-      const codeSet = ConstantUtils.getCodeSet(CodeType.PURPOSE);
-      expect(codeSet.getCodeGroups()).toEqual(new PurposeCodes().getCodeGroups());
     });
 
     it('returns LandUseTypeCodes if LANDUSETYPE codeType provided', () => {
@@ -91,11 +86,6 @@ describe('constantUtils', () => {
       expect(codeGroup).toEqual(RegionCodes.LOWER_MAINLAND);
     });
 
-    it('returns purpose code group if purpose codeType provided and mataching searchString provided', () => {
-      const codeGroup = ConstantUtils.getCodeGroup(CodeType.PURPOSE, 'AGRICULTURE');
-      expect(codeGroup).toEqual(PurposeCodes.AGRICULTURE);
-    });
-
     it('returns land use type code group if landUseType codeType provided and mataching searchString provided', () => {
       const codeGroup = ConstantUtils.getCodeGroup(CodeType.LANDUSETYPE, 'CERTIFICATE OF PURCHASE');
       expect(codeGroup).toEqual(LandUseTypeCodes['CERTIFICATE OF PURCHASE']);
@@ -151,11 +141,6 @@ describe('constantUtils', () => {
     it('returns region code if region codeType provided and mataching searchString provided', () => {
       const code = ConstantUtils.getCode(CodeType.REGION, 'LM - LAND MGMNT - LOWER MAINLAND SERVICE REGION');
       expect(code).toEqual(RegionCodes.LOWER_MAINLAND.code);
-    });
-
-    it('returns purpose code if purpose codeType provided and mataching searchString provided', () => {
-      const code = ConstantUtils.getCode(CodeType.PURPOSE, 'AGRICULTURE');
-      expect(code).toEqual(PurposeCodes.AGRICULTURE.code);
     });
 
     it('returns land use type code if landUseType codeType provided and mataching searchString provided', () => {
@@ -215,11 +200,6 @@ describe('constantUtils', () => {
       expect(param).toEqual(RegionCodes.CARIBOO.param);
     });
 
-    it('returns purpose param if purpose codeType provided and mataching searchString provided', () => {
-      const param = ConstantUtils.getParam(CodeType.PURPOSE, 'SOLAR POWER');
-      expect(param).toEqual(PurposeCodes['SOLAR POWER'].param);
-    });
-
     it('returns land use type param if landUseType codeType provided and mataching searchString provided', () => {
       const param = ConstantUtils.getParam(CodeType.LANDUSETYPE, 'CERTIFICATE OF PURCHASE');
       expect(param).toEqual(LandUseTypeCodes['CERTIFICATE OF PURCHASE'].param);
@@ -277,12 +257,7 @@ describe('constantUtils', () => {
       expect(stringShort).toEqual(RegionCodes.PEACE.text.short);
     });
 
-    it('returns purpose stringShort if purpose codeType provided and mataching searchString provided', () => {
-      const stringShort = ConstantUtils.getTextShort(CodeType.PURPOSE, 'INSTITUTIONAL');
-      expect(stringShort).toEqual(PurposeCodes.INSTITUTIONAL.text.short);
-    });
-
-    it('returns land use type stringShort if landUseType codeType provided and mataching searchString provided', () => {
+     it('returns land use type stringShort if landUseType codeType provided and mataching searchString provided', () => {
       const stringShort = ConstantUtils.getTextShort(CodeType.LANDUSETYPE, 'CROWN GRANT');
       expect(stringShort).toEqual(LandUseTypeCodes['CROWN GRANT'].text.short);
     });
@@ -337,11 +312,6 @@ describe('constantUtils', () => {
     it('returns region stringLong if region codeType provided and mataching searchString provided', () => {
       const stringLong = ConstantUtils.getTextLong(CodeType.REGION, 'SI - LAND MGMNT - SOUTHERN SERVICE REGION');
       expect(stringLong).toEqual(RegionCodes.SOUTHERN_INTERIOR.text.long);
-    });
-
-    it('returns purpose stringLong if purpose codeType provided and mataching searchString provided', () => {
-      const stringLong = ConstantUtils.getTextLong(CodeType.PURPOSE, 'ENERGY PRODUCTION');
-      expect(stringLong).toEqual(PurposeCodes['ENERGY PRODUCTION'].text.long);
     });
 
     it('returns land use type stringLong if landUseType codeType provided and mataching searchString provided', () => {
@@ -399,11 +369,6 @@ describe('constantUtils', () => {
     it('returns region mappedCodes if region codeType provided and mataching searchString provided', () => {
       const mappedCodes = ConstantUtils.getMappedCodes(CodeType.REGION, 'SK');
       expect(mappedCodes).toEqual(RegionCodes.SKEENA.mappedCodes);
-    });
-
-    it('returns purpose mappedCodes if purpose codeType provided and mataching searchString provided', () => {
-      const mappedCodes = ConstantUtils.getMappedCodes(CodeType.PURPOSE, 'COMMERCIAL');
-      expect(mappedCodes).toEqual(PurposeCodes.COMMERCIAL.mappedCodes);
     });
 
     it('returns land use type mappedCodes if landUseType codeType provided and mataching searchString provided', () => {

@@ -66,8 +66,6 @@ describe('ApiService', () => {
         cpEnd: { value: new Date('2019-02-02') },
         tantalisID: { value: 123 },
         cl_file: { value: 321 },
-        purpose: { value: ['PURPOSE'] },
-        subpurpose: { value: ['SUBPURPOSE'] },
         status: { value: ['STATUS'] },
         reason: { value: ['REGION'], modifier: QueryParamModifier.Not_Equal },
         subtype: { value: 'SUBTYPE' },
@@ -92,8 +90,6 @@ describe('ApiService', () => {
         `cpEnd=${new Date('2019-02-02').toISOString()}&` +
         'tantalisID=123&' +
         'cl_file=321&' +
-        'purpose[eq]=PURPOSE&' +
-        'subpurpose[eq]=SUBPURPOSE&' +
         'status[eq]=STATUS&' +
         'reason[ne]=REGION&' +
         'subtype=SUBTYPE&' +

@@ -1,4 +1,4 @@
-import { StatusCodes, ReasonCodes, RegionCodes, PurposeCodes, LandUseTypeCodes } from './application';
+import { StatusCodes, ReasonCodes, RegionCodes, LandUseTypeCodes } from './application';
 import { ICodeSet, ICodeGroup } from './interfaces';
 import { CommentCodes } from './comment';
 
@@ -12,7 +12,6 @@ export enum CodeType {
   STATUS,
   REASON,
   REGION,
-  PURPOSE,
   LANDUSETYPE,
   COMMENT
 }
@@ -40,8 +39,6 @@ export class ConstantUtils {
         return new ReasonCodes();
       case CodeType.REGION:
         return new RegionCodes();
-      case CodeType.PURPOSE:
-        return new PurposeCodes();
       case CodeType.LANDUSETYPE:
         return new LandUseTypeCodes();
       case CodeType.COMMENT:

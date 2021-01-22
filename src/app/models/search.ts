@@ -17,11 +17,9 @@ export class SearchResults {
   DISPOSITION_TRANSACTION_SID: string;
   RESPONSIBLE_BUSINESS_UNIT: string;
   TENURE_LOCATION: string;
-  TENURE_PURPOSE: string;
   TENURE_STAGE: string;
   TENURE_STATUS: string;
   TENURE_REASON: string;
-  TENURE_SUBPURPOSE: string;
   TENURE_SUBTYPE: string;
   TENURE_TYPE: string;
   areaHectares: number;
@@ -42,11 +40,9 @@ export class SearchResults {
     this.DISPOSITION_TRANSACTION_SID = (search && search.DISPOSITION_TRANSACTION_SID) || null;
     this.RESPONSIBLE_BUSINESS_UNIT = (search && search.RESPONSIBLE_BUSINESS_UNIT) || null;
     this.TENURE_LOCATION = (search && search.TENURE_LOCATION) || null;
-    this.TENURE_PURPOSE = (search && search.TENURE_PURPOSE) || null;
     this.TENURE_STAGE = (search && search.TENURE_STAGE) || null;
     this.TENURE_STATUS = (search && search.TENURE_STATUS) || null;
     this.TENURE_REASON = (search && search.TENURE_REASON) || null;
-    this.TENURE_SUBPURPOSE = (search && search.TENURE_SUBPURPOSE) || null;
     this.TENURE_SUBTYPE = (search && search.TENURE_SUBTYPE) || null;
     this.TENURE_TYPE = (search && search.TENURE_TYPE) || null;
     this.TENURE_TYPE = (search && search.TENURE_TYPE) || null;
