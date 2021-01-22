@@ -8,7 +8,8 @@ import { RegionCodes, StatusCodes, ReasonCodes, PurposeCodes } from 'app/utils/c
 import { CodeType, ConstantUtils } from 'app/utils/constants/constantUtils';
 import * as _ from 'lodash';
 import * as moment from 'moment';
-import { forkJoin, Subject } from 'rxjs';
+// import { forkJoin, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ExportService } from 'app/services/export.service';
 
@@ -102,31 +103,81 @@ export class ListComponent implements OnInit, OnDestroy {
    * @memberof ListComponent
    */
   public getApplications(): void {
-    this.searching = true;
+    this.searching = false;
+    console.log('inside getApplications()');
 
     if (this.filterChanged) {
       this.resetPagination();
     }
 
-    forkJoin(
-      this.applicationService.getAll({ getCurrentPeriod: true }, this.getApplicationQueryParamSets()),
-      this.applicationService.getCount(this.getApplicationQueryParamSets())
-    )
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(
-        ([applications, count]) => {
-          this.updatePagination({ totalItems: count });
-          this.applications = applications;
+    //TODO - Creating static application
 
-          this.searching = false;
-          this.loading = false;
-        },
-        error => {
-          console.log('error = ', error);
-          alert("Uh-oh, couldn't load applications");
-          this.router.navigate(['/list']);
-        }
-      );
+    const applications: Application[] =  [
+      new Application({
+          "_id": 123456789,
+          "agency": "Crown Land Allocation",
+          "areaHectares": 2.5,
+          "businessUnit": "SK - LAND MGMNT - SKEENA FIELD OFFICE",
+          "centroid": [
+              -130.2898393371777,
+              54.019088770013575
+            ],
+          "cl_file": 6406200,
+          "client": "ABC SERVICES CORP.",
+          "_createdBy": "idir\\mmedeiro",
+          "createdDate": "2021-01-10",
+          "description": "A high-level description of this application.",
+          "isDeleted": false,
+          "legalDescription": "A detailed description of the subject land.",
+          "location": "Porcher Island",
+          "name": "6406200",
+          "publishDate": "2018-11-07T21:59:58.000Z",
+          "purpose": "COMMERCIAL",
+          "status": "ACCEPTED",
+          "reason": "OFFER NOT ACCEPTED",
+          "subpurpose": "MARINA",
+          "subtype": "LICENCE OF OCCUPATION",
+          "tantalisID": 926028,
+          "tenureStage": "APPLICATION",
+          "meta": {
+            "region": "Cariboo",
+            "cpStatusStringLong": "Approved",
+            "clFile": "123456789",
+            "applicants": "Me applying",
+            "numComments": 3,
+            // retireDate: Date;
+            "isRetired": false,
+            // isPublished: boolean;
+           
+            // isCreated: boolean;
+          }
+        })
+    ]; 
+
+    this.updatePagination({ totalItems: 1 });
+    this.applications = applications;
+    this.loading = false;
+
+    //TODO - Marcelo commented this section
+    // forkJoin(
+    //   this.applicationService.getAll({ getCurrentPeriod: true }, this.getApplicationQueryParamSets()),
+    //   this.applicationService.getCount(this.getApplicationQueryParamSets())
+    // )
+    //   .pipe(takeUntil(this.ngUnsubscribe))
+    //   .subscribe(
+    //     ([applications, count]) => {
+    //       this.updatePagination({ totalItems: count });
+    //       this.applications = applications;
+
+    //       this.searching = false;
+    //       this.loading = false;
+    //     },
+    //     error => {
+    //       console.log('error = ', error);
+    //       alert("Uh-oh, couldn't load applications");
+    //       this.router.navigate(['/list']);
+    //     }
+    //   );
   }
 
   // Export
@@ -722,7 +773,7 @@ export class ListComponent implements OnInit, OnDestroy {
     if (!Date) {
       return null;
     }
-
+    console.log('Created Date: ' + date);
     return moment(date).format('YYYY-MM-DD');
   }
 

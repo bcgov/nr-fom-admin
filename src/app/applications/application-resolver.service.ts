@@ -38,6 +38,8 @@ export class ApplicationDetailResolver implements Resolve<Application> {
       // 7-digit CL File number for display
       if (application.cl_file) {
         application.meta.clFile = application.cl_file.toString().padStart(7, '0');
+        //TODO
+        console.log('app resolver: ' + application.cl_file.toString() );
       }
 
       // derive unique applicants
@@ -66,12 +68,59 @@ export class ApplicationDetailResolver implements Resolve<Application> {
       return of(application);
     }
 
+    //TODO - Marcelo
+
+    const application = new Application({
+          "_id": 123456789,
+          "agency": "Crown Land Allocation",
+          "areaHectares": 2.5,
+          "businessUnit": "SK - LAND MGMNT - SKEENA FIELD OFFICE",
+          "centroid": [
+              -130.2898393371777,
+              54.019088770013575
+            ],
+          "cl_file": 6406200,
+          "client": "ABC SERVICES CORP.",
+          "_createdBy": "idir\\mmedeiro",
+          "createdDate": "2021-01-10",
+          "description": "A high-level description of this application.",
+          "isDeleted": false,
+          "legalDescription": "A detailed description of the subject land.",
+          "location": "Porcher Island",
+          "name": "6406200",
+          "publishDate": "2018-11-07T21:59:58.000Z",
+          "purpose": "COMMERCIAL",
+          "status": "ACCEPTED",
+          "reason": "OFFER NOT ACCEPTED",
+          "subpurpose": "MARINA",
+          "subtype": "LICENCE OF OCCUPATION",
+          "tantalisID": 926028,
+          "tenureStage": "APPLICATION",
+          "meta": {
+            "region": "Cariboo",
+            "cpStatusStringLong": "Approved",
+            "clFile": "123456789",
+            "applicants": "Me applying",
+            "numComments": 3,
+            // retireDate: Date;
+            "isRetired": false,
+            // isPublished: boolean;
+           
+            // isCreated: boolean;
+          }
+        })
+
+        //TODO - Marcelo 
+        console.log('just logging... ' + this.applicationService);
+   
+        return of(application);
+
     // view/edit existing application
-    return this.applicationService.getById(appId, {
-      getFeatures: true,
-      getDocuments: true,
-      getCurrentPeriod: true,
-      getDecision: true
-    });
+    // return this.applicationService.getById(appId, {
+    //   getFeatures: true,
+    //   getDocuments: true,
+    //   getCurrentPeriod: true,
+    //   getDecision: true
+    // });
   }
 }

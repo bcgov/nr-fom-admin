@@ -44,7 +44,7 @@ export class HeaderComponent implements OnInit {
         this.jwt = jwt;
       } else {
         // this.welcomeMsg = 'Login';
-        //Marcelo addded this
+        // TODO: Marcelo addded this
         jwt = {
           username: 'Marcelo',
           displayName: 'Marcelo',
