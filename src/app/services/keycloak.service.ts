@@ -33,7 +33,8 @@ export class KeycloakService {
 
       default:
         // Prod
-        this.keycloakEnabled = true;
+        // TODO - Marcelo this.keycloakEnabled = true;
+        this.keycloakEnabled = false;
         this.keycloakUrl = 'https://sso.pathfinder.gov.bc.ca/auth';
         this.keycloakRealm = 'acrfd';
     }
@@ -154,7 +155,7 @@ export class KeycloakService {
     if (!this.keycloakEnabled) {
       // return the local storage token
       const currentUser = JSON.parse(window.localStorage.getItem('currentUser'));
-      console.log("Current User" + currentUser);
+      console.log('Current User' + currentUser);
       return currentUser ? currentUser.token : null;
     }
 

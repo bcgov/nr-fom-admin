@@ -257,7 +257,8 @@ describe('constantUtils', () => {
       expect(stringShort).toEqual(RegionCodes.PEACE.text.short);
     });
 
-     it('returns land use type stringShort if landUseType codeType provided and mataching searchString provided', () => {
+     it('returns land use type stringShort if landUseType codeType provided' +
+     'and mataching searchString provided', () => {
       const stringShort = ConstantUtils.getTextShort(CodeType.LANDUSETYPE, 'CROWN GRANT');
       expect(stringShort).toEqual(LandUseTypeCodes['CROWN GRANT'].text.short);
     });

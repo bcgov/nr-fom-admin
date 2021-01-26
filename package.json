@@ -12,7 +12,6 @@
     "tests-ci": "ng test --watch=false --code-coverage",
     "e2e": "ng e2e",
     "lint:ts": "ng lint nr-fom-admin --format=stylish",
-    "lint:scss": "stylelint src/**/*.scss",
     "lint": "npm-run-all -l -s -c lint:*",
     "lint-fix:ts-1": "ng lint nr-fom-admin --fix --format=stylish",
     "lint-fix:ts-2": "prettier ./**/*.ts --write --loglevel warn",

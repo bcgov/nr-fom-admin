@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { Router } from '@angular/router';
 import { ApiService } from 'app/services/api';
-import { JwtUtil } from 'app/jwt-util';
+// import { JwtUtil } from 'app/jwt-util';
 import { KeycloakService } from 'app/services/keycloak.service';
 
 @Component({
@@ -34,10 +34,18 @@ export class HeaderComponent implements OnInit {
     // this._api = api;
     router.events.subscribe(() => {
       const token = this.keycloakService.getToken();
+      // let jwt = new JwtUtil().decodeToken(token);
+      let jwt = {
+        username: 'Marcelo',
+        displayName: 'Marcelo',
+        realm_access: {
+          roles: ['sysadmin']
+        },
+        scopes: ['test', 'dev']
+      };
       // TODO: Change this to observe the change in the _api.token
       if (token) {
         // console.log("token:", token);
-        var jwt = new JwtUtil().decodeToken(token);
         // console.log('jwt:', jwt);
         this.welcomeMsg = jwt ? 'Hello ' + jwt.displayName : 'Login';
         // console.log("this:", this.welcomeMsg);
@@ -51,10 +59,10 @@ export class HeaderComponent implements OnInit {
           realm_access: {
             roles: ['sysadmin']
           },
-          scopes: ['test','dev']
+          scopes: ['test', 'dev']
         };
         this.jwt = jwt;
-        //Marcelo addded this
+        // TODO Marcelo addded this
         this.welcomeMsg = jwt ? 'Hello ' + jwt.displayName : 'Login';
         // this.jwt = new JwtUtil().
         // this.jwt.username = 'admin';
