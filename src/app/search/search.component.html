@@ -1,8 +1,8 @@
 <div class="search-container">
   <div class="container">
-    <h1>Find FOM</h1>
+    <h1>Find FSP for FOM</h1>
     <form #f="ngForm" class="search-form ui form" (ngSubmit)="onSubmit()">
-      <label for="keywordInput">Enter FOM File or Disposition Transaction number</label>
+      <label for="keywordInput">Enter FSP for FOM</label>
       <div class="input-group main-search-field">
         <input class="form-control" type="text" name="keywordInput" id="keywordInput" [(ngModel)]="keywords"
           [disabled]="searching" autofocus />
@@ -29,18 +29,21 @@
     <table class="table" *ngIf="count > 0">
       <thead>
         <tr>
-          <th class="cl-file" name="Crowns land File Number">CL File</th>
-          <th class="disp">Disp. ID</th>
-          <th class="client">Applicant(s)</th>
-          <th class="status">Status</th>
+          <!-- <th class="cl-file" name="Crowns land File Number">CL File</th> -->
+          <th class="disp">FOM ID</th>
+          <th class="client">FOM Name</th>
+          <th class="client">Create Date</th>
+          <th class="status">FOM Status</th>
+          <th class="status">Commenting Open Date</th>
           <th class="actions"></th>
         </tr>
       </thead>
       <ng-template ngFor let-application [ngForOf]="applications">
         <tr class="app-details">
-          <td class="cl-file">
+          <!-- <td class="disp">
             <span class="cl-arrow">{{application.meta.clFile}}</span>
-          </td>
+            <span>{{application.meta.clFile}}</span>
+          </td> -->
           <td class="disp">
             <strong>{{application.tantalisID}}</strong>
           </td>
@@ -48,17 +51,16 @@
             [innerHTML]="application.meta.applicants ? (application.meta.applicants | titlecase) : '<em>No Applicant on this File</em>'">
           </td>
           <td>
+            {{application.createdDate | date:'mediumDate'}}
+          </td>
+          <td>
             {{getStatusStringLong(application) || 'Unknown'}}
           </td>
+          <td>
+            {{application.publishDate | date:'mediumDate'}}
+          </td>
+          
           <td class="actions">
-            <div class="btn-container">
-              <button class="btn btn-sm btn-primary" type="button" title="Create this application in ACFRD"
-                *ngIf="!application.meta.isCreated" (click)="onImport(application)" [disabled]="application.meta.isRetired">
-                <i class="material-icons">add</i>
-                Create
-              </button>
-              <span title="You cannot create a retired application"></span>
-            </div>
             <div ngbDropdown placement="bottom-right" *ngIf="application.meta.isCreated">
               <button ngbDropdownToggle class="btn btn-sm btn-outline-primary" type="button">
                 Actions
@@ -66,12 +68,12 @@
               <div ngbDropdownMenu>
                 <button class="dropdown-item" type="button" [routerLink]="['/a', application._id]">
                   <i class="material-icons">insert_drive_file</i>
-                  View Application
+                  View FOM
                 </button>
                 <button class="dropdown-item" type="button" [routerLink]="['/a', application._id, 'edit']"
                   *ngIf="!application.meta.isRetired">
                   <i class="material-icons">edit</i>
-                  Edit Details
+                  Edit FOM
                 </button>
                 <button class="dropdown-item" type="button" [routerLink]="['/comments', application._id]">
                   <i class="material-icons">mode_comment</i>
@@ -108,4 +110,12 @@
       </ng-template>
     </table>
   </div>
+  <div class="btn-container" *ngIf="ranSearch && !searching && count > 0">
+      <!-- (click)="onImport(application)" [disabled]="application.meta.isRetired"> -->
+      <button class="btn btn-sm btn-primary btn-container" type="button" title="Create this application in ACFRD"
+          (click)="onImport()" >
+          <i class="material-icons">add</i>
+          Create
+      </button>
+      </div>
 </div>

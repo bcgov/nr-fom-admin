@@ -217,6 +217,7 @@ $cl-arrow-font-color: #fff;
 .btn-container {
   position: relative;
   display: inline-block;
+  font-weight: 700;
 
   button:disabled + span {
     position: absolute;

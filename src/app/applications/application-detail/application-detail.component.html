@@ -2,8 +2,7 @@
   <div class="container">
     <div class="title-container">
       <div class="title-container__title">
-        <h1>Crown land File: {{application.meta.clFile}}</h1>
-        <span class="title-container__sub text-muted">Disposition Transaction: {{application.tantalisID}}</span>
+        <h1>FOM ID: {{application.tantalisID}}</h1>
       </div>
       <div class="title-container__actions">
         <div class="btn-container">
@@ -81,7 +80,7 @@
                 <i class="material-icons">
                   info
                 </i>
-                Application Information
+                Applications Information
               </ng-template>
               <ng-template ngbTabContent>
                 <section>
@@ -93,27 +92,27 @@
                   <ul class="nv-list">
                     <li>
                       <span class="name">Applicant(s):</span>
-                      <span class="value">{{application.meta.applicants || 'No Applicant on this File'}}</span>
+                      <span class="value">{{application.client || 'No Applicant on this File'}}</span>
                     </li>
                     <li>
-                      <span class="name">Type / Subtype:</span>
-                      <span class="value">{{application.type || '-'}} / {{application.subtype || '-'}}</span>
+                      <span class="name">District:</span>
+                      <span class="value">Cascades Natural Resource District</span>
                     </li>
                     <li>
-                      <span class="name">Stage:</span>
-                      <span class="value">{{application.tenureStage || '-'}}</span>
+                      <span class="name">Blocks:</span>
+                      <span class="value">5321 45 Ha</span>
                     </li>
                     <li>
-                      <span class="name">Agency:</span>
-                      <span class="value">{{application.agency || '-'}}</span>
+                      <span class="name"></span>
+                      <span class="value">5322 035 Ha</span>
                     </li>
                     <li>
-                      <span class="name">Business Unit:</span>
-                      <span class="value">{{application.businessUnit || '-'}}</span>
+                      <span class="name">Road Sections:</span>
+                      <span class="value">1445 1.265km</span>
                     </li>
                     <li>
-                      <span class="name">Region:</span>
-                      <span class="value">{{application.meta.region || '-'}}</span>
+                      <span class="name"></span>
+                      <span class="value">1448 0.268</span>
                     </li>
                     <li>
                       <span class="name">Location:</span>

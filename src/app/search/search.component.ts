@@ -10,6 +10,7 @@ import { SearchService } from 'app/services/search.service';
 import { Application } from 'app/models/application';
 import { ConstantUtils, CodeType } from 'app/utils/constants/constantUtils';
 import { StatusCodes, ReasonCodes } from 'app/utils/constants/application';
+import { singleApplicationStubArray } from '../applications/stubs/application-stub';
 
 @Component({
   selector: 'app-search',
@@ -56,33 +57,42 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.applications = [];
     this.count = 0;
 
-    this.searchService
-      .getApplicationsByCLFileAndTantalisID(this.getQueryParameters())
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(
-        applications => {
-          applications.forEach(application => {
-            // add application if not already in the list (no duplicates allowed)
-            if (!_.find(this.applications, app => app.tantalisID === application.tantalisID)) {
-              this.applications.push(application);
-            }
-          });
-          this.count = this.applications.length;
-        },
-        error => {
-          console.log('error =', error);
+    this.applications = singleApplicationStubArray;
+    this.count = this.applications.length;
 
-          this.searching = false;
-          this.ranSearch = true;
+    this.searching = false;
+    this.ranSearch = true;
 
-          this.snackBarRef = this.snackBar.open('Error searching applications ...', 'RETRY');
-          this.snackBarRef.onAction().subscribe(() => this.onSubmit());
-        },
-        () => {
-          this.searching = false;
-          this.ranSearch = true;
-        }
-      );
+    // console.log(JSON.stringify(this.applications[1]));
+
+    // TODO - Marcelo
+    // this.searchService
+    //   .getApplicationsByCLFileAndTantalisID(this.getQueryParameters())
+    //   .pipe(takeUntil(this.ngUnsubscribe))
+    //   .subscribe(
+    //     applications => {
+    //       applications.forEach(application => {
+    //         // add application if not already in the list (no duplicates allowed)
+    //         if (!_.find(this.applications, app => app.tantalisID === application.tantalisID)) {
+    //           this.applications.push(application);
+    //         }
+    //       });
+    //       this.count = this.applications.length;
+    //     },
+    //     error => {
+    //       console.log('error =', error);
+
+    //       this.searching = false;
+    //       this.ranSearch = true;
+
+    //       this.snackBarRef = this.snackBar.open('Error searching applications ...', 'RETRY');
+    //       this.snackBarRef.onAction().subscribe(() => this.onSubmit());
+    //     },
+    //     () => {
+    //       this.searching = false;
+    //       this.ranSearch = true;
+    //     }
+    //   );
   }
 
   public setInitialQueryParameters() {
@@ -110,34 +120,46 @@ export class SearchComponent implements OnInit, OnDestroy {
 
     this.saveQueryParameters();
 
+    console.log('pressed find');
+
     this.doSearch();
   }
 
-  public onImport(application: Application) {
-    if (application) {
-      // save application data from search results
-      const params = {
-        // initial data
-        type: application.type,
-        subtype: application.subtype,
-        status: application.status,
-        reason: application.reason,
-        tenureStage: application.tenureStage,
-        location: application.location,
-        businessUnit: application.businessUnit,
-        cl_file: application.cl_file,
-        tantalisID: application.tantalisID,
-        legalDescription: application.legalDescription,
-        client: application.client,
-        statusHistoryEffectiveDate: application.statusHistoryEffectiveDate
-      };
-      // go to add-edit page
-      this.router.navigate(['/a', 0, 'edit'], { queryParams: params });
+  public onImport() {
+    if (true) {
+        this.router.navigate(['/a', 0, 'edit']);
     } else {
-      console.log('error, invalid application =', application);
+      // console.log('error, invalid application =', application);
       this.snackBarRef = this.snackBar.open('Error creating application ...', null, { duration: 3000 });
     }
   }
+
+  // TODO - Marcelo
+  // public onImport(application: Application) {
+  //   if (application) {
+  //     // save application data from search results
+  //     const params = {
+  //       // initial data
+  //       type: application.type,
+  //       subtype: application.subtype,
+  //       status: application.status,
+  //       reason: application.reason,
+  //       tenureStage: application.tenureStage,
+  //       location: application.location,
+  //       businessUnit: application.businessUnit,
+  //       cl_file: application.cl_file,
+  //       tantalisID: application.tantalisID,
+  //       legalDescription: application.legalDescription,
+  //       client: application.client,
+  //       statusHistoryEffectiveDate: application.statusHistoryEffectiveDate
+  //     };
+  //     // go to add-edit page
+  //     this.router.navigate(['/a', 0, 'edit'], { queryParams: params });
+  //   } else {
+  //     console.log('error, invalid application =', application);
+  //     this.snackBarRef = this.snackBar.open('Error creating application ...', null, { duration: 3000 });
+  //   }
+  // }
 
   /**
    * Returns true if the application has an abandoned status AND an amendment reason.

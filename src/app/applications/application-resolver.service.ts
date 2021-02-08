@@ -78,7 +78,7 @@ export class ApplicationDetailResolver implements Resolve<Application> {
               54.019088770013575
             ],
           'cl_file': 6406200,
-          'client': 'ABC SERVICES CORP.',
+          'client': '14670 SEWON ENTERPRISES LTD WOOMI SUSHI',
           '_createdBy': 'idir\\mmedeiro',
           'createdDate': '2021-01-10',
           'description': 'A high-level description of this application.',
@@ -96,7 +96,7 @@ export class ApplicationDetailResolver implements Resolve<Application> {
             'region': 'Cariboo',
             'cpStatusStringLong': 'Approved',
             'clFile': '123456789',
-            'applicants': 'Me applying',
+            'applicants': 'Harvesting The Forest',
             'numComments': 3,
             // retireDate: Date;
             'isRetired': false,
