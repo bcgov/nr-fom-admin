@@ -8,7 +8,7 @@
         <div>
           <select class="form-control filter-select" (change)="setRegionFilter($event.target.value)"
             [disabled]="searching || exporting" title="Filter by Region">
-            <option value="">Filter by Region</option>
+            <option value="">Filter by District</option>
             <option *ngFor="let regionCode of regionCodes" [value]="regionCode.param"
               [selected]="regionCodeFilter === regionCode.param">{{regionCode.text.long}}</option>
           </select>
@@ -21,8 +21,9 @@
             <option *ngFor="let statusCode of statusCodes" [value]="statusCode.param"
               [selected]="statusCodeFilters[0] === statusCode.param">{{statusCode.text.long}}</option>
           </select>
+        
           <input class="form-control filter-input" (change)="setApplicantFilter($event.target.value)"
-            [value]="applicantFilter" [disabled]="searching || exporting" placeholder="Filter by Applicant"
+            [value]="applicantFilter" [disabled]="searching || exporting" placeholder="Filter by Licensee"
             title="Filter by Applicant">
           <!-- <select class="form-control filter-select" (change)="setCommentFilter($event.target.value)"
             [disabled]="searching || exporting" title="Filter by comment period">
@@ -94,17 +95,17 @@
       <table class="table-cards" id="table-card">
         <thead>
           <tr>
-            <th class="sortable" (click)="sort('client')">Applicant(s)
+            <th class="sortable" (click)="sort('client')">FSP ID
               <i class="sort"
                 [ngClass]="{'sort-asc': (sorting.column == 'client' && sorting.direction < 0), 'sort-desc': (sorting.column == 'client' && sorting.direction > 0) }"
                 aria-hidden="true" title="Sort by applicant"></i>
             </th>
-            <th class="sortable" (click)="sort('cl_file')">CL File
+            <th class="sortable" (click)="sort('cl_file')">FOM ID
               <i class="sort"
                 [ngClass]="{'sort-asc': (sorting.column == 'cl_file' && sorting.direction < 0), 'sort-desc': (sorting.column == 'cl_file' && sorting.direction > 0) }"
                 aria-hidden="true" title="Sort by cl file"></i>
             </th>
-            <th class="sortable" (click)="sort('businessUnit')">Region
+            <th class="sortable" (click)="sort('businessUnit')">District
               <i class="sort"
                 [ngClass]="{'sort-asc': (sorting.column == 'businessUnit' && sorting.direction < 0), 'sort-desc': (sorting.column == 'businessUnit' && sorting.direction > 0) }"
                 aria-hidden="true" title="Sort by region"></i>
@@ -115,7 +116,6 @@
                 aria-hidden="true" title="Sort by created date"></i>
             </th>
             <th>Status</th>
-            <th>Retired</th>
             <th>Commenting</th>
             <th>Comments</th>
           </tr>
@@ -124,12 +124,16 @@
         <tbody>
           <ng-container *ngFor="let app of applications">
             <tr>
-              <td data-label="Applicant(s)">
+              <!-- <td data-label="Applicant(s)">
                 <span>{{(app.meta.applicants | titlecase) || '-'}}</span>
+              </td> -->
+               <td data-label="FSP ID">
+                <span>4506</span>
               </td>
-              <td data-label="CL File">
+
+              <td data-label="FOM ID">
                 <span>
-                  <a [routerLink]="['/a', app._id]" title="View application details">{{app.meta.clFile.padStart(7, '0') || '-'}}</a>
+                  <a [routerLink]="['/a', app._id]" title="View application details">{{app.meta.clFile}}</a>
                 </span>
               </td>
               <td data-label="Region">
@@ -140,9 +144,6 @@
               </td>
               <td data-label="Status">
                 <span>{{getStatusStringLong(app) || '-'}}</span>
-              </td>
-              <td data-label="Retired">
-                <span>{{isApplicationRetired(app) && 'Yes' || '-'}}</span>
               </td>
               <td data-label="Comment Period">
                 <span>{{app.meta.cpStatusStringLong}}</span>

@@ -191,9 +191,11 @@ export class SearchComponent implements OnInit, OnDestroy {
 
     // If the application was abandoned, but the reason is due to an amendment, then return an amendment string instead
     if (this.isAmendment(application)) {
+      console.log('isAmmendment: ' + application.reason);
       return ConstantUtils.getTextLong(CodeType.REASON, application.reason);
     }
 
+    console.log('status: ' + application.status);
     return (
       (application && ConstantUtils.getTextLong(CodeType.STATUS, application.status)) || StatusCodes.UNKNOWN.text.long
     );

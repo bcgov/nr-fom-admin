@@ -112,39 +112,81 @@ export class ListComponent implements OnInit, OnDestroy {
 
     const applications: Application[] =  [
       new Application({
+        '_id': 123456789,
+        'agency': 'Crown Land Allocation',
+        'areaHectares': 9.19,
+        'businessUnit': 'CA - LAND MGMNT - CARIBOO FIELD OFFICE',
+        'centroid': [
+            -128.2898393371777,
+            54.019088770013575
+          ],
+        'cl_file': 6406200,
+        'clFile': '6406201',
+        'client': 'Lumber Company A',
+        '_createdBy': 'idir\\mmedeiro',
+        'createdDate': '2021-01-10',
+        'description': 'A high-level description of this application.',
+        'isDeleted': false,
+        'legalDescription': 'A detailed description of the subject land.',
+        'location': 'Porcher Island',
+        'name': '6406200',
+        'publishDate': '2021-02-07',
+        'status': 'ACCEPTED',
+        'reason': 'OFFER NOT ACCEPTED',
+        'type': 'LICENCE',
+        'subtype': 'LICENCE OF OCCUPATION',
+        'tantalisID': 926028,
+        'tenureStage': 'APPLICATION',
+        'cpStatus': 'OPEN',
+        'meta': {
+          'region': 'Cariboo',
+          'cpStatusStringLong': '',
+          'clFile': '926028',
+          'applicants': 'Harvesting the Forest',
+          'numComments': 3,
+          // retireDate: Date;
+          'isRetired': false,
+          // isPublished: boolean;
+          isCreated: true
+        }
+        }),
+        new Application({
           '_id': 123456789,
           'agency': 'Crown Land Allocation',
-          'areaHectares': 2.5,
-          'businessUnit': 'SK - LAND MGMNT - SKEENA FIELD OFFICE',
+          'areaHectares': 9.19,
+          'businessUnit': 'KO - LAND MGMNT - KOOTENAY FIELD OFFICE',
           'centroid': [
-              -130.2898393371777,
-              54.019088770013575
+              -128.2898393371777,
+              54.019088770014444
             ],
           'cl_file': 6406200,
-          'client': 'ABC SERVICES CORP.',
+          'clFile': '6406201',
+          'client': 'Lumber Company B',
           '_createdBy': 'idir\\mmedeiro',
-          'createdDate': '2021-01-10',
+          'createdDate': '2021-01-14',
           'description': 'A high-level description of this application.',
           'isDeleted': false,
           'legalDescription': 'A detailed description of the subject land.',
           'location': 'Porcher Island',
           'name': '6406200',
-          'publishDate': '2018-11-07T21:59:58.000Z',
+          'publishDate': '2021-01-28',
           'status': 'ACCEPTED',
           'reason': 'OFFER NOT ACCEPTED',
+          'type': 'LICENCE',
           'subtype': 'LICENCE OF OCCUPATION',
-          'tantalisID': 926028,
+          'tantalisID': 926029,
           'tenureStage': 'APPLICATION',
+          'cpStatus': 'OPEN',
+          'numComments': 1,
           'meta': {
             'region': 'Cariboo',
-            'cpStatusStringLong': 'Approved',
-            'clFile': '123456789',
-            'applicants': 'Me applying',
-            'numComments': 3,
+            'cpStatusStringLong': 'Commenting Closed',
+            'clFile': '926029',
+            'applicants': 'Anne-Marie Operations',
             // retireDate: Date;
             'isRetired': false,
             // isPublished: boolean;
-            // isCreated: boolean;
+            isCreated: true
           }
         })
     ];

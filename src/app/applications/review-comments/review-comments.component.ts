@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+// import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
@@ -9,6 +9,7 @@ import { Application } from 'app/models/application';
 import { Comment } from 'app/models/comment';
 import { CommentService } from 'app/services/comment.service';
 import { ExportService } from 'app/services/export.service';
+import { commentStubArray } from '../../applications/stubs/comment-stub';
 
 class SortKey {
   innerHTML: string;
@@ -48,32 +49,37 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
+    // private route: ActivatedRoute,
+    // private router: Router,
     private commentService: CommentService,
     private exportService: ExportService
   ) {}
 
   ngOnInit() {
-    // get data from route resolver
-    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: Application }) => {
-      if (data.application) {
-        this.application = data.application;
 
-        this.commentService
-          .getCountByPeriodId(this.application.meta.currentPeriod._id)
-          .pipe(takeUntil(this.ngUnsubscribe))
-          .subscribe(value => {
-            this.pageCount = value ? Math.ceil(value / this.PAGE_SIZE) : 1;
-            // get initial data
-            this.getData();
-          });
-      } else {
-        alert("Uh-oh, couldn't load application");
-        // application not found --> navigate back to search
-        this.router.navigate(['/search']);
-      }
-    });
+    this.commentListScrollContainer.nativeElement.scrollTop = 0;
+    this.comments = commentStubArray;
+    
+    // get data from route resolver
+    // this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: Application }) => {
+
+    //   if (data.application) {
+    //     this.application = data.application;
+
+    //     this.commentService
+    //       .getCountByPeriodId(this.application.meta.currentPeriod._id)
+    //       .pipe(takeUntil(this.ngUnsubscribe))
+    //       .subscribe(value => {
+    //         this.pageCount = value ? Math.ceil(value / this.PAGE_SIZE) : 1;
+    //         // get initial data
+    //         this.getData();
+    //       });
+    //   } else {
+    //     alert("Uh-oh, couldn't load application");
+    //     // application not found --> navigate back to search
+    //     this.router.navigate(['/search']);
+    //   }
+    // });
   }
 
   ngOnDestroy() {
@@ -81,49 +87,49 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  getData() {
-    if (this.application) {
-      // safety check
-      this.loading = true;
-      this.commentListScrollContainer.nativeElement.scrollTop = 0;
+  // getData() {
+  //   if (this.application) {
+  //     // safety check
+  //     this.loading = true;
+  //     this.commentListScrollContainer.nativeElement.scrollTop = 0;
 
-      // get a page of comments
-      this.commentService
-        .getAllByApplicationId(this.application._id, this.pageNum - 1, this.PAGE_SIZE, this.sortBy, {
-          getDocuments: true
-        })
-        .pipe(takeUntil(this.ngUnsubscribe))
-        .subscribe(
-          comments => {
-            this.loading = false;
-            this.comments = comments;
+  //     // get a page of comments
+  //     this.commentService
+  //       .getAllByApplicationId(this.application._id, this.pageNum - 1, this.PAGE_SIZE, this.sortBy, {
+  //         getDocuments: true
+  //       })
+  //       .pipe(takeUntil(this.ngUnsubscribe))
+  //       .subscribe(
+  //         comments => {
+  //           this.loading = false;
+  //           this.comments = comments;
 
-            // pre-select the first comment
-            if (this.comments.length > 0) {
-              this.setCurrentComment(this.comments[0]);
-            }
-          },
-          error => {
-            this.loading = false;
-            // if 403, redir to login page
-            if (error && error.status === 403) {
-              this.router.navigate(['/login']);
-            }
-            this.alerts.push('Error loading comments');
-          }
-        );
-    }
-  }
+  //           // pre-select the first comment
+  //           if (this.comments.length > 0) {
+  //             this.setCurrentComment(this.comments[0]);
+  //           }
+  //         },
+  //         error => {
+  //           this.loading = false;
+  //           // if 403, redir to login page
+  //           if (error && error.status === 403) {
+  //             this.router.navigate(['/login']);
+  //           }
+  //           this.alerts.push('Error loading comments');
+  //         }
+  //       );
+  //   }
+  // }
 
-  prevPage() {
-    this.pageNum--;
-    this.getData();
-  }
+  // prevPage() {
+  //   this.pageNum--;
+  //   this.getData();
+  // }
 
-  nextPage() {
-    this.pageNum++;
-    this.getData();
-  }
+  // nextPage() {
+  //   this.pageNum++;
+  //   this.getData();
+  // }
 
   setCurrentComment(item: Comment) {
     const index = _.findIndex(this.comments, { _id: item._id });

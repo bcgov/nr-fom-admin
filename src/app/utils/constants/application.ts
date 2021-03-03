@@ -32,7 +32,7 @@ export class StatusCodes implements ICodeSet {
   public static readonly APPLICATION_UNDER_REVIEW: ICodeGroup = {
     code: 'APPLICATION UNDER REVIEW',
     param: 'AUR',
-    text: { long: 'Application Under Review', short: 'Under Review' },
+    text: { long: 'Finalized', short: 'Under Review' },
     mappedCodes: ['ACCEPTED', 'ALLOWED', 'PENDING', 'RECEIVED']
   };
 
@@ -53,7 +53,7 @@ export class StatusCodes implements ICodeSet {
   public static readonly DECISION_NOT_APPROVED: ICodeGroup = {
     code: 'DECISION NOT APPROVED',
     param: 'DNA',
-    text: { long: 'Decision: Not Approved', short: 'Not Approved' },
+    text: { long: 'Initial', short: 'Initial' },
     mappedCodes: ['DISALLOWED']
   };
 
@@ -126,28 +126,28 @@ export class RegionCodes implements ICodeSet {
   public static readonly CARIBOO: ICodeGroup = {
     code: 'CA - LAND MGMNT - CARIBOO FIELD OFFICE',
     param: 'CA',
-    text: { long: 'Cariboo, Williams Lake', short: 'Cariboo, Williams Lake' },
+    text: { long: 'Chilliwack', short: 'Chilliwack' },
     mappedCodes: []
   };
 
   public static readonly KOOTENAY: ICodeGroup = {
     code: 'KO - LAND MGMNT - KOOTENAY FIELD OFFICE',
     param: 'KO',
-    text: { long: 'Kootenay, Cranbrook', short: 'Kootenay, Cranbrook' },
+    text: { long: 'Prince George', short: 'Prince George' },
     mappedCodes: []
   };
 
   public static readonly LOWER_MAINLAND: ICodeGroup = {
     code: 'LM - LAND MGMNT - LOWER MAINLAND SERVICE REGION',
     param: 'LM',
-    text: { long: 'Lower Mainland, Surrey', short: 'Lower Mainland, Surrey' },
+    text: { long: 'Kitimat-Stikine', short: 'Kitimat-Stikine' },
     mappedCodes: []
   };
 
   public static readonly OMENICA: ICodeGroup = {
     code: 'OM - LAND MGMNT - NORTHERN SERVICE REGION',
     param: 'OM',
-    text: { long: 'Omenica/Peace, Prince George', short: 'Omenica/Peace, Prince George' },
+    text: { long: 'Salmon Arm', short: 'Salmon Arm' },
     mappedCodes: []
   };
 

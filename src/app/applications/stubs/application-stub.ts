@@ -65,7 +65,7 @@ import { Application } from 'app/models/application';
         'location': 'Porcher Island',
         'name': '6406200',
         'publishDate': '2021-02-07',
-        'status': 'ACCEPTED',
+        'status': 'DISALLOWED',
         'reason': 'OFFER NOT ACCEPTED',
         'type': 'LICENCE',
         'subtype': 'LICENCE OF OCCUPATION',
@@ -74,10 +74,10 @@ import { Application } from 'app/models/application';
         'cpStatus': 'OPEN',
         'meta': {
           'region': 'Cariboo',
-          'cpStatusStringLong': 'Approved',
+          'cpStatusStringLong': '',
           'clFile': '123456789',
           'applicants': 'Harvesting the Forest',
-          'numComments': 3,
+          'numComments': 1,
           // retireDate: Date;
           'isRetired': false,
           // isPublished: boolean;
@@ -114,7 +114,7 @@ import { Application } from 'app/models/application';
         'numComments': 1,
         'meta': {
           'region': 'Cariboo',
-          'cpStatusStringLong': 'Approved',
+          'cpStatusStringLong': 'Commenting Closed',
           'clFile': '123456789',
           'applicants': 'Anne-Marie Operations',
           // retireDate: Date;

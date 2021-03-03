@@ -84,6 +84,10 @@
               </ng-template>
               <ng-template ngbTabContent>
                 <section>
+                  <h2>Name</h2>
+                  <p class="mb-0" [innerHTML]="application.meta.applicants ? (application.meta.applicants | titlecase) : '<em>No Applicant on this File</em>'"></p>
+                </section>
+                <section>
                   <h2>Description</h2>
                   <p class="mb-0" [innerHTML]="(application.description | newlines | linkify) || '<em>No application description available</em>'"></p>
                 </section>
