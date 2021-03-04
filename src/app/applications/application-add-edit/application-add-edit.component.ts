@@ -154,6 +154,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: Application }) => {
       if (data.application) {
         this.application = data.application;
+        this.application.meta.decision = new Decision();
 
         // add comment period if there isn't one already (not just on create but also on edit --
         // this will fix the situation where existing applications don't have a comment period)

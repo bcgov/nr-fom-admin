@@ -10,6 +10,7 @@ import { Comment } from 'app/models/comment';
 import { CommentService } from 'app/services/comment.service';
 import { ExportService } from 'app/services/export.service';
 import { commentStubArray } from '../../applications/stubs/comment-stub';
+import { singleApplicationStub } from '../../applications/stubs/application-stub';
 
 class SortKey {
   innerHTML: string;
@@ -59,7 +60,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
 
     this.commentListScrollContainer.nativeElement.scrollTop = 0;
     this.comments = commentStubArray;
-    
+    this.application = singleApplicationStub;
     // get data from route resolver
     // this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: Application }) => {
 

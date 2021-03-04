@@ -96,7 +96,7 @@ export class ApplicationDetailResolver implements Resolve<Application> {
             'region': 'Cariboo',
             'cpStatusStringLong': 'Approved',
             'clFile': '123456789',
-            'applicants': 'Harvesting The Forest',
+            'applicants': 'Pretty Bird Operations',
             'numComments': 3,
             // retireDate: Date;
             'isRetired': false,

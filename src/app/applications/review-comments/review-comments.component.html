@@ -11,11 +11,11 @@
         <!-- <h1>Review Comments for FOM ID : {{application?.meta?.clFile}}</h1> -->
         <h1>Review Comments for FOM ID : 926029</h1>
       </div>
-      <div class="title-container__actions">
+      <!-- <div class="title-container__actions">
         <button class="btn btn-light" (click)="exportToExcel()" [disabled]="comments.length === 0">
           Export to Excel
         </button>
-      </div>
+      </div> -->
     </div>
   </div>
 </div>
@@ -26,7 +26,8 @@
       <div class="review-comments__list panel">
         <div class="panel-header">
           <h2>Comments ({{comments.length}})</h2>
-          <select class="sort-comments form-control" (change)="getData()" [(ngModel)]="sortBy" >
+          <!-- <select class="sort-comments form-control" (change)="getData()" [(ngModel)]="sortBy" > -->
+          <select class="sort-comments form-control" [(ngModel)]="sortBy" >
             <option *ngFor="let key of sortKeys" [value]="key.value" [innerHTML]="key.innerHTML"></option>
           </select>
         </div>
@@ -56,13 +57,15 @@
         <div class="panel-footer bg-light">
           <div class="pagination">
             <div class="btn-group">
-              <button class="pg-btn btn btn-light" type="button" title="View Previous Page" (click)="prevPage()" [disabled]="pageNum <= 1">
+              <!-- <button class="pg-btn btn btn-light" type="button" title="View Previous Page" (click)="prevPage()" [disabled]="pageNum <= 1"> -->
+              <button class="pg-btn btn btn-light" type="button" title="View Previous Page" [disabled]="pageNum <= 1">
                 <i class="material-icons">
                   keyboard_arrow_left
                 </i>
               </button>
               <span class="pg-count">Page {{pageNum}} of {{pageCount}}</span>
-              <button class="pg-btn btn btn-light" type="button" title="View Next Page" (click)="nextPage()" [disabled]="pageNum >= pageCount">
+              <!-- <button class="pg-btn btn btn-light" type="button" title="View Next Page" (click)="nextPage()" [disabled]="pageNum >= pageCount"> -->
+              <button class="pg-btn btn btn-light" type="button" title="View Next Page" [disabled]="pageNum >= pageCount">
                 <i class="material-icons">
                   keyboard_arrow_right
                 </i>

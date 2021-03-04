@@ -6,21 +6,40 @@
 
       <div class="filter-grid">
         <div>
-          <select class="form-control filter-select" (change)="setRegionFilter($event.target.value)"
+          <select class="form-control filter-select" id="district-list">
+            <option value="">Filter by District</option>
+            <option value="56">100 Mile House Natural Resource District</option>
+            <option value="43">Campbell River Natural Resource District</option>
+            <option value="1826">Cariboo-Chilcotin Natural Resource District</option>
+            <option value="1828">Cascades Natural Resource District</option>
+            <option value="15">Chilliwack Natural Resource District</option>
+            <option value="32">Coast Mountains Natural Resource District</option>
+            <option value="46">Fort Nelson Natural Resource District</option>
+            <option value="48">Haida Gwaii Natural Resource District</option>
+          </select>
+          <!-- <select class="form-control filter-select" (change)="setRegionFilter($event.target.value)"
             [disabled]="searching || exporting" title="Filter by Region">
             <option value="">Filter by District</option>
             <option *ngFor="let regionCode of regionCodes" [value]="regionCode.param"
               [selected]="regionCodeFilter === regionCode.param">{{regionCode.text.long}}</option>
-          </select>
+          </select> -->
         </div>
 
         <div>
-          <select class="form-control filter-select" (change)="setStatusFilter($event.target.value)"
+          <select class="form-control filter-select" id="status">
+            <option value="">Filter by Status</option>
+            <option value="initial">Initial</option>
+            <option value="c-open">Commenting Open</option>
+            <option value="c-closed">Commenting Closed</option>
+            <option value="finalized">Finalized</option>
+            <option value="expired">Expired</option>
+         </select>
+          <!-- <select class="form-control filter-select" (change)="setStatusFilter($event.target.value)"
             [disabled]="searching || exporting" title="Filter by Status">
             <option value="">Filter by Status</option>
             <option *ngFor="let statusCode of statusCodes" [value]="statusCode.param"
               [selected]="statusCodeFilters[0] === statusCode.param">{{statusCode.text.long}}</option>
-          </select>
+          </select> -->
         
           <input class="form-control filter-input" (change)="setApplicantFilter($event.target.value)"
             [value]="applicantFilter" [disabled]="searching || exporting" placeholder="Filter by Licensee"

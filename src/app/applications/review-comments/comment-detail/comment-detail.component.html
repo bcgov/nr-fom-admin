@@ -4,7 +4,8 @@
 
 <div class="comment-detail-container" *ngIf="comment">
   <div class="title-container__title">
-    <h2>{{comment.commentAuthor.contactName || 'Anonymous'}} <span *ngIf="comment.commentAuthor.orgName">({{comment.commentAuthor.orgName}})</span></h2>
+    <!-- <h2>{{comment.commentAuthor.contactName || 'Anonymous'}} <span *ngIf="comment.commentAuthor.orgName">({{comment.commentAuthor.orgName}})</span></h2> -->
+    <h2>{{comment.commentAuthor.contactName || 'Anonymous'}}</h2>
     <div class="comment-detail__date">
       {{comment.dateAdded | date:'medium'}}
     </div>
@@ -22,27 +23,33 @@
   </div>
   <hr>
   <div class="comment-detail__body" [innerHTML]="comment.comment | newlines"></div>
-  <div class="comment-detail__attachments">
-    <ul class="doc-list">
-      <li *ngFor="let document of comment.documents">
-        <div class="cell icon">
-          <i class="material-icons link" 
-            (click)="api.openDocument(document)">
-            insert_drive_file
-          </i>
-        </div>
-        <div class="cell name">
-          <span class="cell__txt-content">
-            <a (click)="api.openDocument(document)">{{document.documentFileName}}</a>
-          </span>
-        </div>
-        <div class="cell actions">
-          <button class="btn btn-icon" type="button" title="Download this document" 
-            (click)="api.downloadDocument(document)">
-            <i class="material-icons">file_download</i>
-          </button>
-        </div>
-      </li>
-    </ul>
+  <hr>
+
+
+    <div class="row">
+      <div class="col-md-6">
+        <label>Classify comment</label>
+      </div>
+      <div class="col-md-6">
+        <label>Details</label>
+      </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <select class="sort-comments form-control mb-3" id="comment-response">
+        <option value="addressed">Addressed</option>
+        <option value="considered">Considered</option>
+        <option value="irrelevant">Irrelevant</option>
+      </select>
+    </div>
+    <div class="col-md-6">
+      <textarea class="form-control  mb" rows="3" id="detail" name="detail">
+      </textarea>
+    </div>
+  </div>
+  <div class="row">
+    <button class="btn btn-sm btn-primary btn-container" type="button" title="Save this comment response">
+    Save response
+   </button>
   </div>
 </div>
