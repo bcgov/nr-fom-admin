@@ -92,12 +92,34 @@
       </fieldset>
 
       <fieldset>
-        <legend>Application Details</legend>
-        <div class="form-group">
-          <label>Applicant(s)</label>
-          <div class="applicant-display">
-            {{application.meta.applicants || 'No Applicant on this File'}}
+        <div class="row">
+          <div class="col-md-6">
+            <legend>Application Details</legend>
           </div>
+          <div class="col-md-6">
+            <select class="sort-comments form-control" id="district-list">
+              <option value="56">100 Mile House Natural Resource District</option>
+              <option value="43">Campbell River Natural Resource District</option>
+                  <option value="1826">Cariboo-Chilcotin Natural Resource District</option>
+                  <option value="1828">Cascades Natural Resource District</option>
+                  <option value="15">Chilliwack Natural Resource District</option>
+                  <option value="32">Coast Mountains Natural Resource District</option>
+                  <option value="46">Fort Nelson Natural Resource District</option>
+                      <option value="48">Haida Gwaii Natural Resource District</option>
+            </select>
+          </div>
+      </div>
+        <!-- <legend>Application Details</legend> -->
+        <div class="form-group">
+          <label>Licensee</label>
+          <div class="applicant-display">
+            {{application.meta.applicants || 'Pretty Bird Operations'}}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>FOM Name</label>
+          <input type="text" class="form-control" rows="1" id="fomname" name="fomname">
         </div>
 
         <div class="form-group">
@@ -108,7 +130,7 @@
           </textarea>
         </div>
         <div class="form-group mb-0">
-          <label>Application Documents</label>
+          <legend>FOM Supporting Documents</legend>
           <ul class="doc-list mb-3" *ngIf="application.meta.documents?.length > 0">
               <li *ngFor="let doc of application.meta.documents">
                 <span class="cell icon">
@@ -130,10 +152,11 @@
       </fieldset>
 
       <fieldset name="decisionForm" id="appDecision">
-        <legend class="mb-3">Application Decision Documents</legend>
+        <!-- <legend class="mb-3">Initial Public Notice</legend> -->
+        <legend>Initial Public Notice</legend>
+        <!-- <div class="mb-4" *ngIf="application.meta.decision"> -->
         <div class="mb-4" *ngIf="application.meta.decision">
           <div class="form-group">
-            <label>Decision Documents</label>
             <ul class="doc-list mb-3" *ngIf="application.meta.decision.meta.documents?.length > 0">
               <li *ngFor="let doc of application.meta.decision.meta.documents">
                 <span class="cell icon">
@@ -155,7 +178,7 @@
               (filesChange)="addDocuments($event, application.meta.decision.meta.documents); decisionFiles = []"></app-file-upload>
           </div>
         </div>
-        <button class="btn content-btn-alt" type="button" title="Add decision documents"
+        <!-- <button class="btn content-btn-alt" type="button" title="Add decision documents"
           *ngIf="!application.meta.decision"
           (click)="addDecision()">
           <i class="material-icons md-20">add</i>
@@ -166,7 +189,7 @@
           (click)="deleteDecision()">
           <i class="material-icons md-20">remove</i>
           Remove Decision Documents
-        </button>
+        </button> -->
       </fieldset>
 
     </form>
