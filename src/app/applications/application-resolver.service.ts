@@ -90,16 +90,23 @@ export class ApplicationDetailResolver implements Resolve<Application> {
           'status': 'ACCEPTED',
           'reason': 'OFFER NOT ACCEPTED',
           'subtype': 'LICENCE OF OCCUPATION',
-          'tantalisID': 926028,
+          'tantalisID': 926029,
           'tenureStage': 'APPLICATION',
           'meta': {
             'region': 'Cariboo',
-            'cpStatusStringLong': 'Approved',
+            'cpStatusStringLong': 'Commenting Closed',
             'clFile': '123456789',
             'applicants': 'Pretty Bird Operations',
             'numComments': 3,
             // retireDate: Date;
             'isRetired': false,
+            'currentPeriod':  {
+              '_id': 234543,
+              '_addedBy': 'Marcelo very concerned about this',
+              '_application' : 123456789,
+              'startDate': '2021-01-10',
+              'endDate': '2021-02-10'
+          },
             // isPublished: boolean;
             // isCreated: boolean;
           }

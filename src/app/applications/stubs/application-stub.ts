@@ -111,7 +111,7 @@ import { Application } from 'app/models/application';
         'tantalisID': 926029,
         'tenureStage': 'APPLICATION',
         'cpStatus': 'OPEN',
-        'numComments': 1,
+        'numComments': 3,
         'meta': {
           'region': 'Cariboo',
           'cpStatusStringLong': 'Commenting Closed',

@@ -177,7 +177,7 @@ export class ListComponent implements OnInit, OnDestroy {
           'tantalisID': 926029,
           'tenureStage': 'APPLICATION',
           'cpStatus': 'OPEN',
-          'numComments': 1,
+          'numComments': 3,
           'meta': {
             'region': 'Cariboo',
             'cpStatusStringLong': 'Commenting Closed',

@@ -39,7 +39,7 @@ export  const commentStubArray: Comment[] =  [
           '_commentPeriod' : '234544',
           'commentNumber': 3,
           'comment': 'Hi there? When are you actually planning on executing this work? Will there be any further \n' +
-          'notification? I\'m planing on building a house very close to where the cut will be, that\'s why the \n'+
+          'notification? I\'m planing on building a house very close to where the cut will be, that\'s why the \n' +
           'concern. In addition, how long will your work take?',
           'commentAuthor': {
               '_userId': '23456',

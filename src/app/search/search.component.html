@@ -1,6 +1,6 @@
 <div class="search-container">
   <div class="container">
-    <h1>Find FSP for FOM</h1>
+    <h1>Find FOM by FSP</h1>
     <form #f="ngForm" class="search-form ui form" (ngSubmit)="onSubmit()">
       <label for="keywordInput">Enter FSP for FOM</label>
       <div class="input-group main-search-field">
@@ -16,7 +16,23 @@
       </div>
     </form>
   </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2">
+          <div class="btn-container">
+            <!-- (click)="onImport(application)" [disabled]="application.meta.isRetired"> -->
+            <button class="btn btn-sm btn-primary btn-container" type="button" title="Create a new FOM"
+                (click)="onImport()" >
+                <i class="material-icons">add</i>
+                Create
+            </button>
+          </div> 
+      </div>
+      <div> Add New Forest Operations Map </div>
+    </div>
+  </div>
 </div>
+
 
 <div class="container">
   <div class="search-results">
@@ -111,12 +127,12 @@
       </ng-template>
     </table>
   </div>
-  <div class="btn-container" *ngIf="ranSearch && !searching && count > 0">
-      <!-- (click)="onImport(application)" [disabled]="application.meta.isRetired"> -->
-      <button class="btn btn-sm btn-primary btn-container" type="button" title="Create this application in ACFRD"
+  <!-- <div class="btn-container" *ngIf="ranSearch && !searching && count > 0">
+      (click)="onImport(application)" [disabled]="application.meta.isRetired">
+      <button class="btn btn-sm btn-primary btn-container" type="button" title="Create a new FOM"
           (click)="onImport()" >
           <i class="material-icons">add</i>
           Create
       </button>
-      </div>
+  </div> -->
 </div>
