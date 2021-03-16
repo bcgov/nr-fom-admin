@@ -14,6 +14,7 @@ import { Document } from 'app/models/document';
 import { Feature } from 'app/models/feature';
 import { SearchResults } from 'app/models/search';
 import { User } from 'app/models/user';
+import { Project } from 'app/models/project';
 
 /**
  * Supported query param field modifiers used by the api to interpret the query param value.
@@ -145,7 +146,7 @@ export class ApiService {
     switch (hostname) {
       case 'localhost':
         // Local
-        this.pathAPI = 'http://localhost:3000/api';
+        this.pathAPI = 'http://localhost:8081/api';
         this.env = 'local';
         break;
 
@@ -210,6 +211,28 @@ export class ApiService {
     this.token = null;
     window.localStorage.removeItem('currentUser');
   }
+
+
+  //
+  // Projects
+  //
+
+/**
+ * Fetch all projects that match the provided parameters.
+ *
+ * @returns {Observable<Project[]>}
+ * @memberof ApiService
+ */
+ getProjects(): Observable<Project[]> {
+  console.log('calling the API');
+  const queryString =
+    'project';
+
+  return this.http.get<Project[]>(`${this.pathAPI}/${queryString}`, {});
+}
+
+
+
 
   //
   // Applications

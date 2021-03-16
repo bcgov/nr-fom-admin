@@ -55,44 +55,39 @@
           <th class="actions"></th>
         </tr>
       </thead>
-      <ng-template ngFor let-application [ngForOf]="applications">
+      <ng-template ngFor let-project [ngForOf]="projects">
         <tr class="app-details">
-          <!-- <td class="disp">
-            <span class="cl-arrow">{{application.meta.clFile}}</span>
-            <span>{{application.meta.clFile}}</span>
-          </td> -->
           <td class="disp">
-            <strong>{{application.tantalisID}}</strong>
+            <strong>{{project._id}}</strong>
           </td>
           <td
-            [innerHTML]="application.meta.applicants ? (application.meta.applicants | titlecase) : '<em>No Applicant on this File</em>'">
+            [innerHTML]="project.name ? (project.name | titlecase) : '<em>No FOM name on this File</em>'">
           </td>
           <td>
-            {{application.createdDate | date:'mediumDate'}}
+            {{project.createTimestamp| date:'mediumDate'}}
           </td>
           <td>
-            {{getStatusStringLong(application) || 'Unknown'}}
+            {{project.workflow_state_code}}
           </td>
           <td>
-            {{application.publishDate | date:'mediumDate'}}
+            {{project.commentingOpenDate | date:'mediumDate'}}
           </td>
           
           <td class="actions">
-            <div ngbDropdown placement="bottom-right" *ngIf="application.meta.isCreated">
+            <div ngbDropdown placement="bottom-right">
               <button ngbDropdownToggle class="btn btn-sm btn-outline-primary" type="button">
                 Actions
               </button>
               <div ngbDropdownMenu>
-                <button class="dropdown-item" type="button" [routerLink]="['/a', application._id]">
+                <button class="dropdown-item" type="button" [routerLink]="['/a', project._id]">
                   <i class="material-icons">insert_drive_file</i>
                   View FOM
                 </button>
-                <button class="dropdown-item" type="button" [routerLink]="['/a', application._id, 'edit']"
-                  *ngIf="!application.meta.isRetired">
+                <button class="dropdown-item" type="button" [routerLink]="['/a', project._id, 'edit']">
                   <i class="material-icons">edit</i>
                   Edit FOM
                 </button>
-                <button class="dropdown-item" type="button" [routerLink]="['/comments', application._id]">
+                <button class="dropdown-item" type="button" [routerLink]="['/comments', project._id]">
                   <i class="material-icons">mode_comment</i>
                   Review Comments
                 </button>
@@ -100,7 +95,7 @@
             </div>
           </td>
         </tr>
-        <tr class="app-comment-details" *ngIf="application.meta.isCreated">
+        <!-- <tr class="app-comment-details" *ngIf="application.meta.isCreated">
           <td colspan="6">
             <span class="comment-info">
               <span *ngIf="application.meta.numComments > 0">
@@ -123,7 +118,7 @@
               </span>
             </span>
           </td>
-        </tr>
+        </tr> -->
       </ng-template>
     </table>
   </div>

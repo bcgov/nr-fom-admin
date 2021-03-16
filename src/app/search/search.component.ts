@@ -7,10 +7,13 @@ import { takeUntil } from 'rxjs/operators';
 import * as _ from 'lodash';
 
 import { SearchService } from 'app/services/search.service';
+import { SearchProjectService } from 'app/services/searchproject.service';
 import { Application } from 'app/models/application';
 import { ConstantUtils, CodeType } from 'app/utils/constants/constantUtils';
 import { StatusCodes, ReasonCodes } from 'app/utils/constants/application';
 import { singleApplicationStubArray } from '../applications/stubs/application-stub';
+import { singleProjectStubArray } from '../projects/stubs/project-stub';
+import { Project } from 'app/models/project';
 
 @Component({
   selector: 'app-search',
@@ -23,6 +26,7 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   public keywords: string;
   public applications: Application[] = [];
+  public projects: Project[] = [];
   public count = 0; // used in template
 
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
@@ -34,6 +38,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     private location: Location,
     public snackBar: MatSnackBar,
     public searchService: SearchService, // used in template
+    public searcProjecthService: SearchProjectService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -58,10 +63,19 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.count = 0;
 
     this.applications = singleApplicationStubArray;
-    this.count = this.applications.length;
+    this.projects = singleProjectStubArray;
+    this.count = this.projects.length;
 
     this.searching = false;
     this.ranSearch = true;
+
+    this.searcProjecthService.getProjects().subscribe(
+        projects => {
+          projects.forEach(project => {
+
+              this.projects.push(project);
+          });
+        });
 
     // console.log(JSON.stringify(this.applications[1]));
 
