@@ -1,7 +1,7 @@
 
 export class Project {
   // Database fields
-  _id: string;
+  id: string;
   revisionCount: number;
   createTimestamp: Date = null;
   createUser: string;
@@ -19,7 +19,7 @@ export class Project {
 
   constructor(obj?: any) {
     // Database fields
-    this._id = (obj && obj._id) || null;
+    this.id = (obj && obj.id) || null;
     this.revisionCount = (obj && obj.revisionCount) || null;
     this.createTimestamp = (obj && obj.createTimestamp) || null;
     this.createUser = (obj && obj.createUser) || null;

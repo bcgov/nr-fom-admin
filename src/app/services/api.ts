@@ -226,7 +226,7 @@ export class ApiService {
  getProjects(): Observable<Project[]> {
   console.log('calling the API');
   const queryString =
-    'project';
+    'project/';
 
   return this.http.get<Project[]>(`${this.pathAPI}/${queryString}`, {});
 }

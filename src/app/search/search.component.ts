@@ -11,8 +11,6 @@ import { SearchProjectService } from 'app/services/searchproject.service';
 import { Application } from 'app/models/application';
 import { ConstantUtils, CodeType } from 'app/utils/constants/constantUtils';
 import { StatusCodes, ReasonCodes } from 'app/utils/constants/application';
-import { singleApplicationStubArray } from '../applications/stubs/application-stub';
-import { singleProjectStubArray } from '../projects/stubs/project-stub';
 import { Project } from 'app/models/project';
 
 @Component({
@@ -25,7 +23,6 @@ export class SearchComponent implements OnInit, OnDestroy {
   private paramMap: ParamMap = null;
 
   public keywords: string;
-  public applications: Application[] = [];
   public projects: Project[] = [];
   public count = 0; // used in template
 
@@ -59,54 +56,31 @@ export class SearchComponent implements OnInit, OnDestroy {
   private doSearch() {
     this.searching = true;
 
-    this.applications = [];
+    this.projects = [];
     this.count = 0;
 
-    this.applications = singleApplicationStubArray;
-    this.projects = singleProjectStubArray;
-    this.count = this.projects.length;
-
-    this.searching = false;
-    this.ranSearch = true;
-
-    this.searcProjecthService.getProjects().subscribe(
+    this.searcProjecthService.getProjects()
+    .subscribe(
         projects => {
           projects.forEach(project => {
 
               this.projects.push(project);
           });
+          this.count = this.projects.length;
+        },
+        error => {
+          console.log('error =', error);
+
+          this.searching = false;
+          this.ranSearch = true;
+
+          this.snackBarRef = this.snackBar.open('Error searching foms ...', 'RETRY');
+          this.snackBarRef.onAction().subscribe(() => this.onSubmit());
+        },
+        () => {
+          this.searching = false;
+          this.ranSearch = true;
         });
-
-    // console.log(JSON.stringify(this.applications[1]));
-
-    // TODO - Marcelo
-    // this.searchService
-    //   .getApplicationsByCLFileAndTantalisID(this.getQueryParameters())
-    //   .pipe(takeUntil(this.ngUnsubscribe))
-    //   .subscribe(
-    //     applications => {
-    //       applications.forEach(application => {
-    //         // add application if not already in the list (no duplicates allowed)
-    //         if (!_.find(this.applications, app => app.tantalisID === application.tantalisID)) {
-    //           this.applications.push(application);
-    //         }
-    //       });
-    //       this.count = this.applications.length;
-    //     },
-    //     error => {
-    //       console.log('error =', error);
-
-    //       this.searching = false;
-    //       this.ranSearch = true;
-
-    //       this.snackBarRef = this.snackBar.open('Error searching applications ...', 'RETRY');
-    //       this.snackBarRef.onAction().subscribe(() => this.onSubmit());
-    //     },
-    //     () => {
-    //       this.searching = false;
-    //       this.ranSearch = true;
-    //     }
-    //   );
   }
 
   public setInitialQueryParameters() {

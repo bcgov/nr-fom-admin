@@ -58,7 +58,7 @@
       <ng-template ngFor let-project [ngForOf]="projects">
         <tr class="app-details">
           <td class="disp">
-            <strong>{{project._id}}</strong>
+            <strong>{{project.id }}</strong>
           </td>
           <td
             [innerHTML]="project.name ? (project.name | titlecase) : '<em>No FOM name on this File</em>'">
