@@ -1,4 +1,4 @@
-export class District {
+export class ForestClient {
 
     id: number;
     revisionCount: number;

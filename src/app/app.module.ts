@@ -39,6 +39,10 @@ import { DecisionService } from 'app/services/decision.service';
 import { UserService } from 'app/services/user.service';
 import { CanDeactivateGuard } from 'app/services/can-deactivate-guard.service';
 import { KeycloakService } from 'app/services/keycloak.service';
+import { DistrictService } from 'app/services/district.service';
+import { ForestClientService } from 'app/services/forestclient.service';
+import { WorkflowStateCodeService } from 'app/services/workflowstatecode.service';
+import { PublicCommentService } from 'app/services/publiccomments.service';
 
 // feature modules
 import { TokenInterceptor } from './utils/token-interceptor';
@@ -91,6 +95,10 @@ export function kcFactory(keycloakService: KeycloakService) {
     SearchService,
     SearchProjectService,
     ProjectService,
+    DistrictService,
+    ForestClientService,
+    WorkflowStateCodeService,
+    PublicCommentService,
     FeatureService,
     AuthenticationService,
     ApplicationService,

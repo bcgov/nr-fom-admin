@@ -1,7 +1,7 @@
 
 export class Project {
   // Database fields
-  id: string;
+  id: number;
   revisionCount: number;
   createTimestamp: Date = null;
   createUser: string;

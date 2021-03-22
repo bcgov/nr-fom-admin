@@ -1,141 +1,57 @@
-import * as _ from 'lodash';
-import { Document } from './document';
 
-class Internal {
-  email: string;
-  phone: string;
-
-  isPublished = false; // depends on tags; see below
-
-  constructor(obj?: any) {
-    this.email = (obj && obj.email) || null;
-    this.phone = (obj && obj.phone) || null;
-
-    // wrap isPublished around the tags we receive for this object
-    if (obj && obj.tags) {
-      for (const tag of obj.tags) {
-        if (_.includes(tag, 'public')) {
-          this.isPublished = true;
-          break;
-        }
-      }
-    }
-  }
-}
-
-class CommentAuthor {
-  _userId: string; // object id -> User
-  orgName: string;
-  contactName: string;
+export class PublicComment {
+  // Database fields
+  id: number;
+  revisionCount: number;
+  createTimestamp: Date = null;
+  updateTimestamp: Date = null;
+  createUser: string;
+  updateUser: string;
+  feedback: string;
+  name: string;
   location: string;
-  requestedAnonymous: boolean;
-  internal: Internal;
+  description: string;
+  email: string;
+  phoneNumber: string;
+  responseDetails: string;
+  responseCode: string;
 
-  isPublished = false; // depends on tags; see below
+
 
   constructor(obj?: any) {
-    this._userId = (obj && obj._userId) || null;
-    this.orgName = (obj && obj.orgName) || null;
-    this.contactName = (obj && obj.contactName) || null;
+    // Database fields
+    this.id = (obj && obj.id) || null;
+    this.revisionCount = (obj && obj.revisionCount) || null;
+    this.createTimestamp = (obj && obj.createTimestamp) || null;
+    this.createUser = (obj && obj.createUser) || null;
+    this.updateTimestamp = (obj && obj.updateTimestamp) || null;
+    this.updateUser = (obj && obj.updateUser) || null;
+    this.name = (obj && obj.name) || null;
+    this.feedback = (obj && obj.feedback) || null;
     this.location = (obj && obj.location) || null;
-    this.requestedAnonymous = (obj && obj.requestedAnonymous) || null;
+    this.description = (obj && obj.description) || null;
+    this.email = (obj && obj.email) || null;
+    this.phoneNumber = (obj && obj.phoneNumber) || null;
+    this.responseDetails = (obj && obj.responseDetails) || null;
+    this.responseCode = (obj && obj.responseCode) || null;
 
-    this.internal = new Internal((obj && obj.internal) || null); // must exist
 
-    // wrap isPublished around the tags we receive for this object
-    if (obj && obj.tags) {
-      for (const tag of obj.tags) {
-        if (_.includes(tag, 'public')) {
-          this.isPublished = true;
-          break;
-        }
-      }
-    }
-  }
-}
-
-class Review {
-  _reviewerId: string; // object id -> User
-  reviewerNotes: string = null;
-  reviewerDate: Date = null;
-
-  isPublished = false; // depends on tags; see below
-
-  constructor(obj?: any) {
-    this._reviewerId = (obj && obj._reviewerId) || null;
-
-    // replace \\n (JSON format) with newlines
-    if (obj && obj.reviewerNotes) {
-      this.reviewerNotes = obj.reviewerNotes.replace(/\\n/g, '\n');
+    if (obj && obj.createTimestamp) {
+      this.createTimestamp = new Date(obj.createTimestamp);
     }
 
-    if (obj && obj.reviewerDate) {
-      this.reviewerDate = new Date(obj.reviewerDate);
+    if (obj && obj.updateTimestamp) {
+      this.updateTimestamp = new Date(obj.updateTimestamp);
     }
 
-    // wrap isPublished around the tags we receive for this object
-    if (obj && obj.tags) {
-      for (const tag of obj.tags) {
-        if (_.includes(tag, 'public')) {
-          this.isPublished = true;
-          break;
-        }
-      }
-    }
-  }
-}
-
-export class Comment {
-  _id: string;
-  _addedBy: string;
-  _commentPeriod: string; // object id -> CommentPeriod
-  commentNumber: number;
-  comment: string = null;
-  commentAuthor: CommentAuthor;
-  review: Review;
-  dateAdded: Date = null;
-  commentStatus: string;
-
-  // associated data
-  documents: Document[] = [];
-
-  isPublished = false; // depends on tags; see below
-
-  constructor(obj?: any) {
-    this._id = (obj && obj._id) || null;
-    this._addedBy = (obj && obj._addedBy) || null;
-    this._commentPeriod = (obj && obj._commentPeriod) || null;
-    this.commentNumber = (obj && obj.commentNumber) || 0;
-    this.commentStatus = (obj && obj.commentStatus) || null;
-
-    if (obj && obj.dateAdded) {
-      this.dateAdded = new Date(obj.dateAdded);
+    if (obj && obj.description) {
+      // replace \\n (JSON format) with newlines
+      this.description = obj.description.replace(/\\n/g, '\n');
     }
 
-    this.commentAuthor = new CommentAuthor((obj && obj.commentAuthor) || null); // must exist
-
-    this.review = new Review((obj && obj.review) || null); // must exist
-
-    // replace \\n (JSON format) with newlines
-    if (obj && obj.comment) {
-      this.comment = obj.comment.replace(/\\n/g, '\n');
-    }
-
-    // copy documents
-    if (obj && obj.documents) {
-      for (const doc of obj.documents) {
-        this.documents.push(doc);
-      }
-    }
-
-    // wrap isPublished around the tags we receive for this object
-    if (obj && obj.tags) {
-      for (const tag of obj.tags) {
-        if (_.includes(tag, 'public')) {
-          this.isPublished = true;
-          break;
-        }
-      }
+    if (obj && obj.responseDetails) {
+      // replace \\n (JSON format) with newlines
+      this.responseDetails = obj.responseDetails.replace(/\\n/g, '\n');
     }
   }
 }

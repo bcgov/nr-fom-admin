@@ -13,6 +13,12 @@ import { ConstantUtils, CodeType } from 'app/utils/constants/constantUtils';
 import { StatusCodes, ReasonCodes } from 'app/utils/constants/application';
 import { Project } from 'app/models/project';
 
+// Testing fetching Districts
+import { DistrictService } from 'app/services/district.service';
+import { ForestClientService } from 'app/services/forestclient.service';
+import { WorkflowStateCodeService } from 'app/services/workflowstatecode.service';
+import { PublicCommentService } from 'app/services/publiccomments.service';
+
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
@@ -36,6 +42,10 @@ export class SearchComponent implements OnInit, OnDestroy {
     public snackBar: MatSnackBar,
     public searchService: SearchService, // used in template
     public searcProjecthService: SearchProjectService,
+    public searchDistrictService: DistrictService,
+    public searchforestClientService: ForestClientService,
+    public searchWorkflowStateCodeService: WorkflowStateCodeService,
+    public searchPublicCommentService: PublicCommentService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -55,11 +65,12 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   private doSearch() {
     this.searching = true;
+    console.log('doSearch: ' + this.keywords);
 
     this.projects = [];
     this.count = 0;
 
-    this.searcProjecthService.getProjects()
+    this.searcProjecthService.getProjectsByFspId(this.keywords)
     .subscribe(
         projects => {
           projects.forEach(project => {
@@ -81,10 +92,92 @@ export class SearchComponent implements OnInit, OnDestroy {
           this.searching = false;
           this.ranSearch = true;
         });
+
+    // this.fetchingAllDistricts();
+    // this.fetchingAllForestClients();
+    // this.fetchingAllWorkflowStateCodes();
+    // this.fetchingAllPublicComments();
   }
+
+  // private fetchingAllDistricts() {
+  //   this.searchDistrictService.getAll()
+  //   .subscribe(
+  //     districts => {
+  //       districts.forEach(district => {
+
+  //           console.log('districts: ' + JSON.stringify(district));
+  //       });
+
+  //     },
+  //     error => {
+  //       console.log('error =', error);
+  //     },
+  //     () => {
+  //       this.searching = false;
+  //       this.ranSearch = true;
+  //     });
+  // }
+
+  // private fetchingAllForestClients() {
+  //   this.searchforestClientService.getAll()
+  //   .subscribe(
+  //     forestClients => {
+  //       forestClients.forEach(forestClient => {
+
+  //           console.log('forestClients: ' + JSON.stringify(forestClient));
+  //       });
+
+  //     },
+  //     error => {
+  //       console.log('error =', error);
+  //     },
+  //     () => {
+  //       this.searching = false;
+  //       this.ranSearch = true;
+  //     });
+  // }
+
+  // private fetchingAllWorkflowStateCodes() {
+  //   this.searchWorkflowStateCodeService.getAll()
+  //   .subscribe(
+  //     workflowStateCodes => {
+  //       workflowStateCodes.forEach(workflowStateCode => {
+
+  //           console.log('workflowStateCodes: ' + JSON.stringify(workflowStateCode));
+  //       });
+
+  //     },
+  //     error => {
+  //       console.log('error =', error);
+  //     },
+  //     () => {
+  //       this.searching = false;
+  //       this.ranSearch = true;
+  //     });
+  // }
+
+  // private fetchingAllPublicComments() {
+  //   this.searchPublicCommentService.getAll()
+  //   .subscribe(
+  //     publicComments => {
+  //       publicComments.forEach(publicComment => {
+
+  //           console.log('publicComments: ' + JSON.stringify(publicComment));
+  //       });
+
+  //     },
+  //     error => {
+  //       console.log('error =', error);
+  //     },
+  //     () => {
+  //       this.searching = false;
+  //       this.ranSearch = true;
+  //     });
+  // }
 
   public setInitialQueryParameters() {
     this.keywords = this.paramMap.get('keywords') || '';
+    console.log('setInitialParam: ' + this.keywords);
   }
 
   public getQueryParameters() {

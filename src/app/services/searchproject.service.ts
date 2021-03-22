@@ -22,7 +22,7 @@ export class SearchProjectService {
   constructor(private projectService: ProjectService) {}
 
   /**
-   * Get application search results by Disposition Transaction ID
+   * Get list of projects
    *
    * @returns {Observable<Project[]>}
    * @memberof SearchProjectService
@@ -30,6 +30,19 @@ export class SearchProjectService {
   getProjects(): Observable<Project[]> {
     console.log('inside searchproject.service.getProjects()');
     const projects = this.projectService.getAll();
+
+    return projects;
+  }
+
+  /**
+   * Get list of projects by FspId
+   *
+   * @returns {Observable<Project[]>}
+   * @memberof SearchProjectService
+   */
+   getProjectsByFspId(fspId: string): Observable<Project[]> {
+    console.log('inside searchproject.service.getProjectsByFspId() ' + fspId);
+    const projects = this.projectService.getProjectsByFspId(fspId);
 
     return projects;
   }
