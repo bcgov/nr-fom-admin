@@ -249,7 +249,6 @@ export class ApiService {
   return this.http.get<Project[]>(`${this.pathAPI}/${queryString}`, {});
 }
 
-//const queryString = `application/${id}?isDeleted=false&fields=${this.convertArrayIntoPipeString(fields)}`;
 
   //
   // Districts

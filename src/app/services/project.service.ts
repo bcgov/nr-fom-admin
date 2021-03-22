@@ -36,20 +36,19 @@ export class ProjectService {
       return observables;
   }
 
-    /**
+  /**
    * Get all projects by FspId.
    *
    * @returns {Observable<Project[]>}
    * @memberof ProjectService
    */
-     getProjectsByFspId(fspId: string): Observable<Project[]> {
+    getProjectsByFspId(fspId: string): Observable<Project[]> {
 
-      let observables: Observable<Project[]>;
-  
-  
-        observables = this.api.getProjectsByFspId(fspId);
-  
-        return observables;
+    let observables: Observable<Project[]>;
+
+    observables = this.api.getProjectsByFspId(fspId);
+
+    return observables;
+
     }
-  
 }

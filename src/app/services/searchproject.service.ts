@@ -28,7 +28,6 @@ export class SearchProjectService {
    * @memberof SearchProjectService
    */
   getProjects(): Observable<Project[]> {
-    console.log('inside searchproject.service.getProjects()');
     const projects = this.projectService.getAll();
 
     return projects;
@@ -41,7 +40,6 @@ export class SearchProjectService {
    * @memberof SearchProjectService
    */
    getProjectsByFspId(fspId: string): Observable<Project[]> {
-    console.log('inside searchproject.service.getProjectsByFspId() ' + fspId);
     const projects = this.projectService.getProjectsByFspId(fspId);
 
     return projects;
