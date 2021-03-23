@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
-// import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
@@ -11,6 +11,9 @@ import { CommentService } from 'app/services/comment.service';
 import { ExportService } from 'app/services/export.service';
 import { commentStubArray } from '../../applications/stubs/comment-stub';
 import { singleApplicationStub } from '../../applications/stubs/application-stub';
+import { Project } from 'app/models/project';
+import { PublicComment } from 'app/models/publiccomment';
+// import { PublicCommentService } from 'app/services/publiccomments.service';
 
 class SortKey {
   innerHTML: string;
@@ -37,7 +40,9 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
 
   public loading = false;
   public application: Application = null;
+  public project: Project = null;
   public comments: Comment[] = [];
+  public publicComments: PublicComment[] = [];
   public alerts: string[] = [];
   public currentComment: Comment;
   public pageCount = 1; // in case getCount() fails
@@ -50,9 +55,10 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
 
   constructor(
-    // private route: ActivatedRoute,
-    // private router: Router,
+    private route: ActivatedRoute,
+    private router: Router,
     private commentService: CommentService,
+    // private publicCommentService: PublicCommentService,
     private exportService: ExportService
   ) {}
 
@@ -62,25 +68,26 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     this.comments = commentStubArray;
     this.application = singleApplicationStub;
     // get data from route resolver
-    // this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: Application }) => {
+    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { project: Project }) => {
 
-    //   if (data.application) {
-    //     this.application = data.application;
+      if (data.project) {
+        this.project = data.project;
+        console.log('inside data.project: ' + JSON.stringify(this.project));
 
-    //     this.commentService
-    //       .getCountByPeriodId(this.application.meta.currentPeriod._id)
-    //       .pipe(takeUntil(this.ngUnsubscribe))
-    //       .subscribe(value => {
-    //         this.pageCount = value ? Math.ceil(value / this.PAGE_SIZE) : 1;
-    //         // get initial data
-    //         this.getData();
-    //       });
-    //   } else {
-    //     alert("Uh-oh, couldn't load application");
-    //     // application not found --> navigate back to search
-    //     this.router.navigate(['/search']);
-    //   }
-    // });
+        // this.commentService
+        //   .getCountByPeriodId(this.application.meta.currentPeriod._id)
+        //   .pipe(takeUntil(this.ngUnsubscribe))
+        //   .subscribe(value => {
+        //     this.pageCount = value ? Math.ceil(value / this.PAGE_SIZE) : 1;
+        //     // get initial data
+        //     this.getData();
+        //   });
+      } else {
+        alert("Uh-oh, couldn't load application");
+        // application not found --> navigate back to search
+        this.router.navigate(['/search']);
+      }
+    });
   }
 
   ngOnDestroy() {

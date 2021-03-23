@@ -74,10 +74,10 @@ export class SearchComponent implements OnInit, OnDestroy {
     .subscribe(
         projects => {
           projects.forEach(project => {
-
-              this.projects.push(project);
+            this.projects.push(new Project(project));
           });
           this.count = this.projects.length;
+          this.fetchingAllPublicComments();
         },
         error => {
           console.log('error =', error);
@@ -96,7 +96,22 @@ export class SearchComponent implements OnInit, OnDestroy {
     // this.fetchingAllDistricts();
     // this.fetchingAllForestClients();
     // this.fetchingAllWorkflowStateCodes();
-    // this.fetchingAllPublicComments();
+  }
+
+  private fetchingAllPublicComments() {
+    this.projects.forEach(project => {
+    this.searchPublicCommentService.getPublicCommentsByProjectId( project.id)
+    .subscribe(
+      publicComments => {
+        publicComments.forEach(publicComment => {
+            project.publicComments.push(publicComment);
+        });
+
+      },
+      error => {
+        console.log('error =', error);
+      });
+    });
   }
 
   // private fetchingAllDistricts() {
@@ -144,25 +159,6 @@ export class SearchComponent implements OnInit, OnDestroy {
   //       workflowStateCodes.forEach(workflowStateCode => {
 
   //           console.log('workflowStateCodes: ' + JSON.stringify(workflowStateCode));
-  //       });
-
-  //     },
-  //     error => {
-  //       console.log('error =', error);
-  //     },
-  //     () => {
-  //       this.searching = false;
-  //       this.ranSearch = true;
-  //     });
-  // }
-
-  // private fetchingAllPublicComments() {
-  //   this.searchPublicCommentService.getAll()
-  //   .subscribe(
-  //     publicComments => {
-  //       publicComments.forEach(publicComment => {
-
-  //           console.log('publicComments: ' + JSON.stringify(publicComment));
   //       });
 
   //     },

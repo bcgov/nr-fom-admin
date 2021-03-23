@@ -37,4 +37,22 @@ export class PublicCommentService {
 
       return observables;
   }
+
+  /**
+   * Get all PublicComments by projectId.
+   *
+   * @returns {Observable<PublicComment[]>}
+   * @memberof ProjectService
+   */
+   getPublicCommentsByProjectId(projectId: string): Observable<PublicComment[]> {
+
+
+    let observables: Observable<PublicComment[]>;
+
+
+      observables = this.api.getPublicCommentsByProjectId(projectId);
+
+      return observables;
+  }
+
 }

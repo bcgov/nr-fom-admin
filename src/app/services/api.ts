@@ -249,6 +249,20 @@ export class ApiService {
   return this.http.get<Project[]>(`${this.pathAPI}/${queryString}`, {});
 }
 
+/**
+ * Fetch all publicComments by projectId.
+ *
+ * @returns {Observable<PublicComment[]>}
+ * @memberof ApiService
+ */
+ getPublicCommentsByProjectId(projectId: string): Observable<PublicComment[]> {
+  console.log('calling the API');
+  const queryString =
+    'public-comment/byprojectid/' + projectId;
+
+  return this.http.get<PublicComment[]>(`${this.pathAPI}/${queryString}`, {});
+}
+
 
   //
   // Districts
