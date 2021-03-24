@@ -51,4 +51,19 @@ export class ProjectService {
     return observables;
 
     }
+
+  /**
+   * Get project by id.
+   *
+   * @returns {Observable<Project>}
+   * @memberof ProjectService
+   */
+    getProjectById(projectId: string): Observable<Project> {
+
+    let observable: Observable<Project>;
+
+    observable = this.api.getProjectById(projectId);
+
+    return observable;
+  }
 }

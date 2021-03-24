@@ -8,12 +8,12 @@ import * as _ from 'lodash';
 import { Application } from 'app/models/application';
 import { Comment } from 'app/models/comment';
 import { CommentService } from 'app/services/comment.service';
+import { PublicCommentService } from 'app/services/publiccomments.service';
 import { ExportService } from 'app/services/export.service';
 import { commentStubArray } from '../../applications/stubs/comment-stub';
 import { singleApplicationStub } from '../../applications/stubs/application-stub';
 import { Project } from 'app/models/project';
 import { PublicComment } from 'app/models/publiccomment';
-// import { PublicCommentService } from 'app/services/publiccomments.service';
 
 class SortKey {
   innerHTML: string;
@@ -45,6 +45,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
   public publicComments: PublicComment[] = [];
   public alerts: string[] = [];
   public currentComment: Comment;
+  public currentPublicComment: PublicComment;
   public pageCount = 1; // in case getCount() fails
   public pageNum = 1; // first page
   public sortBy = this.sortKeys[1].value; // initial sort is by descending date
@@ -58,7 +59,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private commentService: CommentService,
-    // private publicCommentService: PublicCommentService,
+    private publicCommentService: PublicCommentService,
     private exportService: ExportService
   ) {}
 
@@ -68,10 +69,10 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     this.comments = commentStubArray;
     this.application = singleApplicationStub;
     // get data from route resolver
-    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { project: Project }) => {
+    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: Project } ) => {
 
-      if (data.project) {
-        this.project = data.project;
+      if (data.application) {
+        this.project = data.application;
         console.log('inside data.project: ' + JSON.stringify(this.project));
 
         // this.commentService
@@ -82,6 +83,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
         //     // get initial data
         //     this.getData();
         //   });
+        this.getData();
       } else {
         alert("Uh-oh, couldn't load application");
         // application not found --> navigate back to search
@@ -95,60 +97,60 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  // getData() {
-  //   if (this.application) {
-  //     // safety check
-  //     this.loading = true;
-  //     this.commentListScrollContainer.nativeElement.scrollTop = 0;
+  getData() {
+    if (this.project) {
+      console.log('getData: ' + this.project.id);
+      // safety check
+      this.loading = true;
+      this.commentListScrollContainer.nativeElement.scrollTop = 0;
 
-  //     // get a page of comments
-  //     this.commentService
-  //       .getAllByApplicationId(this.application._id, this.pageNum - 1, this.PAGE_SIZE, this.sortBy, {
-  //         getDocuments: true
-  //       })
-  //       .pipe(takeUntil(this.ngUnsubscribe))
-  //       .subscribe(
-  //         comments => {
-  //           this.loading = false;
-  //           this.comments = comments;
+      // get a page of comments
+      this.publicCommentService
+      .getPublicCommentsByProjectId(this.project.id)
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe(
+          publicComments => {
+            this.loading = false;
+            this.publicComments = publicComments;
 
-  //           // pre-select the first comment
-  //           if (this.comments.length > 0) {
-  //             this.setCurrentComment(this.comments[0]);
-  //           }
-  //         },
-  //         error => {
-  //           this.loading = false;
-  //           // if 403, redir to login page
-  //           if (error && error.status === 403) {
-  //             this.router.navigate(['/login']);
-  //           }
-  //           this.alerts.push('Error loading comments');
-  //         }
-  //       );
-  //   }
-  // }
-
-  // prevPage() {
-  //   this.pageNum--;
-  //   this.getData();
-  // }
-
-  // nextPage() {
-  //   this.pageNum++;
-  //   this.getData();
-  // }
-
-  setCurrentComment(item: Comment) {
-    const index = _.findIndex(this.comments, { _id: item._id });
-    if (index >= 0) {
-      this.comments.splice(index, 1, item);
-      this.currentComment = item;
+            // pre-select the first comment
+            if (this.publicComments.length > 0) {
+              this.setCurrentComment(this.publicComments[0]);
+            }
+          },
+          error => {
+            this.loading = false;
+            // if 403, redir to login page
+            if (error && error.status === 403) {
+              this.router.navigate(['/login']);
+            }
+            this.alerts.push('Error loading comments');
+          }
+        );
     }
   }
 
-  isCurrentComment(item: Comment): boolean {
-    return item === this.currentComment;
+  prevPage() {
+    this.pageNum--;
+    this.getData();
+  }
+
+  nextPage() {
+    this.pageNum++;
+    this.getData();
+  }
+
+  setCurrentComment(item: PublicComment) {
+    const index = _.findIndex(this.publicComments, { id: item.id });
+    console.log('setCurrent comment: ' + index);
+    if (index >= 0) {
+      this.publicComments.splice(index, 1, item);
+      this.currentPublicComment = item;
+    }
+  }
+
+  isCurrentComment(item: PublicComment): boolean {
+    return item === this.currentPublicComment;
   }
 
   exportToExcel() {

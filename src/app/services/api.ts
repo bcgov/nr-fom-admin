@@ -250,13 +250,27 @@ export class ApiService {
 }
 
 /**
+ * Fetch project by projectId.
+ *
+ * @returns {Observable<Project>}
+ * @memberof ApiService
+ */
+ getProjectById(projectId: string): Observable<Project> {
+   console.log('calling api getProjectById: ' + projectId);
+  const queryString =
+    'project/' + projectId;
+
+  return this.http.get<Project>(`${this.pathAPI}/${queryString}`, {});
+}
+
+
+/**
  * Fetch all publicComments by projectId.
  *
  * @returns {Observable<PublicComment[]>}
  * @memberof ApiService
  */
  getPublicCommentsByProjectId(projectId: string): Observable<PublicComment[]> {
-  console.log('calling the API');
   const queryString =
     'public-comment/byprojectid/' + projectId;
 
