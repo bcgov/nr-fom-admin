@@ -73,7 +73,6 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
 
       if (data.application) {
         this.project = data.application;
-        console.log('inside data.project: ' + JSON.stringify(this.project));
 
         // this.commentService
         //   .getCountByPeriodId(this.application.meta.currentPeriod._id)

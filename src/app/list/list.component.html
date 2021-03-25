@@ -56,8 +56,8 @@
         <div class="filter-buttons">
           <button class="filter-btn-clear btn btn-secondary" (click)="clearQueryParameters()"
             [disabled]="searching || exporting" title="Clear search filters">Clear</button>
-          <button class="filter-btn-search btn btn-primary" type="submit" (click)="getApplications()"
-            [disabled]="searching || exporting" title="Search for applications">
+          <button class="filter-btn-search btn btn-primary" type="submit" (click)="getProjects()"
+            [disabled]="searching || exporting" title="Search for FOMs">
             Search
             <i class="spinner-border" [hidden]="!searching"></i>
           </button>
@@ -141,34 +141,34 @@
         </thead>
 
         <tbody>
-          <ng-container *ngFor="let app of applications">
+          <ng-container *ngFor="let project of projects">
             <tr>
               <!-- <td data-label="Applicant(s)">
                 <span>{{(app.meta.applicants | titlecase) || '-'}}</span>
               </td> -->
                <td data-label="FSP ID">
-                <span>4506</span>
+                <span>{{project.fspId}}</span>
               </td>
 
               <td data-label="FOM ID">
                 <span>
-                  <a [routerLink]="['/a', app._id]" title="View application details">{{app.meta.clFile}}</a>
+                  <a [routerLink]="['/a', project.id]" title="View application details">{{project.id}}</a>
                 </span>
               </td>
               <td data-label="Region">
-                <span>{{app.meta.region || '-'}}</span>
+                <span>{{project.district.name || '-'}}</span>
               </td>
               <td data-label="Created">
-                <span>{{getFormattedDate(app.createdDate) || '-'}}</span>
+                <span>{{getFormattedDate(project.createTimestamp) || '-'}}</span>
               </td>
               <td data-label="Status">
-                <span>{{getStatusStringLong(app) || '-'}}</span>
+                <span>{{project.workflowStateCode.code || '-'}}</span>
               </td>
-              <td data-label="Comment Period">
-                <span>{{app.meta.cpStatusStringLong}}</span>
+              <td data-label="Comment Status">
+                <span>Commenting &nbsp; Closed - {{ project.commentingClosedDate | date:'longDate' || 'Unknown'}}</span>
               </td>
               <td data-label="Comments" class="text-align">
-                <span>{{app.meta.numComments}}</span>
+                <span>Not Implemented</span>
               </td>
             </tr>
           </ng-container>

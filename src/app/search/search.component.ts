@@ -13,7 +13,6 @@ import { ConstantUtils, CodeType } from 'app/utils/constants/constantUtils';
 import { StatusCodes, ReasonCodes } from 'app/utils/constants/application';
 import { Project } from 'app/models/project';
 
-// Testing fetching Districts
 import { DistrictService } from 'app/services/district.service';
 import { ForestClientService } from 'app/services/forestclient.service';
 import { WorkflowStateCodeService } from 'app/services/workflowstatecode.service';
