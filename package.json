@@ -49,6 +49,7 @@
     "lodash": "4.17.11",
     "moment": "2.24.0",
     "mygovbc-bootstrap-theme": "0.4.1",
+    "node-sass": "^4.14.1",
     "ng-inline-svg": "8.5.1",
     "ng2-bootstrap-modal": "1.0.1",
     "ngx-pagination": "3.2.1",
