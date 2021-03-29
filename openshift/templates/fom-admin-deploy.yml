@@ -33,13 +33,33 @@ parameters:
     displayName: Service port name
     name: SERVICE_PORT_NAME
     value: http
+  - description: Request for CPU resources measured in cpu units, e.g. 200m
+    displayName: CPU resource request
+    name: REQUEST_CPU
+    required: false
+    value: 100m
+  - description: Request for memory resources measured in bytes, e.g. 512Mi, 1Gi.
+    displayName: Memory resource request
+    name: REQUEST_MEMORY
+    required: false
+    value: 512Mi
+  - description: Limit for CPU resources measured in cpu units, e.g. 200m
+    displayName: CPU resource limit
+    name: LIMIT_CPU
+    required: false
+    value: 200m
+  - description: Limit for memory resources measured in bytes, e.g. 512Mi, 1Gi.
+    displayName: Memory resource limit
+    name: LIMIT_MEMORY
+    required: false
+    value: 1Gi
+
 objects:
   ### DeploymentConfig
   - kind: DeploymentConfig
     apiVersion: apps.openshift.io/v1
     metadata:
       name: ${NAME}-${TAG}-${ENV}
-    namespace: ${PROJECT}-${ENV}
     labels:
     spec:
       replicas: 1
@@ -82,9 +102,12 @@ objects:
                 - name: PORT
                   value: '${PORT}'
               resources:
+                requests:
+                  cpu: ${REQUEST_CPU}
+                  memory: ${REQUEST_MEMORY}
                 limits:
-                  cpu: '2'
-                  memory: 8Gi              
+                  cpu: ${LIMIT_CPU}
+                  memory: ${LIMIT_MEMORY}
               livenessProbe:
                 httpGet:
                   path: /admin
@@ -115,8 +138,6 @@ objects:
     apiVersion: v1
     metadata:
       name: ${NAME}-${TAG}
-      namespace: ${PROJECT}-${ENV}
-      labels:
     spec:
       ports:
         - name: ${SERVICE_PORT_NAME}
@@ -132,7 +153,6 @@ objects:
     apiVersion: v1
     metadata:
       name: ${NAME}-${TAG}
-      namespace: ${PROJECT}-${ENV}
     spec:
       host: ${NAME}-${TAG}-${PROJECT}-${ENV}.apps.silver.devops.gov.bc.ca
       to:
@@ -150,7 +170,6 @@ objects:
     apiVersion: networking.k8s.io/v1
     metadata:
       name: web-allow-external-${NAME}-${TAG}
-      namespace: ${PROJECT}-${ENV}
     spec:
       podSelector:
         matchLabels:
