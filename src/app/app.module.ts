@@ -30,6 +30,8 @@ import { SearchService } from 'app/services/search.service';
 import { FeatureService } from 'app/services/feature.service';
 import { AuthenticationService } from 'app/services/authentication.service';
 import { ApplicationService } from 'app/services/application.service';
+import { SearchProjectService } from 'app/services/searchproject.service';
+import { ProjectService } from 'app/services/project.service';
 import { CommentPeriodService } from 'app/services/commentperiod.service';
 import { CommentService } from 'app/services/comment.service';
 import { DocumentService } from 'app/services/document.service';
@@ -37,6 +39,10 @@ import { DecisionService } from 'app/services/decision.service';
 import { UserService } from 'app/services/user.service';
 import { CanDeactivateGuard } from 'app/services/can-deactivate-guard.service';
 import { KeycloakService } from 'app/services/keycloak.service';
+import { DistrictService } from 'app/services/district.service';
+import { ForestClientService } from 'app/services/forestclient.service';
+import { WorkflowStateCodeService } from 'app/services/workflowstatecode.service';
+import { PublicCommentService } from 'app/services/publiccomments.service';
 
 // feature modules
 import { TokenInterceptor } from './utils/token-interceptor';
@@ -87,6 +93,12 @@ export function kcFactory(keycloakService: KeycloakService) {
       multi: true
     },
     SearchService,
+    SearchProjectService,
+    ProjectService,
+    DistrictService,
+    ForestClientService,
+    WorkflowStateCodeService,
+    PublicCommentService,
     FeatureService,
     AuthenticationService,
     ApplicationService,

@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { Comment } from 'app/models/comment';
+// import { Comment } from 'app/models/comment';
+import { PublicComment } from 'app/models/publiccomment';
 import { ApiService } from 'app/services/api';
 @Component({
   selector: 'app-comment-detail',
@@ -7,7 +8,7 @@ import { ApiService } from 'app/services/api';
   styleUrls: ['./comment-detail.component.scss']
 })
 export class CommentDetailComponent {
-  @Input() comment: Comment;
+  @Input() comment: PublicComment;
 
   constructor(
     public api: ApiService // used in template

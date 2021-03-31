@@ -10,10 +10,14 @@
           Cancel
         </button>
         <div class="btn-container">
-          <button class="btn btn-primary ml-1" type="button" title="Submit new application"
+          <!-- <button class="btn btn-primary ml-1" type="button" title="Submit new application"
             *ngIf="!application._id"
             (click)="addApplication()"
             [disabled]="isSubmitting || application.meta.isRetired">
+            <i class="spinner rotating" [hidden]="!isSubmitting"></i>
+            <span>{{isSubmitting ? 'Saving' : 'Save'}}</span>
+          </button> -->
+          <button class="btn btn-primary ml-1" type="button" title="Submit new application">
             <i class="spinner rotating" [hidden]="!isSubmitting"></i>
             <span>{{isSubmitting ? 'Saving' : 'Save'}}</span>
           </button>

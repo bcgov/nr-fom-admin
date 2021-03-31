@@ -6,6 +6,9 @@ import { IApplicationQueryParamSet, QueryParamModifier } from 'app/services/api'
 import { ApplicationService } from 'app/services/application.service';
 import { RegionCodes, StatusCodes, ReasonCodes } from 'app/utils/constants/application';
 import { CodeType, ConstantUtils } from 'app/utils/constants/constantUtils';
+import { Project } from 'app/models/project';
+import { SearchProjectService } from 'app/services/searchproject.service';
+
 import * as _ from 'lodash';
 import * as moment from 'moment';
 // import { forkJoin, Subject } from 'rxjs';
@@ -38,6 +41,8 @@ export class ListComponent implements OnInit, OnDestroy {
 
   // list of applications to display
   public applications: Application[] = [];
+
+  public projects: Project[] = [];
 
   // drop down filter values
   public regionCodes = new RegionCodes().getCodeGroups();
@@ -74,6 +79,7 @@ export class ListComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private applicationService: ApplicationService,
+    private searcProjecthService: SearchProjectService,
     private exportService: ExportService
   ) {}
 
@@ -87,7 +93,7 @@ export class ListComponent implements OnInit, OnDestroy {
       this.paramMap = paramMap;
 
       this.setInitialQueryParameters();
-      this.getApplications();
+      this.getProjects();
     });
   }
 
@@ -100,7 +106,7 @@ export class ListComponent implements OnInit, OnDestroy {
    *
    * @memberof ListComponent
    */
-  public getApplications(): void {
+  public getProjects(): void {
     this.searching = false;
     console.log('inside getApplications()');
 
@@ -108,91 +114,23 @@ export class ListComponent implements OnInit, OnDestroy {
       this.resetPagination();
     }
 
-    // TODO - Creating static application
+    this.searcProjecthService.getProjects()
+    .subscribe(
+        projects => {
+          projects.forEach(project => {
+            this.projects.push(new Project(project));
+          });
 
-    const applications: Application[] =  [
-      new Application({
-        '_id': 123456789,
-        'agency': 'Crown Land Allocation',
-        'areaHectares': 9.19,
-        'businessUnit': 'CA - LAND MGMNT - CARIBOO FIELD OFFICE',
-        'centroid': [
-            -128.2898393371777,
-            54.019088770013575
-          ],
-        'cl_file': 6406200,
-        'clFile': '6406201',
-        'client': 'Lumber Company A',
-        '_createdBy': 'idir\\mmedeiro',
-        'createdDate': '2021-01-10',
-        'description': 'A high-level description of this application.',
-        'isDeleted': false,
-        'legalDescription': 'A detailed description of the subject land.',
-        'location': 'Porcher Island',
-        'name': '6406200',
-        'publishDate': '2021-02-07',
-        'status': 'ACCEPTED',
-        'reason': 'OFFER NOT ACCEPTED',
-        'type': 'LICENCE',
-        'subtype': 'LICENCE OF OCCUPATION',
-        'tantalisID': 926028,
-        'tenureStage': 'APPLICATION',
-        'cpStatus': 'OPEN',
-        'meta': {
-          'region': 'Cariboo',
-          'cpStatusStringLong': '',
-          'clFile': '926028',
-          'applicants': 'Harvesting the Forest',
-          'numComments': 3,
-          // retireDate: Date;
-          'isRetired': false,
-          // isPublished: boolean;
-          isCreated: true
-        }
-        }),
-        new Application({
-          '_id': 123456789,
-          'agency': 'Crown Land Allocation',
-          'areaHectares': 9.19,
-          'businessUnit': 'KO - LAND MGMNT - KOOTENAY FIELD OFFICE',
-          'centroid': [
-              -128.2898393371777,
-              54.019088770014444
-            ],
-          'cl_file': 6406200,
-          'clFile': '6406201',
-          'client': 'Lumber Company B',
-          '_createdBy': 'idir\\mmedeiro',
-          'createdDate': '2021-01-14',
-          'description': 'A high-level description of this application.',
-          'isDeleted': false,
-          'legalDescription': 'A detailed description of the subject land.',
-          'location': 'Porcher Island',
-          'name': '6406200',
-          'publishDate': '2021-01-28',
-          'status': 'ACCEPTED',
-          'reason': 'OFFER NOT ACCEPTED',
-          'type': 'LICENCE',
-          'subtype': 'LICENCE OF OCCUPATION',
-          'tantalisID': 926029,
-          'tenureStage': 'APPLICATION',
-          'cpStatus': 'OPEN',
-          'numComments': 3,
-          'meta': {
-            'region': 'Cariboo',
-            'cpStatusStringLong': 'Commenting Closed',
-            'clFile': '926029',
-            'applicants': 'Anne-Marie Operations',
-            // retireDate: Date;
-            'isRetired': false,
-            // isPublished: boolean;
-            isCreated: true
-          }
-        })
-    ];
+        },
+        error => {
+          console.log('error =', error);
+        },
+        () => {
+
+        });
 
     this.updatePagination({ totalItems: 1 });
-    this.applications = applications;
+    // this.applications = applications;
     this.loading = false;
 
     // TODO - Marcelo commented this section
@@ -614,7 +552,7 @@ export class ListComponent implements OnInit, OnDestroy {
     }
 
     this.saveQueryParameters();
-    this.getApplications();
+    this.getProjects();
   }
 
   // Pagination
@@ -690,7 +628,7 @@ export class ListComponent implements OnInit, OnDestroy {
     ) {
       this.updatePagination({ currentPage: this.pagination.currentPage += page });
       this.saveQueryParameters();
-      this.getApplications();
+      this.getProjects();
     }
   }
 
@@ -704,7 +642,7 @@ export class ListComponent implements OnInit, OnDestroy {
     if (page >= 1 && this.pagination.pageCount >= page) {
       this.updatePagination({ currentPage: page });
       this.saveQueryParameters();
-      this.getApplications();
+      this.getProjects();
     }
   }
 
@@ -786,7 +724,6 @@ export class ListComponent implements OnInit, OnDestroy {
     if (!Date) {
       return null;
     }
-    console.log('Created Date: ' + date);
     return moment(date).format('YYYY-MM-DD');
   }
 

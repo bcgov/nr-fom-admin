@@ -155,7 +155,6 @@ export class KeycloakService {
     if (!this.keycloakEnabled) {
       // return the local storage token
       const currentUser = JSON.parse(window.localStorage.getItem('currentUser'));
-      console.log('Current User' + currentUser);
       return currentUser ? currentUser.token : null;
     }
 

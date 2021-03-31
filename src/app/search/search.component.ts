@@ -7,10 +7,16 @@ import { takeUntil } from 'rxjs/operators';
 import * as _ from 'lodash';
 
 import { SearchService } from 'app/services/search.service';
+import { SearchProjectService } from 'app/services/searchproject.service';
 import { Application } from 'app/models/application';
 import { ConstantUtils, CodeType } from 'app/utils/constants/constantUtils';
 import { StatusCodes, ReasonCodes } from 'app/utils/constants/application';
-import { singleApplicationStubArray } from '../applications/stubs/application-stub';
+import { Project } from 'app/models/project';
+
+import { DistrictService } from 'app/services/district.service';
+import { ForestClientService } from 'app/services/forestclient.service';
+import { WorkflowStateCodeService } from 'app/services/workflowstatecode.service';
+import { PublicCommentService } from 'app/services/publiccomments.service';
 
 @Component({
   selector: 'app-search',
@@ -22,7 +28,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   private paramMap: ParamMap = null;
 
   public keywords: string;
-  public applications: Application[] = [];
+  public projects: Project[] = [];
   public count = 0; // used in template
 
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
@@ -34,6 +40,11 @@ export class SearchComponent implements OnInit, OnDestroy {
     private location: Location,
     public snackBar: MatSnackBar,
     public searchService: SearchService, // used in template
+    public searcProjecthService: SearchProjectService,
+    public searchDistrictService: DistrictService,
+    public searchforestClientService: ForestClientService,
+    public searchWorkflowStateCodeService: WorkflowStateCodeService,
+    public searchPublicCommentService: PublicCommentService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -53,50 +64,115 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   private doSearch() {
     this.searching = true;
+    console.log('doSearch: ' + this.keywords);
 
-    this.applications = [];
+    this.projects = [];
     this.count = 0;
 
-    this.applications = singleApplicationStubArray;
-    this.count = this.applications.length;
+    this.searcProjecthService.getProjectsByFspId(this.keywords)
+    .subscribe(
+        projects => {
+          projects.forEach(project => {
+            this.projects.push(new Project(project));
+          });
+          this.count = this.projects.length;
+          this.fetchingAllPublicComments();
+        },
+        error => {
+          console.log('error =', error);
 
-    this.searching = false;
-    this.ranSearch = true;
+          this.searching = false;
+          this.ranSearch = true;
 
-    // console.log(JSON.stringify(this.applications[1]));
+          this.snackBarRef = this.snackBar.open('Error searching foms ...', 'RETRY');
+          this.snackBarRef.onAction().subscribe(() => this.onSubmit());
+        },
+        () => {
+          this.searching = false;
+          this.ranSearch = true;
+        });
 
-    // TODO - Marcelo
-    // this.searchService
-    //   .getApplicationsByCLFileAndTantalisID(this.getQueryParameters())
-    //   .pipe(takeUntil(this.ngUnsubscribe))
-    //   .subscribe(
-    //     applications => {
-    //       applications.forEach(application => {
-    //         // add application if not already in the list (no duplicates allowed)
-    //         if (!_.find(this.applications, app => app.tantalisID === application.tantalisID)) {
-    //           this.applications.push(application);
-    //         }
-    //       });
-    //       this.count = this.applications.length;
-    //     },
-    //     error => {
-    //       console.log('error =', error);
-
-    //       this.searching = false;
-    //       this.ranSearch = true;
-
-    //       this.snackBarRef = this.snackBar.open('Error searching applications ...', 'RETRY');
-    //       this.snackBarRef.onAction().subscribe(() => this.onSubmit());
-    //     },
-    //     () => {
-    //       this.searching = false;
-    //       this.ranSearch = true;
-    //     }
-    //   );
+    // this.fetchingAllDistricts();
+    // this.fetchingAllForestClients();
+    // this.fetchingAllWorkflowStateCodes();
   }
+
+  private fetchingAllPublicComments() {
+    this.projects.forEach(project => {
+    this.searchPublicCommentService.getPublicCommentsByProjectId( project.id)
+    .subscribe(
+      publicComments => {
+        publicComments.forEach(publicComment => {
+            project.publicComments.push(publicComment);
+        });
+
+      },
+      error => {
+        console.log('error =', error);
+      });
+    });
+  }
+
+  // private fetchingAllDistricts() {
+  //   this.searchDistrictService.getAll()
+  //   .subscribe(
+  //     districts => {
+  //       districts.forEach(district => {
+
+  //           console.log('districts: ' + JSON.stringify(district));
+  //       });
+
+  //     },
+  //     error => {
+  //       console.log('error =', error);
+  //     },
+  //     () => {
+  //       this.searching = false;
+  //       this.ranSearch = true;
+  //     });
+  // }
+
+  // private fetchingAllForestClients() {
+  //   this.searchforestClientService.getAll()
+  //   .subscribe(
+  //     forestClients => {
+  //       forestClients.forEach(forestClient => {
+
+  //           console.log('forestClients: ' + JSON.stringify(forestClient));
+  //       });
+
+  //     },
+  //     error => {
+  //       console.log('error =', error);
+  //     },
+  //     () => {
+  //       this.searching = false;
+  //       this.ranSearch = true;
+  //     });
+  // }
+
+  // private fetchingAllWorkflowStateCodes() {
+  //   this.searchWorkflowStateCodeService.getAll()
+  //   .subscribe(
+  //     workflowStateCodes => {
+  //       workflowStateCodes.forEach(workflowStateCode => {
+
+  //           console.log('workflowStateCodes: ' + JSON.stringify(workflowStateCode));
+  //       });
+
+  //     },
+  //     error => {
+  //       console.log('error =', error);
+  //     },
+  //     () => {
+  //       this.searching = false;
+  //       this.ranSearch = true;
+  //     });
+  // }
 
   public setInitialQueryParameters() {
     this.keywords = this.paramMap.get('keywords') || '';
+    console.log('setInitialParam: ' + this.keywords);
   }
 
   public getQueryParameters() {

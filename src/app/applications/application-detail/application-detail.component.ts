@@ -13,6 +13,10 @@ import { CommentPeriodService } from 'app/services/commentperiod.service';
 import { DecisionService } from 'app/services/decision.service';
 import { DocumentService } from 'app/services/document.service';
 import { FeatureService } from 'app/services/feature.service';
+import { Project } from 'app/models/project';
+import { PublicCommentService } from 'app/services/publiccomments.service';
+import { PublicComment} from 'app/models/publiccomment';
+
 
 @Component({
   selector: 'app-application-detail',
@@ -25,8 +29,12 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
   public isDeleting = false;
   public isRefreshing = false;
   public application: Application = null;
+  public publicComment: PublicComment = null;
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
+  public project: Project = null;
+  public isProjectActive = false;
+  public numberComments = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -35,6 +43,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
     public api: ApiService, // also used in template
     private dialogService: DialogService,
     public applicationService: ApplicationService, // also used in template
+    public searchPublicCommentService: PublicCommentService,
     public commentPeriodService: CommentPeriodService,
     public decisionService: DecisionService,
     public documentService: DocumentService,
@@ -43,11 +52,16 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // get data from route resolver
-    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: Application }) => {
+    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: Project }) => {
       if (data.application) {
-        this.application = data.application;
+        this.project = data.application;
+        if (this.project.workflowStateCode.code === 'INITIAL') {
+          this.isProjectActive = true;
+        }
+        this.fetchingAllPublicComments();
+        console.log('fom detail: ' + this.project.workflowStateCode.code);
       } else {
-        alert("Uh-oh, couldn't load application");
+        alert("Uh-oh, couldn't load fom");
         // application not found --> navigate back to search
         this.router.navigate(['/search']);
       }
@@ -417,5 +431,20 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
           );
       }
     );
+  }
+
+  public fetchingAllPublicComments() {
+    this.searchPublicCommentService.getPublicCommentsByProjectId( this.project.id)
+    .subscribe(
+      publicComments => {
+        publicComments.forEach(publicComment => {
+          this.numberComments ++;
+          this.publicComment = publicComment;
+        });
+
+      },
+      error => {
+        console.log('error =', error);
+      });
   }
 }

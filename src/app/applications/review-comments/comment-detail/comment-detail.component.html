@@ -5,24 +5,24 @@
 <div class="comment-detail-container" *ngIf="comment">
   <div class="title-container__title">
     <!-- <h2>{{comment.commentAuthor.contactName || 'Anonymous'}} <span *ngIf="comment.commentAuthor.orgName">({{comment.commentAuthor.orgName}})</span></h2> -->
-    <h2>{{comment.commentAuthor.contactName || 'Anonymous'}}</h2>
+    <h2>{{comment.name || 'Anonymous'}}</h2>
     <div class="comment-detail__date">
-      {{comment.dateAdded | date:'medium'}}
+      {{comment.createTimestamp | date:'medium'}}
     </div>
   </div>
   <div class="comment-detail__meta">
     <div>
-      <a href="mailto:{{comment.commentAuthor.internal.email}}">{{comment.commentAuthor.internal.email}}</a>
+      <a href="mailto:{{comment.email}}">{{comment.email}}</a>
     </div>
     <div>
-      <a href="tel:{{comment.commentAuthor.internal.phone}}">{{comment.commentAuthor.internal.phone}}</a>
+      <a href="tel:{{comment.phoneNumber}}">{{comment.phoneNumber}}</a>
     </div>
     <div>
-      {{comment.commentAuthor.location}}
+      {{comment.location}}
     </div>
   </div>
   <hr>
-  <div class="comment-detail__body" [innerHTML]="comment.comment | newlines"></div>
+  <div class="comment-detail__body" [innerHTML]="comment.feedback | newlines"></div>
   <hr>
 
 

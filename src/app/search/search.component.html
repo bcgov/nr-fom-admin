@@ -55,44 +55,39 @@
           <th class="actions"></th>
         </tr>
       </thead>
-      <ng-template ngFor let-application [ngForOf]="applications">
+      <ng-template ngFor let-project [ngForOf]="projects">
         <tr class="app-details">
-          <!-- <td class="disp">
-            <span class="cl-arrow">{{application.meta.clFile}}</span>
-            <span>{{application.meta.clFile}}</span>
-          </td> -->
           <td class="disp">
-            <strong>{{application.tantalisID}}</strong>
+            <strong>{{project.id }}</strong>
           </td>
           <td
-            [innerHTML]="application.meta.applicants ? (application.meta.applicants | titlecase) : '<em>No Applicant on this File</em>'">
+            [innerHTML]="project.name ? (project.name | titlecase) : '<em>No FOM name on this File</em>'">
           </td>
           <td>
-            {{application.createdDate | date:'mediumDate'}}
+            {{project.createTimestamp| date:'mediumDate'}}
           </td>
           <td>
-            {{getStatusStringLong(application) || 'Unknown'}}
+            {{project.workflowStateCode.description}}
           </td>
           <td>
-            {{application.publishDate | date:'mediumDate'}}
+            {{project.commentingOpenDate | date:'mediumDate'}}
           </td>
           
           <td class="actions">
-            <div ngbDropdown placement="bottom-right" *ngIf="application.meta.isCreated">
+            <div ngbDropdown placement="bottom-right">
               <button ngbDropdownToggle class="btn btn-sm btn-outline-primary" type="button">
                 Actions
               </button>
               <div ngbDropdownMenu>
-                <button class="dropdown-item" type="button" [routerLink]="['/a', application._id]">
+                <button class="dropdown-item" type="button" [routerLink]="['/a', project.id]">
                   <i class="material-icons">insert_drive_file</i>
                   View FOM
                 </button>
-                <button class="dropdown-item" type="button" [routerLink]="['/a', application._id, 'edit']"
-                  *ngIf="!application.meta.isRetired">
+                <button class="dropdown-item" type="button" [routerLink]="['/a', project.id, 'edit']">
                   <i class="material-icons">edit</i>
                   Edit FOM
                 </button>
-                <button class="dropdown-item" type="button" [routerLink]="['/comments', application._id]">
+                <button class="dropdown-item" type="button" [routerLink]="['/comments', project.id]">
                   <i class="material-icons">mode_comment</i>
                   Review Comments
                 </button>
@@ -100,31 +95,30 @@
             </div>
           </td>
         </tr>
-        <tr class="app-comment-details" *ngIf="application.meta.isCreated">
+        
           <td colspan="6">
             <span class="comment-info">
-              <span *ngIf="application.meta.numComments > 0">
+              <span *ngIf="project.publicComments.length > 0">
                 <strong>
-                  <a [routerLink]="['/comments', application._id]">{{application.meta.numComments}}
-                    {{application.meta.numComments === 1 ? 'comment' : 'comments'}}</a>
+                  <a [routerLink]="['/comments', project.id]">{{ project.publicComments.length }}
+                    {{project.publicComments.length === 1 ? 'comment' : 'comments'}}</a>
                 </strong>
                 &nbsp;-&nbsp;
               </span>
               <span>
-                {{application.meta.cpStatusStringLong || 'Unknown'}}
+                &nbsp;&nbsp; Commenting &nbsp; Closed - {{ project.commentingClosedDate | date:'longDate' || 'Unknown'}}
               </span>
-              <span *ngIf="application.meta.currentPeriod">
+              <!-- <span *ngIf="application.meta.currentPeriod">
                 &nbsp;-&nbsp;
                 {{application.meta.currentPeriod.startDate | date:'longDate'}} to
                 {{application.meta.currentPeriod.endDate | date:'longDate'}}
                 <span *ngIf="application.meta.currentPeriod.meta.daysRemaining">
                   &nbsp;({{application.meta.currentPeriod.meta.daysRemaining + (application.meta.currentPeriod.meta.daysRemaining === 1 ? ' day ' : ' days ') + 'remaining'}})
                 </span>
-              </span>
+              </span> -->
             </span>
           </td>
-        </tr>
-      </ng-template>
+       </ng-template>
     </table>
   </div>
   <!-- <div class="btn-container" *ngIf="ranSearch && !searching && count > 0">
