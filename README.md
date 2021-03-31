@@ -60,6 +60,11 @@ npm start
 
     _Note: To change the default port edit `angular.json`._
 
+## In Docker
+Note: run as non-root user to correspond to how it will run in OpenShift with podman
+> docker build fom-admin .
+> docker run -d -u 1001 -p4200:4200 fom-admin
+
 ## Prod
 1. Download dependencies
 ```
