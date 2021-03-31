@@ -69,7 +69,6 @@ objects:
     apiVersion: apps.openshift.io/v1
     metadata:
       name: ${NAME}-${TAG}-${ENV}
-    labels:
     spec:
       replicas: ${{REPLICA_COUNT}}
       revisionHistoryLimit: 10
