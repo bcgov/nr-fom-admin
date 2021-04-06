@@ -63,4 +63,4 @@ objects:
           uri: 'https://github.com/bcgov/nr-fom-admin'
           ref: ${GIT_REF}
         contextDir: /
-    runPolicy: Serial
+    runPolicy: SerialLatestOnly
