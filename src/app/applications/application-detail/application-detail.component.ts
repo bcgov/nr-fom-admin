@@ -55,11 +55,11 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
     this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: Project }) => {
       if (data.application) {
         this.project = data.application;
-        if (this.project.workflowStateCode.code === 'INITIAL') {
+        if (this.project.workflowState.code === 'INITIAL') {
           this.isProjectActive = true;
         }
         this.fetchingAllPublicComments();
-        console.log('fom detail: ' + this.project.workflowStateCode.code);
+        console.log('fom detail: ' + this.project.workflowState.code);
       } else {
         alert("Uh-oh, couldn't load fom");
         // application not found --> navigate back to search

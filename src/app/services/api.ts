@@ -17,7 +17,7 @@ import { User } from 'app/models/user';
 import { Project } from 'app/models/project';
 import { District } from 'app/models/district';
 import { ForestClient } from 'app/models/forestclient';
-import { WorkflowStateCode } from 'app/models/workflowstatecode';
+import { WorkflowState } from 'app/models/workflowstatecode';
 import { PublicComment } from 'app/models/publiccomment';
 
 /**
@@ -230,7 +230,7 @@ export class ApiService {
  getProjects(): Observable<Project[]> {
   console.log('calling the API');
   const queryString =
-    'project/';
+    'projects/';
 
   return this.http.get<Project[]>(`${this.pathAPI}/${queryString}`, {});
 }
@@ -244,7 +244,7 @@ export class ApiService {
  getProjectsByFspId(fspId: string): Observable<Project[]> {
   console.log('calling the API');
   const queryString =
-    'project/byfspid/' + fspId;
+    'projects/byfspid/' + fspId;
 
   return this.http.get<Project[]>(`${this.pathAPI}/${queryString}`, {});
 }
@@ -272,7 +272,7 @@ export class ApiService {
  */
  getPublicCommentsByProjectId(projectId: string): Observable<PublicComment[]> {
   const queryString =
-    'public-comment/byprojectid/' + projectId;
+    'public-comments/byprojectid/' + projectId;
 
   return this.http.get<PublicComment[]>(`${this.pathAPI}/${queryString}`, {});
 }
@@ -325,12 +325,12 @@ export class ApiService {
  * @returns {Observable<WorkflowStateCode[]>}
  * @memberof ApiService
  */
- getWorkflowStateCodes(): Observable<WorkflowStateCode[]> {
+ getWorkflowStateCodes(): Observable<WorkflowState[]> {
   console.log('calling the API forest_clients');
   const queryString =
     'workflow-state-code/';
 
-  return this.http.get<WorkflowStateCode[]>(`${this.pathAPI}/${queryString}`, {});
+  return this.http.get<WorkflowState[]>(`${this.pathAPI}/${queryString}`, {});
 }
 
 
