@@ -1,40 +1,56 @@
-<div class="top-container" *ngIf="application">
+<div class="top-container" *ngIf="project">
   <div class="container">
     <div class="title-container">
       <div class="title-container__title">
-        <h1>FOM ID: {{application.tantalisID}}</h1>
+        <h1>FOM ID: {{project.id}}</h1>
       </div>
       <div class="title-container__actions">
         <div class="btn-container">
-          <button class="btn btn-light" type="button" title="Edit application"
-            [routerLink]="['/a', application._id, 'edit']"
+          <!-- <button class="btn btn-light" type="button" title="Edit application"
+            [routerLink]="['/a', project.id, 'edit']"
             [disabled]="application.meta.isRetired">
             Edit
+          </button> -->
+          <button class="btn btn-light" type="button" title="Edit FOM"
+            [routerLink]="['/a', project.id, 'edit']">
+            Edit
           </button>
-          <span title="You cannot edit a retired application"></span>
+          <span title="You cannot edit a finalized/expired project"></span>
         </div>
         <div class="btn-container">
-          <button class="btn btn-primary ml-1" type="button" title="Publish application"
+          <button class="btn btn-primary ml-1" type="button" title="Publish FOM">
+            <i class="spinner rotating" [hidden]="!isPublishing"></i>
+            <span>{{isPublishing ? 'Publishing' : 'Publish'}}</span>
+          </button>
+          <!-- <button class="btn btn-primary ml-1" type="button" title="Publish application"
             *ngIf="!application.meta.isPublished"
             (click)="publishApplication()"
             [disabled]="isPublishing || application.meta.isRetired">
             <i class="spinner rotating" [hidden]="!isPublishing"></i>
             <span>{{isPublishing ? 'Publishing' : 'Publish'}}</span>
-          </button>
+          </button> -->
           <span title="You cannot publish a retired application"></span>
         </div>
         <!-- NB: you CAN unpublish a retired application -->
-        <button class="btn btn-primary ml-1" type="button" title="Unpublish application"
+        <!-- <button class="btn btn-primary ml-1" type="button" title="Unpublish application">
+          <i class="spinner rotating" [hidden]="!isUnpublishing"></i>
+          <span>{{isUnpublishing ? 'Unpublishing' : 'Unpublish'}}</span>
+        </button> -->
+        <!-- <button class="btn btn-primary ml-1" type="button" title="Unpublish application"
           *ngIf="application.meta.isPublished"
           (click)="unPublishApplication()"
           [disabled]="isUnpublishing">
           <i class="spinner rotating" [hidden]="!isUnpublishing"></i>
           <span>{{isUnpublishing ? 'Unpublishing' : 'Unpublish'}}</span>
-        </button>
+        </button> -->
         <span class="vert-pipe first-pipe">&nbsp;</span>
-        <button class="btn btn-icon" title="Refresh this application with the latest data from Tantalis"
+        <!-- <button class="btn btn-icon" title="Refresh this FOM"
           (click)="refreshApplication()"
           [disabled]="isRefreshing">
+          <i class="material-icons refresh-spinner" [ngClass]="{'rotating': isRefreshing}" [inlineSVG]="'assets/images/baseline-refresh-24px.svg'">
+          </i>
+        </button> -->
+        <button class="btn btn-icon" title="Refresh this FOM">
           <i class="material-icons refresh-spinner" [ngClass]="{'rotating': isRefreshing}" [inlineSVG]="'assets/images/baseline-refresh-24px.svg'">
           </i>
         </button>
@@ -51,21 +67,23 @@
   </div>
 </div>
 
-<div class="bottom-container" *ngIf="application">
+<div class="bottom-container" *ngIf="project">
   <div class="container">
-    <ngb-alert type="primary" [dismissible]="false" *ngIf="application.meta.retireDate && !application.meta.isRetired">
+    <ngb-alert type="primary" [dismissible]="false" *ngIf="isProjectActive">
       <div class="alert-contents">
         <i class="material-icons">warning</i>
         <div class="alert-msg">
-          This application will be visible on the public website until {{application.meta.retireDate | date:'longDate'}}.
+          <!-- This FOM will be visible on the public website until {{application.meta.retireDate | date:'longDate'}}. -->
+          This FOM will be visible on the public website until Some date in the future TBD.
         </div>
       </div>
     </ngb-alert>
-    <ngb-alert type="warning" [dismissible]="false" *ngIf="application.meta.retireDate && application.meta.isRetired">
+    <ngb-alert type="warning" [dismissible]="false" *ngIf="!isProjectActive">
       <div class="alert-contents">
         <i class="material-icons">warning</i>
         <div class="alert-msg">
-          This application was removed from the public website on {{application.meta.retireDate | date:'longDate'}}.
+          <!-- This application was removed from the public website on {{application.meta.retireDate | date:'longDate'}}. -->
+          This FOM was removed from the public website on where does this date come from TBD.
         </div>
       </div>
     </ngb-alert>
@@ -85,22 +103,22 @@
               <ng-template ngbTabContent>
                 <section>
                   <h2>Name</h2>
-                  <p class="mb-0" [innerHTML]="application.meta.applicants ? (application.meta.applicants | titlecase) : '<em>No Applicant on this File</em>'"></p>
+                  <p class="mb-0" [innerHTML]="project.name ? (project.name | titlecase) : '<em>No Applicant on this File</em>'"></p>
                 </section>
                 <section>
                   <h2>Description</h2>
-                  <p class="mb-0" [innerHTML]="(application.description | newlines | linkify) || '<em>No application description available</em>'"></p>
+                  <p class="mb-0" [innerHTML]="(project.description | newlines | linkify) || '<em>No project description available</em>'"></p>
                 </section>
                 <section>
                   <h2>Details</h2>
                   <ul class="nv-list">
                     <li>
                       <span class="name">Licensee:</span>
-                      <span class="value">{{application.client || 'No Applicant on this File'}}</span>
+                      <span class="value">{{project.forestClient.name || 'No Applicant on this File'}}</span>
                     </li>
                     <li>
                       <span class="name">District:</span>
-                      <span class="value">Cascades Natural Resource District</span>
+                      <span class="value">{{project.district.name}}</span>
                     </li>
                     <li>
                       <span class="name">Blocks:</span>
@@ -118,14 +136,10 @@
                       <span class="name"></span>
                       <span class="value">1448 0.268</span>
                     </li>
-                    <li>
-                      <span class="name">Location:</span>
-                      <span class="value">{{application.location || '-'}}</span>
-                    </li>
-                    <li>
+                    <!-- <li>
                       <span class="name">Total Area (hectares):</span>
                       <span class="value">{{application.areaHectares ? (application.areaHectares | number:'1.2-2') : '-'}}</span>
-                    </li>
+                    </li> -->
                     <!-- <li *ngIf="application.publishDate">
                       <span class="name">Initial Publish Date:</span>
                       <span class="value">{{application.publishDate | date:'longDate'}}</span>
@@ -135,7 +149,7 @@
                 <section>
                   <h2>Initial Public Notice</h2>
                   <ul class="doc-list">
-                    <li *ngFor="let doc of application.meta.documents">
+                    <!-- <li *ngFor="let doc of application.meta.documents">
                       <span class="cell icon">
                         <i class="material-icons link" (click)="api.openDocument(doc)">
                           insert_drive_file
@@ -151,8 +165,9 @@
                           <i class="material-icons">file_download</i>
                         </button>
                       </span>
-                    </li>
-                    <li class="no-results" *ngIf="application.meta.documents.length === 0">
+                    </li> -->
+                    <!-- <li class="no-results" *ngIf="application.meta.documents.length === 0"> -->
+                    <li class="no-results">
                       <em>FOM document goes here</em>
                     </li>
                   </ul>
@@ -210,41 +225,47 @@
         <div class="aside-card">
           <h3 class="title">Application Status</h3>
           <div class="body">
-            <div class="app-status">{{applicationService.getStatusStringLong(application) || '-'}}</div>
-            <div class="app-status__date text-muted" *ngIf="application.statusHistoryEffectiveDate">
-              Last updated on {{application.statusHistoryEffectiveDate | date:'longDate'}}
+            <div class="app-status">{{project.workflowStateCode.code || '-'}}</div>
+            <!-- <div class="app-status__date text-muted" *ngIf="application.statusHistoryEffectiveDate"> -->
+            <div class="app-status__date text-muted" *ngIf="project.updateTimestamp">
+              Last updated on {{project.updateTimestamp | date:'longDate'}}
             </div>
           </div>
         </div>
 
         <div class="aside-card">
           <h3 class="title">Comment Period Details</h3>
-          <div class="body" *ngIf="!application.meta.currentPeriod">
+          <!-- <div class="body" *ngIf="!application.meta.currentPeriod">
             Not Open For Commenting
-          </div>
-          <div class="body" *ngIf="application.meta.currentPeriod">
+          </div> -->
+          <!-- <div class="body" *ngIf="application.meta.currentPeriod"> -->
+          <div class="body">
             <ul class="nv-list">
               <li>
                 <span class="name">Status:</span>
-                <span class="value">{{application.meta.cpStatusStringLong}}</span>
+                <span class="value">{{project.workflowStateCode.code}}</span>
               </li>
               <li>
                 <span class="name">Start Date:</span>
-                <span class="value">{{application.meta.currentPeriod.startDate | date:'longDate'}}</span>
+                <span class="value">{{project.commentingOpenDate | date:'longDate'}}</span>
               </li>
               <li>
                 <span class="name">End Date:</span>
-                <span class="value">{{application.meta.currentPeriod.endDate | date:'longDate'}}</span>
+                <span class="value">{{project.commentingClosedDate| date:'longDate'}}</span>
               </li>
-              <li *ngIf="application.meta.currentPeriod.meta.daysRemaining">
+              <!-- <li *ngIf="application.meta.currentPeriod.meta.daysRemaining">
                 <span class="name">Days Remaining:</span>
                 <span class="value">{{application.meta.currentPeriod.meta.daysRemaining}}</span>
+              </li> -->
+              <li>
+                <span class="name">Days Remaining:</span>
+                <span class="value">Some days in the future TBD</span>
               </li>
             </ul>
             <div class="btn-container">
               <button class="cta-btn btn btn-sm btn-outline-primary" type="button" title="Review comments"
-                [routerLink]="['/comments', application._id]">
-                Review Comments<span *ngIf="application.meta.numComments >= 0">&nbsp;(3)</span>
+                [routerLink]="['/comments', project.id]">
+                Review Comments<span *ngIf="numberComments >= 0">&nbsp;({{numberComments}})</span>
               </button>
             </div>
           </div>
@@ -256,7 +277,7 @@
               <p class="mb-0">No decision documents have been added to this application.</p>
             </div> -->
             <div>Attachement file goes here</div>
-            <div *ngIf="application.meta.decision">
+            <!-- <div *ngIf="application.meta.decision">
               <ul class="doc-list">
                 <li *ngFor="let doc of application.meta.decision.meta.documents">
                   <span class="cell icon">
@@ -279,16 +300,16 @@
                   <em>No decision documents</em>
                 </li>
               </ul>
-            </div>
+            </div> 
             <div class="btn-container">
               <button class="cta-btn btn btn-sm btn-outline-primary" type="button" title="Edit fom documents"
-                [routerLink]="['/a', application._id, 'edit']"
+                [routerLink]="['/a', project.id, 'edit']"
                 [disabled]="application.meta.isRetired"
                 fragment="appDecision">
                 Edit FOM Attachments
               </button>
               <span title="You cannot edit the decision of a retired application"></span>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

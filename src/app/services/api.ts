@@ -14,6 +14,11 @@ import { Document } from 'app/models/document';
 import { Feature } from 'app/models/feature';
 import { SearchResults } from 'app/models/search';
 import { User } from 'app/models/user';
+import { Project } from 'app/models/project';
+import { District } from 'app/models/district';
+import { ForestClient } from 'app/models/forestclient';
+import { WorkflowStateCode } from 'app/models/workflowstatecode';
+import { PublicComment } from 'app/models/publiccomment';
 
 /**
  * Supported query param field modifiers used by the api to interpret the query param value.
@@ -145,7 +150,7 @@ export class ApiService {
     switch (hostname) {
       case 'localhost':
         // Local
-        this.pathAPI = 'http://localhost:3000/api';
+        this.pathAPI = 'http://localhost:8081/api';
         this.env = 'local';
         break;
 
@@ -210,6 +215,144 @@ export class ApiService {
     this.token = null;
     window.localStorage.removeItem('currentUser');
   }
+
+
+  //
+  // Projects
+  //
+
+/**
+ * Fetch all projects.
+ *
+ * @returns {Observable<Project[]>}
+ * @memberof ApiService
+ */
+ getProjects(): Observable<Project[]> {
+  console.log('calling the API');
+  const queryString =
+    'project/';
+
+  return this.http.get<Project[]>(`${this.pathAPI}/${queryString}`, {});
+}
+
+/**
+ * Fetch all projects by FspId.
+ *
+ * @returns {Observable<Project[]>}
+ * @memberof ApiService
+ */
+ getProjectsByFspId(fspId: string): Observable<Project[]> {
+  console.log('calling the API');
+  const queryString =
+    'project/byfspid/' + fspId;
+
+  return this.http.get<Project[]>(`${this.pathAPI}/${queryString}`, {});
+}
+
+/**
+ * Fetch project by projectId.
+ *
+ * @returns {Observable<Project>}
+ * @memberof ApiService
+ */
+ getProjectById(projectId: string): Observable<Project> {
+   console.log('calling api getProjectById: ' + projectId);
+  const queryString =
+    'project/' + projectId;
+
+  return this.http.get<Project>(`${this.pathAPI}/${queryString}`, {});
+}
+
+
+/**
+ * Fetch all publicComments by projectId.
+ *
+ * @returns {Observable<PublicComment[]>}
+ * @memberof ApiService
+ */
+ getPublicCommentsByProjectId(projectId: string): Observable<PublicComment[]> {
+  const queryString =
+    'public-comment/byprojectid/' + projectId;
+
+  return this.http.get<PublicComment[]>(`${this.pathAPI}/${queryString}`, {});
+}
+
+
+  //
+  // Districts
+  //
+
+/**
+ * Fetch all projects that match the provided parameters.
+ *
+ * @returns {Observable<District[]>}
+ * @memberof ApiService
+ */
+ getDistricts(): Observable<District[]> {
+  console.log('calling the API district');
+  const queryString =
+    'district/';
+
+  return this.http.get<District[]>(`${this.pathAPI}/${queryString}`, {});
+}
+
+  //
+  // ForestClients
+  //
+
+/**
+ * Fetch all projects that match the provided parameters.
+ *
+ * @returns {Observable<ForestClient[]>}
+ * @memberof ApiService
+ */
+ getForestClients(): Observable<ForestClient[]> {
+  console.log('calling the API forest_clients');
+  const queryString =
+    'forestclient/';
+
+  return this.http.get<ForestClient[]>(`${this.pathAPI}/${queryString}`, {});
+}
+
+
+ //
+  // WorkflowStateCodes
+  //
+
+/**
+ * Fetch all workflowStateCodes that match the provided parameters.
+ *
+ * @returns {Observable<WorkflowStateCode[]>}
+ * @memberof ApiService
+ */
+ getWorkflowStateCodes(): Observable<WorkflowStateCode[]> {
+  console.log('calling the API forest_clients');
+  const queryString =
+    'workflow-state-code/';
+
+  return this.http.get<WorkflowStateCode[]>(`${this.pathAPI}/${queryString}`, {});
+}
+
+
+ //
+  // PublicComments
+  //
+
+/**
+ * Fetch all PublicComment that match the provided parameters.
+ *
+ * @returns {Observable<PublicComment[]>}
+ * @memberof ApiService
+ */
+ getPublicComments(): Observable<PublicComment[]> {
+  console.log('calling the API getComments');
+  const queryString =
+    'public-comment/';
+
+  return this.http.get<PublicComment[]>(`${this.pathAPI}/${queryString}`, {});
+}
+
+
 
   //
   // Applications

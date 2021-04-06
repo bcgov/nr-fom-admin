@@ -12,6 +12,7 @@ import * as _ from 'lodash';
 
 import { ConfirmComponent } from 'app/confirm/confirm.component';
 import { Application } from 'app/models/application';
+import { Project } from 'app/models/project';
 import { CommentPeriod } from 'app/models/commentperiod';
 import { Document } from 'app/models/document';
 import { Decision } from 'app/models/decision';
@@ -19,6 +20,7 @@ import { ApplicationService } from 'app/services/application.service';
 import { CommentPeriodService } from 'app/services/commentperiod.service';
 import { DecisionService } from 'app/services/decision.service';
 import { DocumentService } from 'app/services/document.service';
+
 
 const DEFAULT_DAYS = 30;
 
@@ -35,6 +37,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
   public isSubmitting = false;
   public isSaving = false;
   public application: Application = null;
+  public project: Project = null;
   public startDate: NgbDateStruct = null;
   public endDate: NgbDateStruct = null;
   public delta: number; // # days (including today)
