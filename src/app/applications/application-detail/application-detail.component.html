@@ -112,11 +112,11 @@
                 <section>
                   <h2>Details</h2>
                   <ul class="nv-list">
-                    <li>
+                    <li *ngIf="project.forestClient">
                       <span class="name">Licensee:</span>
                       <span class="value">{{project.forestClient.name || 'No Applicant on this File'}}</span>
                     </li>
-                    <li>
+                    <li *ngIf="project.district">
                       <span class="name">District:</span>
                       <span class="value">{{project.district.name}}</span>
                     </li>
@@ -300,7 +300,7 @@
                   <em>No decision documents</em>
                 </li>
               </ul>
-            </div> 
+            </div>
             <div class="btn-container">
               <button class="cta-btn btn btn-sm btn-outline-primary" type="button" title="Edit fom documents"
                 [routerLink]="['/a', project.id, 'edit']"
