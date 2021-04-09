@@ -272,7 +272,7 @@ export class ApiService {
  */
  getPublicCommentsByProjectId(projectId: string): Observable<PublicComment[]> {
   const queryString =
-    'public-comments/pyProjectId/' + projectId;
+    'public-comments/byProjectId/' + projectId;
 
   return this.http.get<PublicComment[]>(`${this.pathAPI}/${queryString}`, {});
 }
