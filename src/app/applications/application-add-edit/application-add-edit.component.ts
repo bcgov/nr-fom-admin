@@ -110,6 +110,9 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
   // this is needed because we don't have a form control that is marked as dirty
   private anyUnsavedItems(): boolean {
     // look for application documents not yet uploaded to db
+    // TODO: Make sure application.meta exists!
+    if (!this.application.meta) return false;
+
     if (this.application.meta.documents) {
       for (const doc of this.application.meta.documents) {
         if (!doc._id) {
