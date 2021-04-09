@@ -434,7 +434,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
   }
 
   public fetchingAllPublicComments() {
-    this.searchPublicCommentService.getPublicCommentsByProjectId( this.project.id)
+    this.searchPublicCommentService.getPublicCommentsByProjectId(this.project.id)
     .subscribe(
       publicComments => {
         publicComments.forEach(publicComment => {

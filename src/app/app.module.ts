@@ -48,6 +48,9 @@ import { PublicCommentService } from 'app/services/publiccomments.service';
 import { TokenInterceptor } from './utils/token-interceptor';
 import { NotAuthorizedComponent } from './not-authorized/not-authorized.component';
 
+// api modules
+// import { ProjectsApi, ProjectApi } from 'app/api-client/typescript-rxjs';
+
 export function kcFactory(keycloakService: KeycloakService) {
   return () => keycloakService.init();
 }
@@ -107,7 +110,9 @@ export function kcFactory(keycloakService: KeycloakService) {
     DocumentService,
     DecisionService,
     UserService,
-    CanDeactivateGuard
+    CanDeactivateGuard,
+    // ProjectsApi,
+    // ProjectApi
   ],
   entryComponents: [ConfirmComponent, AddEditUserComponent],
   bootstrap: [AppComponent]

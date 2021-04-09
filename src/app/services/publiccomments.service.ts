@@ -44,15 +44,12 @@ export class PublicCommentService {
    * @returns {Observable<PublicComment[]>}
    * @memberof ProjectService
    */
-   getPublicCommentsByProjectId(projectId: string): Observable<PublicComment[]> {
-
-
+   getPublicCommentsByProjectId(projectId: number): Observable<PublicComment[]> {
     let observables: Observable<PublicComment[]>;
 
+    observables = this.api.getPublicCommentsByProjectId(projectId.toString());
 
-      observables = this.api.getPublicCommentsByProjectId(projectId);
-
-      return observables;
+    return observables;
   }
 
 }

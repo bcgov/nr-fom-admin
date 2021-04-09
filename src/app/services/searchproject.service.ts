@@ -9,7 +9,8 @@ import { Observable} from 'rxjs';
 import { ProjectService } from 'app/services/project.service';
 // import { SearchResults } from 'app/models/search';
 // import { Application } from 'app/models/application';
-import { Project } from 'app/models/project';
+// import { Project } from 'app/models/project';
+import { ProjectDto }  from '../api-client/typescript-rxjs';
 
 // import { StatusCodes } from 'app/utils/constants/application';
 // import { ConstantUtils, CodeType } from 'app/utils/constants/constantUtils';
@@ -27,10 +28,8 @@ export class SearchProjectService {
    * @returns {Observable<Project[]>}
    * @memberof SearchProjectService
    */
-  getProjects(): Observable<Project[]> {
-    const projects = this.projectService.getAll();
-
-    return projects;
+  getProjects(): Observable<ProjectDto[]> {
+    return this.projectService.getAll();
   }
 
   /**
@@ -39,10 +38,8 @@ export class SearchProjectService {
    * @returns {Observable<Project[]>}
    * @memberof SearchProjectService
    */
-   getProjectsByFspId(fspId: string): Observable<Project[]> {
-    const projects = this.projectService.getProjectsByFspId(fspId);
-
-    return projects;
+   getProjectsByFspId(fspId: string): Observable<ProjectDto[]> {
+    return this.projectService.getProjectsByFspId(parseInt(fspId));
   }
 
 

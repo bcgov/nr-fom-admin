@@ -5,24 +5,24 @@ import { WorkflowStateCode } from './workflowstatecode';
 
 export class Project {
   // Database fields
-  id: string;
+  id: number;
   revisionCount: number;
-  createTimestamp: Date = null;
+  createTimestamp: string | Date = null;
   createUser: string;
-  updateTimestamp: Date = null;
+  updateTimestamp: string | Date = null;
   updateUser: string;
   name: string;
   description: string;
-  commentingOpenDate:  Date = null;
-  commentingClosedDate:  Date = null;
+  commentingOpenDate: string | Date = null;
+  commentingClosedDate: string | Date = null;
   fspId: number;
   districtId: number;
-  forestClientId: string;
-  workflow_state_code: string;
-  district: District;
-  forestClient: ForestClient;
-  workflowStateCode: WorkflowStateCode;
-  publicComments: PublicComment[] = [];
+  forestClientId?: string;
+  // workflow_state_code: string;
+  district?: District;
+  forestClient?: ForestClient;
+  workflowStateCode?: WorkflowStateCode;
+  publicComments?: PublicComment[] = [];
 
 
   constructor(obj?: any) {
@@ -40,7 +40,7 @@ export class Project {
     this.fspId = (obj && obj.fspId) || null;
     this.districtId = (obj && obj.districtId) || null; // not zero
     this.forestClientId = (obj && obj.forestClientId) || null;
-    this.workflow_state_code = (obj && obj.workflow_state_code) || null;
+    // this.workflow_state_code = (obj && obj.workflow_state_code) || null;
     this.district = (obj && obj.district) || null;
     this.forestClient = (obj && obj.forestClient) || null;
     this.workflowStateCode = (obj && obj.workflowStateCode) || null;

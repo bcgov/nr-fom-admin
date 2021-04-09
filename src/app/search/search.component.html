@@ -26,7 +26,7 @@
                 <i class="material-icons">add</i>
                 Create
             </button>
-          </div> 
+          </div>
       </div>
       <div> Add New Forest Operations Map </div>
     </div>
@@ -72,7 +72,7 @@
           <td>
             {{project.commentingOpenDate | date:'mediumDate'}}
           </td>
-          
+
           <td class="actions">
             <div ngbDropdown placement="bottom-right">
               <button ngbDropdownToggle class="btn btn-sm btn-outline-primary" type="button">
@@ -95,10 +95,10 @@
             </div>
           </td>
         </tr>
-        
+
           <td colspan="6">
             <span class="comment-info">
-              <span *ngIf="project.publicComments.length > 0">
+              <span *ngIf="project.publicComments && project.publicComments.length > 0">
                 <strong>
                   <a [routerLink]="['/comments', project.id]">{{ project.publicComments.length }}
                     {{project.publicComments.length === 1 ? 'comment' : 'comments'}}</a>

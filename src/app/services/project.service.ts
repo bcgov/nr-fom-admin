@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-// import {catchError } from 'rxjs/operators';
 
-import { ApiService } from './api';
+// import { Project } from 'app/models/project';
+import {
+  ProjectDto,
+  ProjectsApi as RxJsProjectsApi,
+  ProjectApi as RxJsProjectApi
+} from '../api-client/typescript-rxjs';
 
-import { Project } from 'app/models/project';
-
+import { RxjsAuthInterceptor } from '../api-client/rxjs-auth-interceptor';
 
 
 /**
@@ -16,9 +19,46 @@ import { Project } from 'app/models/project';
  */
 @Injectable()
 export class ProjectService {
+  public clientType: 'rxjs' | 'axios' = 'axios';
+  protected projectsApi: RxJsProjectsApi;
+  protected projectApi: RxJsProjectApi;
+
   constructor(
-    private api: ApiService
-  ) {}
+  // private projectsApi: RxJsProjectsApi,
+  // private projectApi: RxJsProjectApi
+  ) {
+    /* if (ProjectService.clientType === 'axios') {
+      this.projectsApi = new AxiosProjectsApi({
+        isJsonMime(mime: string): boolean {
+          return false;
+        },
+        basePath: 'http://localhost:8081'
+      });
+    } else if (ProjectService.clientType === 'rxjs') {
+      this.projectsApi = new RxJsProjectsApi();
+    } */
+
+    // @ts-ignore
+    /* this.projectsApi = new AxiosProjectsApi({
+      basePath: 'http://localhost:8081'
+    }); */
+
+    try {
+      // @ts-ignore
+      this.projectsApi = new RxJsProjectsApi({...{
+        basePath: 'http://localhost:8081',
+        middleware: []
+      }, ...RxjsAuthInterceptor.Instance });
+
+      // @ts-ignore
+      this.projectApi = new RxJsProjectApi({...{
+          basePath: 'http://localhost:8081',
+          middleware: []
+        }, ...RxjsAuthInterceptor.Instance });
+    } catch (err)  {
+      console.log(err);
+    }
+  }
 
   /**
    * Get all projects.
@@ -26,14 +66,8 @@ export class ProjectService {
    * @returns {Observable<Project[]>}
    * @memberof ProjectService
    */
-  getAll(): Observable<Project[]> {
-
-    let observables: Observable<Project[]>;
-
-
-      observables = this.api.getProjects();
-
-      return observables;
+  getAll(): Observable<ProjectDto[]> {
+    return this.projectsApi.projectsControllerFindAll();
   }
 
   /**
@@ -42,15 +76,9 @@ export class ProjectService {
    * @returns {Observable<Project[]>}
    * @memberof ProjectService
    */
-    getProjectsByFspId(fspId: string): Observable<Project[]> {
-
-    let observables: Observable<Project[]>;
-
-    observables = this.api.getProjectsByFspId(fspId);
-
-    return observables;
-
-    }
+  getProjectsByFspId(fspId: number): Observable<ProjectDto[]> {
+    return this.projectsApi.projectsControllerFindByFspId({ id: fspId });
+  }
 
   /**
    * Get project by id.
@@ -58,12 +86,7 @@ export class ProjectService {
    * @returns {Observable<Project>}
    * @memberof ProjectService
    */
-    getProjectById(projectId: string): Observable<Project> {
-
-    let observable: Observable<Project>;
-
-    observable = this.api.getProjectById(projectId);
-
-    return observable;
+  getProjectById(projectId: number): Observable<ProjectDto> {
+    return this.projectApi.projectControllerFindOne({ id: projectId });
   }
 }

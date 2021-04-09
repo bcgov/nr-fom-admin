@@ -7,16 +7,20 @@ import { Observable} from 'rxjs';
 // import { ApplicationService } from 'app/services/application.service';
 import { ProjectService } from 'app/services/project.service';
 // import { Application } from 'app/models/application';
-import { Project } from 'app/models/project';
+// import { Project } from 'app/models/project';
 // import { StatusCodes } from 'app/utils/constants/application';
 // import { ConstantUtils, CodeType } from 'app/utils/constants/constantUtils';
 
+import {
+  ProjectDto
+} from '../api-client/typescript-rxjs';
+
 @Injectable()
-export class ApplicationDetailResolver implements Resolve<Project> {
+export class ApplicationDetailResolver implements Resolve<ProjectDto> {
   constructor(private projectService: ProjectService) {}
 
-  resolve(route: ActivatedRouteSnapshot): Observable<Project> {
-    const projectId = route.paramMap.get('appId');
+  resolve(route: ActivatedRouteSnapshot): Observable<ProjectDto> {
+    const projectId = parseInt(route.paramMap.get('appId'));
     console.log('valued projectId: ' + projectId);
 
     // if (appId === '0') {
