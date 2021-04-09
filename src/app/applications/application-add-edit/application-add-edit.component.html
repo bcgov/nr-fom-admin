@@ -58,7 +58,7 @@
             <label>Start Date</label>
             <div class="input-group" [ngClass]="{'is-invalid': isSubmitSaveClicked && !isValidDate(startDate)}">
               <input class="form-control" placeholder="yyyy-mm-dd" name="date1" ngbDatepicker #date1="ngbDatepicker"
-                [firstDayOfWeek]="7" navigation="arrows" 
+                [firstDayOfWeek]="7" navigation="arrows"
                 (click)="date1.close(); date2.close();" required aria-required="true">
                 <!-- <input class="form-control" placeholder="yyyy-mm-dd" name="date1" ngbDatepicker #date1="ngbDatepicker"
                 [firstDayOfWeek]="7" navigation="arrows" [(ngModel)]="startDate" (ngModelChange)="onStartDateChg($event)"
@@ -83,7 +83,7 @@
             <label>End Date</label>
             <div class="input-group" [ngClass]="{'is-invalid': isSubmitSaveClicked && !isValidDate(endDate)}">
               <input class="form-control" placeholder="yyyy-mm-dd" name="date2" ngbDatepicker #date2="ngbDatepicker"
-                [firstDayOfWeek]="7" navigation="arrows" 
+                [firstDayOfWeek]="7" navigation="arrows"
                 (click)="date1.close(); date2.close();" required aria-required="true">
                 <!-- <input class="form-control" placeholder="yyyy-mm-dd" name="date2" ngbDatepicker #date2="ngbDatepicker"
                 [firstDayOfWeek]="7" navigation="arrows" [(ngModel)]="endDate" (ngModelChange)="onEndDateChg($event)"
@@ -141,7 +141,7 @@
         </div>
         <div class="form-group mb-0">
           <legend>FOM Supporting Documents</legend>
-          <ul class="doc-list mb-3" *ngIf="application.meta.documents?.length > 0">
+          <ul class="doc-list mb-3" *ngIf="application.meta && application.meta.documents && application.meta.documents?.length > 0">
               <li *ngFor="let doc of application.meta.documents">
                 <span class="cell icon">
                   <i class="material-icons">insert_drive_file</i>
@@ -156,7 +156,7 @@
                 </span>
               </li>
           </ul>
-          <app-file-upload [fileExt]="['jpg', 'jpeg', 'png', 'pdf', 'tiff']" [maxFiles]="0" [maxSize]="10" [showList]="false" [files]="applicationFiles"
+          <app-file-upload *ngIf="application.meta && application.meta.documents" [fileExt]="['jpg', 'jpeg', 'png', 'pdf', 'tiff']" [maxFiles]="0" [maxSize]="10" [showList]="false" [files]="applicationFiles"
             (filesChange)="addDocuments($event, application.meta.documents); applicationFiles = []"></app-file-upload>
         </div>
       </fieldset>
@@ -165,7 +165,7 @@
         <!-- <legend class="mb-3">Initial Public Notice</legend> -->
         <legend>Initial Public Notice</legend>
         <!-- <div class="mb-4" *ngIf="application.meta.decision"> -->
-        <div class="mb-4" *ngIf="application.meta.decision">
+        <div class="mb-4" *ngIf="application.meta && application.meta.decision">
           <div class="form-group">
             <ul class="doc-list mb-3" *ngIf="application.meta.decision.meta.documents?.length > 0">
               <li *ngFor="let doc of application.meta.decision.meta.documents">
