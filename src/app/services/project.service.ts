@@ -24,37 +24,24 @@ export class ProjectService {
   protected projectApi: RxJsProjectApi;
 
   constructor(
+  // TODO: Set up DI for these APIs
   // private projectsApi: RxJsProjectsApi,
   // private projectApi: RxJsProjectApi
   ) {
-    /* if (ProjectService.clientType === 'axios') {
-      this.projectsApi = new AxiosProjectsApi({
-        isJsonMime(mime: string): boolean {
-          return false;
-        },
-        basePath: 'http://localhost:8081'
-      });
-    } else if (ProjectService.clientType === 'rxjs') {
-      this.projectsApi = new RxJsProjectsApi();
-    } */
-
-    // @ts-ignore
-    /* this.projectsApi = new AxiosProjectsApi({
-      basePath: 'http://localhost:8081'
-    }); */
-
     try {
       // @ts-ignore
       this.projectsApi = new RxJsProjectsApi({...{
         basePath: 'http://localhost:8081',
+        // TODO: Hook up middleware
         middleware: []
       }, ...RxjsAuthInterceptor.Instance });
 
       // @ts-ignore
       this.projectApi = new RxJsProjectApi({...{
-          basePath: 'http://localhost:8081',
-          middleware: []
-        }, ...RxjsAuthInterceptor.Instance });
+        basePath: 'http://localhost:8081',
+        // TODO: Hook up middleware
+        middleware: []
+      }, ...RxjsAuthInterceptor.Instance });
     } catch (err)  {
       console.log(err);
     }
