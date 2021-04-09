@@ -244,7 +244,7 @@ export class ApiService {
  getProjectsByFspId(fspId: string): Observable<Project[]> {
   console.log('calling the API');
   const queryString =
-    'project/byfspid/' + fspId;
+    'projects/byFspId/' + fspId;
 
   return this.http.get<Project[]>(`${this.pathAPI}/${queryString}`, {});
 }
@@ -272,7 +272,7 @@ export class ApiService {
  */
  getPublicCommentsByProjectId(projectId: string): Observable<PublicComment[]> {
   const queryString =
-    'public-comment/byprojectid/' + projectId;
+    'public-comments/pyProjectId/' + projectId;
 
   return this.http.get<PublicComment[]>(`${this.pathAPI}/${queryString}`, {});
 }

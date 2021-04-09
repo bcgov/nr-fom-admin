@@ -17,6 +17,7 @@ import { DistrictService } from 'app/services/district.service';
 import { ForestClientService } from 'app/services/forestclient.service';
 import { WorkflowStateCodeService } from 'app/services/workflowstatecode.service';
 import { PublicCommentService } from 'app/services/publiccomments.service';
+import { ProjectsApi }  from '../api-client';
 
 @Component({
   selector: 'app-search',
@@ -40,7 +41,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     private location: Location,
     public snackBar: MatSnackBar,
     public searchService: SearchService, // used in template
-    public searcProjecthService: SearchProjectService,
+    public searchProjectService: SearchProjectService,
     public searchDistrictService: DistrictService,
     public searchforestClientService: ForestClientService,
     public searchWorkflowStateCodeService: WorkflowStateCodeService,
@@ -62,35 +63,43 @@ export class SearchComponent implements OnInit, OnDestroy {
     });
   }
 
-  private doSearch() {
+  private async doSearch() {
     this.searching = true;
     console.log('doSearch: ' + this.keywords);
 
     this.projects = [];
     this.count = 0;
 
-    this.searcProjecthService.getProjectsByFspId(this.keywords)
-    .subscribe(
-        projects => {
-          projects.forEach(project => {
-            this.projects.push(new Project(project));
-          });
-          this.count = this.projects.length;
-          this.fetchingAllPublicComments();
-        },
-        error => {
-          console.log('error =', error);
+    this.searching = false;
+    this.ranSearch = true;
 
-          this.searching = false;
-          this.ranSearch = true;
+    // @ts-ignore
+    const api = new ProjectsApi({
+      basePath: 'http://localhost:8081'
+    });
 
-          this.snackBarRef = this.snackBar.open('Error searching foms ...', 'RETRY');
-          this.snackBarRef.onAction().subscribe(() => this.onSubmit());
-        },
-        () => {
-          this.searching = false;
-          this.ranSearch = true;
-        });
+    try {
+      const response = await api.projectsControllerFindByFspId(parseInt(this.keywords));
+      // @ts-ignore
+      const projects = response.data as Project[];
+      projects.forEach(project => {
+        this.projects.push(new Project(project));
+      });
+      this.count = this.projects.length;
+      this.fetchingAllPublicComments();
+
+    } catch (err) {
+      console.log('error =', err);
+
+      this.searching = false;
+      this.ranSearch = true;
+
+      this.snackBarRef = this.snackBar.open('Error searching foms ...', 'RETRY');
+      this.snackBarRef.onAction().subscribe(() => this.onSubmit());
+    }
+
+    this.searching = false;
+    this.ranSearch = true;
 
     // this.fetchingAllDistricts();
     // this.fetchingAllForestClients();
