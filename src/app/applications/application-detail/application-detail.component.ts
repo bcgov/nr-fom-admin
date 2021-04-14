@@ -2,7 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatSnackBarRef, SimpleSnackBar, MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DialogService } from 'ng2-bootstrap-modal';
+// @ts-ignore
 import { Subject, of, throwError } from 'rxjs';
+// @ts-ignore
 import { takeUntil, concat, mergeMap } from 'rxjs/operators';
 
 import { ConfirmComponent } from 'app/confirm/confirm.component';
@@ -13,10 +15,10 @@ import { CommentPeriodService } from 'app/services/commentperiod.service';
 import { DecisionService } from 'app/services/decision.service';
 import { DocumentService } from 'app/services/document.service';
 import { FeatureService } from 'app/services/feature.service';
-import { Project } from 'app/models/project';
 import { PublicCommentService } from 'app/services/publiccomments.service';
-import { PublicComment} from 'app/models/publiccomment';
+import { PublicComment } from 'app/models/publiccomment';
 
+import { ProjectDto } from 'app/api-client/typescript-rxjs/models/ProjectDto';
 
 @Component({
   selector: 'app-application-detail',
@@ -28,11 +30,11 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
   public isUnpublishing = false;
   public isDeleting = false;
   public isRefreshing = false;
-  public application: Application = null;
+  public application: ProjectDto = null;
   public publicComment: PublicComment = null;
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
-  public project: Project = null;
+  public project: ProjectDto = null;
   public isProjectActive = false;
   public numberComments = null;
 
@@ -52,14 +54,14 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // get data from route resolver
-    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: Project }) => {
+    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: ProjectDto }) => {
       if (data.application) {
         this.project = data.application;
-        if (this.project.workflowStateCode.code === 'INITIAL') {
+        if (this.project.workflowState['code'] === 'INITIAL') {
           this.isProjectActive = true;
         }
         this.fetchingAllPublicComments();
-        console.log('fom detail: ' + this.project.workflowStateCode.code);
+        console.log('fom detail: ' + this.project.workflowStateCode['code']);
       } else {
         alert("Uh-oh, couldn't load fom");
         // application not found --> navigate back to search
@@ -79,7 +81,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
   }
 
   public deleteApplication() {
-    if (this.application.meta.numComments > 0) {
+    /* if (this.application.meta.numComments > 0) {
       this.dialogService
         .addDialog(
           ConfirmComponent,
@@ -111,7 +113,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
         )
         .pipe(takeUntil(this.ngUnsubscribe));
       return;
-    }
+    } */
 
     this.dialogService
       .addDialog(
@@ -138,6 +140,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
 
     let observables = of(null);
 
+    /*
     // delete comment period
     if (this.application.meta.currentPeriod) {
       observables = observables.pipe(concat(this.commentPeriodService.delete(this.application.meta.currentPeriod)));
@@ -168,6 +171,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
     // delete application
     // do this last in case of prior failures
     observables = observables.pipe(concat(this.applicationService.delete(this.application)));
+    */
 
     observables.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
       () => {
@@ -196,7 +200,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
    */
   public refreshApplication() {
     this.isRefreshing = true;
-    this.api
+    /* this.api
       .refreshApplication(this.application)
       .pipe(
         // Now that the application is refreshed, fetch it with all of its new data and features.
@@ -232,7 +236,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
           this.isRefreshing = false;
           this.snackBarRef = this.snackBar.open('Application refreshed...', null, { duration: 2000 });
         }
-      );
+      ); */
   }
 
   public publishApplication() {
@@ -279,7 +283,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
     let observables = of(null);
 
     // publish comment period
-    if (this.application.meta.currentPeriod && !this.application.meta.currentPeriod.meta.isPublished) {
+    /* if (this.application.meta.currentPeriod && !this.application.meta.currentPeriod.meta.isPublished) {
       observables = observables.pipe(concat(this.commentPeriodService.publish(this.application.meta.currentPeriod)));
     }
 
@@ -316,7 +320,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
     if (!this.application.publishDate) {
       this.application.publishDate = new Date(); // now
       observables = observables.pipe(concat(this.applicationService.save(this.application)));
-    }
+    } */
 
     observables.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
       () => {
@@ -333,8 +337,8 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
         // onCompleted
         this.snackBarRef = this.snackBar.open('Application published...', null, { duration: 2000 });
         // reload all data
-        this.applicationService
-          .getById(this.application._id, {
+        /* this.applicationService
+          .getById(this.application.id, {
             getFeatures: true,
             getDocuments: true,
             getCurrentPeriod: true,
@@ -342,7 +346,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
           })
           .pipe(takeUntil(this.ngUnsubscribe))
           .subscribe(
-            (application: Application) => {
+            (application: ProjectDto) => {
               this.isPublishing = false;
               this.application = application;
             },
@@ -351,7 +355,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
               console.log('error =', error);
               alert("Uh-oh, couldn't reload application");
             }
-          );
+          ); */
       }
     );
   }
@@ -361,6 +365,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
 
     let observables = of(null);
 
+    /*
     // unpublish comment period
     if (this.application.meta.currentPeriod && this.application.meta.currentPeriod.meta.isPublished) {
       observables = observables.pipe(concat(this.commentPeriodService.unPublish(this.application.meta.currentPeriod)));
@@ -394,6 +399,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
     if (this.application.meta.isPublished) {
       observables = observables.pipe(concat(this.applicationService.unPublish(this.application)));
     }
+    */
 
     observables.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
       () => {
@@ -411,7 +417,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
         this.snackBarRef = this.snackBar.open('Application unpublished...', null, { duration: 2000 });
         // reload all data
         this.applicationService
-          .getById(this.application._id, {
+          .getById(this.application.id, {
             getFeatures: true,
             getDocuments: true,
             getCurrentPeriod: true,
@@ -419,9 +425,10 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
           })
           .pipe(takeUntil(this.ngUnsubscribe))
           .subscribe(
+            // @ts-ignore
             (application: Application) => {
               this.isUnpublishing = false;
-              this.application = application;
+              // this.application = application;
             },
             error => {
               this.isUnpublishing = false;

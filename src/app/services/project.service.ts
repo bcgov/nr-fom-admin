@@ -31,14 +31,14 @@ export class ProjectService {
     try {
       // @ts-ignore
       this.projectsApi = new RxJsProjectsApi({...{
-        basePath: 'http://localhost:8081',
+        basePath: 'http://localhost:3333',
         // TODO: Hook up middleware
         middleware: []
       }, ...RxjsAuthInterceptor.Instance });
 
       // @ts-ignore
       this.projectApi = new RxJsProjectApi({...{
-        basePath: 'http://localhost:8081',
+        basePath: 'http://localhost:3333',
         // TODO: Hook up middleware
         middleware: []
       }, ...RxjsAuthInterceptor.Instance });

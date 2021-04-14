@@ -150,7 +150,7 @@ export class ApiService {
     switch (hostname) {
       case 'localhost':
         // Local
-        this.pathAPI = 'http://localhost:8081/api';
+        this.pathAPI = 'http://localhost:3333/api';
         this.env = 'local';
         break;
 
@@ -397,7 +397,7 @@ export class ApiService {
   }
 
   // NB: returns array with 1 element
-  getApplication(id: string): Observable<Application[]> {
+  getApplication(id: number): Observable<Application[]> {
     const fields = [
       'agency',
       'areaHectares',

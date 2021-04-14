@@ -19,7 +19,7 @@ import { ForestClientService } from 'app/services/forestclient.service';
 import { WorkflowStateCodeService } from 'app/services/workflowstatecode.service';
 import { PublicCommentService } from 'app/services/publiccomments.service';
 
-// import { ProjectDto } from '../api-client/typescript-rxjs';
+import { ProjectDto } from '../api-client/typescript-rxjs';
 
 @Component({
   selector: 'app-search',
@@ -31,7 +31,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   private paramMap: ParamMap = null;
 
   public keywords: string;
-  public projects: Project[] = [];
+  public projects: ProjectDto[] = [];
   public count = 0; // used in template
 
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
@@ -209,9 +209,9 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 
   public onImport() {
-    if (true) {
-      this.router.navigate(['/a', 0, 'edit']);
-    } else {
+    try {
+      this.router.navigate(['/a', 'create']);
+    } catch (err) {
       // console.log('error, invalid application =', application);
       this.snackBarRef = this.snackBar.open('Error creating application ...', null, { duration: 3000 });
     }

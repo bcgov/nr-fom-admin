@@ -1,5 +1,5 @@
-<div class="top-container" *ngIf="project">
-  <div class="container">
+<div class="top-container">
+  <div class="container" *ngIf="project">
     <div class="title-container">
       <div class="title-container__title">
         <h1>FOM ID: {{project.id}}</h1>
@@ -67,18 +67,18 @@
   </div>
 </div>
 
-<div class="bottom-container" *ngIf="project">
+<div class="bottom-container">
   <div class="container">
-    <ngb-alert type="primary" [dismissible]="false" *ngIf="isProjectActive">
+    <ngb-alert type="primary" [dismissible]="true">
       <div class="alert-contents">
         <i class="material-icons">warning</i>
         <div class="alert-msg">
           <!-- This FOM will be visible on the public website until {{application.meta.retireDate | date:'longDate'}}. -->
-          This FOM will be visible on the public website until Some date in the future TBD.
+          This FOM will be visible on the public website until some date in the future TBD.
         </div>
       </div>
     </ngb-alert>
-    <ngb-alert type="warning" [dismissible]="false" *ngIf="!isProjectActive">
+    <ngb-alert type="warning" [dismissible]="true">
       <div class="alert-contents">
         <i class="material-icons">warning</i>
         <div class="alert-msg">
@@ -103,7 +103,7 @@
               <ng-template ngbTabContent>
                 <section>
                   <h2>Name</h2>
-                  <p class="mb-0" [innerHTML]="project.name ? (project.name | titlecase) : '<em>No Applicant on this File</em>'"></p>
+                  <p class="mb-0" [innerHTML]="project.name ? (project.name | titlecase) : '<em>No applicant on this file</em>'"></p>
                 </section>
                 <section>
                   <h2>Description</h2>
@@ -112,13 +112,13 @@
                 <section>
                   <h2>Details</h2>
                   <ul class="nv-list">
-                    <li *ngIf="project.forestClient">
+                    <li>
                       <span class="name">Licensee:</span>
-                      <span class="value">{{project.forestClient.name || 'No Applicant on this File'}}</span>
+                      <span class="value">{{project.forestClient ? project.forestClient.name : 'No applicant on this file'}}</span>
                     </li>
-                    <li *ngIf="project.district">
+                    <li>
                       <span class="name">District:</span>
-                      <span class="value">{{project.district.name}}</span>
+                      <span class="value">{{project.district ? project.district.name : 'A district has not been specified'}}</span>
                     </li>
                     <li>
                       <span class="name">Blocks:</span>
@@ -182,34 +182,32 @@
                 Location
               </ng-template>
               <ng-template ngbTabContent>
-                <section>
+                <section *ngIf="application">
                   <app-application-aside [application]="application"></app-application-aside>
                 </section>
-                <section *ngIf="!application.meta.features || application.meta.features.length === 0">
+                <section>
                   <!-- if no features, display Legal Description here -->
                   <!-- otherwise it's displayed in shape section below -->
                   <h2>Legal Description</h2>
-                  <p [innerHTML]="(application.legalDescription | newlines) || '-'"></p>
+                  <p [innerHTML]="(application.description | newlines) || '-'"></p>
                 </section>
-                <section *ngIf="application.meta.features && application.meta.features.length !== 0">
-                  <h2>Geographic Shape Information ({{application.meta.features.length}})</h2>
+                <section>
+                  <h2>Geographic Shape Information</h2>
                   <ul class="shapefile-list">
-                    <li class="interest-id" *ngFor="let shape of application.meta.features">
-                      <span class="title">Shape ID: {{shape.properties.INTRID_SID}}</span>
+                    <li class="interest-id">
+                      <span class="title">Shape ID: TEST</span>
                       <ul class="nv-list">
                         <li>
                           <span class="name">Type / Subtype:</span>
-                          <span class="value">{{application.type || '-'}} / {{application.subtype || '-'}}</span>
+                          <span class="value">-</span>
                         </li>
                         <li>
                           <span class="name">Area (hectares):</span>
-                          <span class="value">
-                            {{shape.properties.TENURE_AREA_IN_HECTARES ? (shape.properties.TENURE_AREA_IN_HECTARES | number:'1.2-2') : '-'}}
-                          </span>
+                          <span class="value"></span>
                         </li>
                         <li>
                           <span class="name">Legal Description:</span>
-                          <span class="value" [innerHTML]="(shape.properties.TENURE_LEGAL_DESCRIPTION | newlines) || '-'"></span>
+                          <span class="value"></span>
                         </li>
                       </ul>
                     </li>
@@ -225,7 +223,7 @@
         <div class="aside-card">
           <h3 class="title">Application Status</h3>
           <div class="body">
-            <div class="app-status">{{project.workflowStateCode.code || '-'}}</div>
+            <div class="app-status">{{project.workflowState && project.workflowState.description ? project.workflowState.description : '-'}}</div>
             <!-- <div class="app-status__date text-muted" *ngIf="application.statusHistoryEffectiveDate"> -->
             <div class="app-status__date text-muted" *ngIf="project.updateTimestamp">
               Last updated on {{project.updateTimestamp | date:'longDate'}}
@@ -243,7 +241,7 @@
             <ul class="nv-list">
               <li>
                 <span class="name">Status:</span>
-                <span class="value">{{project.workflowStateCode.code}}</span>
+                <span class="value">{{project.workflowState && project.workflowState.description}}</span>
               </li>
               <li>
                 <span class="name">Start Date:</span>
@@ -262,10 +260,10 @@
                 <span class="value">Some days in the future TBD</span>
               </li>
             </ul>
-            <div class="btn-container">
+            <div class="btn-container" *ngIf="project">
               <button class="cta-btn btn btn-sm btn-outline-primary" type="button" title="Review comments"
                 [routerLink]="['/comments', project.id]">
-                Review Comments<span *ngIf="numberComments >= 0">&nbsp;({{numberComments}})</span>
+                Review Comments<span>&nbsp;({{numberComments}})</span>
               </button>
             </div>
           </div>
@@ -276,10 +274,10 @@
             <!-- <div *ngIf="!application.meta.decision">
               <p class="mb-0">No decision documents have been added to this application.</p>
             </div> -->
-            <div>Attachement file goes here</div>
-            <!-- <div *ngIf="application.meta.decision">
+            <div>Attachment file goes here</div>
+            <div>
               <ul class="doc-list">
-                <li *ngFor="let doc of application.meta.decision.meta.documents">
+                <li *ngFor="let doc of (project['attachments'] || [])">
                   <span class="cell icon">
                     <i class="material-icons link" (click)="api.openDocument(doc)">
                       insert_drive_file
@@ -296,7 +294,7 @@
                     </button>
                   </span>
                 </li>
-                <li class="no-results" *ngIf="application.meta.decision.meta.documents.length === 0">
+                <li class="no-results" *ngIf="(project['attachments'] || []) === 0">
                   <em>No decision documents</em>
                 </li>
               </ul>
@@ -304,12 +302,11 @@
             <div class="btn-container">
               <button class="cta-btn btn btn-sm btn-outline-primary" type="button" title="Edit fom documents"
                 [routerLink]="['/a', project.id, 'edit']"
-                [disabled]="application.meta.isRetired"
                 fragment="appDecision">
                 Edit FOM Attachments
               </button>
               <span title="You cannot edit the decision of a retired application"></span>
-            </div> -->
+            </div>
           </div>
         </div>
       </div>

@@ -11,9 +11,7 @@ import { ProjectService } from 'app/services/project.service';
 // import { StatusCodes } from 'app/utils/constants/application';
 // import { ConstantUtils, CodeType } from 'app/utils/constants/constantUtils';
 
-import {
-  ProjectDto
-} from '../api-client/typescript-rxjs';
+import { ProjectDto } from '../api-client/typescript-rxjs';
 
 @Injectable()
 export class ApplicationDetailResolver implements Resolve<ProjectDto> {
@@ -23,57 +21,58 @@ export class ApplicationDetailResolver implements Resolve<ProjectDto> {
     const projectId = parseInt(route.paramMap.get('appId'));
     console.log('valued projectId: ' + projectId);
 
-    // if (appId === '0') {
-    //   // create new application
-    //   const application = new Application({
-    //     type: route.queryParamMap.get('type'),
-    //     subtype: route.queryParamMap.get('subtype'),
-    //     status: route.queryParamMap.get('status'),
-    //     reason: route.queryParamMap.get('reason'),
-    //     tenureStage: route.queryParamMap.get('tenureStage'),
-    //     location: route.queryParamMap.get('location'),
-    //     businessUnit: route.queryParamMap.get('businessUnit'),
-    //     cl_file: +route.queryParamMap.get('cl_file'), // NB: unary operator
-    //     tantalisID: +route.queryParamMap.get('tantalisID'), // NB: unary operator
-    //     legalDescription: route.queryParamMap.get('legalDescription'),
-    //     client: route.queryParamMap.get('client'),
-    //     statusHistoryEffectiveDate: route.queryParamMap.get('statusHistoryEffectiveDate')
-    //   });
+    if (isNaN(projectId)) {
+      // create new application
+      /* const application = new Application({
+        type: route.queryParamMap.get('type'),
+        subtype: route.queryParamMap.get('subtype'),
+        status: route.queryParamMap.get('status'),
+        reason: route.queryParamMap.get('reason'),
+        tenureStage: route.queryParamMap.get('tenureStage'),
+        location: route.queryParamMap.get('location'),
+        businessUnit: route.queryParamMap.get('businessUnit'),
+        cl_file: +route.queryParamMap.get('cl_file'), // NB: unary operator
+        tantalisID: +route.queryParamMap.get('tantalisID'), // NB: unary operator
+        legalDescription: route.queryParamMap.get('legalDescription'),
+        client: route.queryParamMap.get('client'),
+        statusHistoryEffectiveDate: route.queryParamMap.get('statusHistoryEffectiveDate')
+      });
 
-    //   // 7-digit CL File number for display
-    //   if (application.cl_file) {
-    //     application.meta.clFile = application.cl_file.toString().padStart(7, '0');
-    //     // TODO
-    //     console.log('app resolver: ' + application.cl_file.toString() );
-    //   }
+      // 7-digit CL File number for display
+      if (application.cl_file) {
+        application.meta.clFile = application.cl_file.toString().padStart(7, '0');
+        // TODO
+        console.log('app resolver: ' + application.cl_file.toString() );
+      }
 
-    //   // derive unique applicants
-    //   if (application.client) {
-    //     const clients = application.client.split(', ');
-    //     application.meta.applicants = _.uniq(clients).join(', ');
-    //   }
+      // derive unique applicants
+      if (application.client) {
+        const clients = application.client.split(', ');
+        application.meta.applicants = _.uniq(clients).join(', ');
+      }
 
-    //   // derive retire date
-    //   if (
-    //     application.statusHistoryEffectiveDate &&
-    //     [
-    //       StatusCodes.DECISION_APPROVED.code,
-    //       StatusCodes.DECISION_NOT_APPROVED.code,
-    //       StatusCodes.ABANDONED.code
-    //     ].includes(ConstantUtils.getCode(CodeType.STATUS, application.status))
-    //   ) {
-    //     application.meta.retireDate = moment(application.statusHistoryEffectiveDate)
-    //       .endOf('day')
-    //       .add(6, 'months')
-    //       .toDate();
-    //     // set flag if retire date is in the past
-    //     application.meta.isRetired = moment(application.meta.retireDate).isBefore();
-    //   }
+      // derive retire date
+      if (
+        application.statusHistoryEffectiveDate &&
+        [
+          StatusCodes.DECISION_APPROVED.code,
+          StatusCodes.DECISION_NOT_APPROVED.code,
+          StatusCodes.ABANDONED.code
+        ].includes(ConstantUtils.getCode(CodeType.STATUS, application.status))
+      ) {
+        application.meta.retireDate = moment(application.statusHistoryEffectiveDate)
+          .endOf('day')
+          .add(6, 'months')
+          .toDate();
+        // set flag if retire date is in the past
+        application.meta.isRetired = moment(application.meta.retireDate).isBefore();
+      }
 
-    //   return of(project);
-    // }
-
-    // view/edit existing application
-    return this.projectService.getProjectById(projectId);
+      return of(project); */
+      return new Observable<ProjectDto>();
+    } else {
+      // view/edit existing application
+      return this.projectService.getProjectById(projectId);
+    }
   }
 }

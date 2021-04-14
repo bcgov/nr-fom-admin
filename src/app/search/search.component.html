@@ -67,7 +67,7 @@
             {{project.createTimestamp| date:'mediumDate'}}
           </td>
           <td>
-            {{project.workflowStateCode.description}}
+            {{project.workflowState && project.workflowState.description ? project.workflowState.description : 'Unknown'}}
           </td>
           <td>
             {{project.commentingOpenDate | date:'mediumDate'}}
@@ -86,6 +86,10 @@
                 <button class="dropdown-item" type="button" [routerLink]="['/a', project.id, 'edit']">
                   <i class="material-icons">edit</i>
                   Edit FOM
+                </button>
+                <button class="dropdown-item" type="button" [routerLink]="['/a', project.id, 'edit']">
+                  <i class="material-icons">public</i>
+                  GeoSpatial Submissions
                 </button>
                 <button class="dropdown-item" type="button" [routerLink]="['/comments', project.id]">
                   <i class="material-icons">mode_comment</i>

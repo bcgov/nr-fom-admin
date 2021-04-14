@@ -179,7 +179,7 @@ export class ApplicationService {
    * @returns {Observable<Application>}
    * @memberof ApplicationService
    */
-  getById(appId: string, params: IGetParameters = null): Observable<Application> {
+  getById(appId: number, params: IGetParameters = null): Observable<Application> {
     // first get just the application
     return this.api.getApplication(appId).pipe(
       mergeMap(apps => {
