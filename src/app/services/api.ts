@@ -540,7 +540,7 @@ export class ApiService {
     return this.http.get<Feature[]>(`${this.pathAPI}/${queryString}`, {});
   }
 
-  getFeaturesByApplicationId(applicationId: string): Observable<Feature[]> {
+  getFeaturesByApplicationId(applicationId: number): Observable<Feature[]> {
     const fields = ['type', 'tags', 'geometry', 'properties', 'isDeleted', 'applicationID'];
     const queryString =
       'feature?isDeleted=false&' +

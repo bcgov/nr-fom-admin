@@ -78,15 +78,14 @@
         </div>
       </div>
     </ngb-alert>
-    <ngb-alert type="warning" [dismissible]="true">
+    <!--<ngb-alert type="warning" [dismissible]="true">
       <div class="alert-contents">
         <i class="material-icons">warning</i>
         <div class="alert-msg">
-          <!-- This application was removed from the public website on {{application.meta.retireDate | date:'longDate'}}. -->
           This FOM was removed from the public website on where does this date come from TBD.
         </div>
       </div>
-    </ngb-alert>
+    </ngb-alert>-->
 
     <div class="row">
       <div class="col-md-8">
@@ -182,16 +181,14 @@
                 Location
               </ng-template>
               <ng-template ngbTabContent>
-                <section *ngIf="application">
-                  <app-application-aside [application]="application"></app-application-aside>
+                <section class="m-3">
+                  <app-application-aside [project]="project"></app-application-aside>
                 </section>
-                <section>
-                  <!-- if no features, display Legal Description here -->
-                  <!-- otherwise it's displayed in shape section below -->
+                <section class="m-3">
                   <h2>Legal Description</h2>
-                  <p [innerHTML]="(application.description | newlines) || '-'"></p>
+                  <p [innerHTML]="(project.description | newlines) || '-'"></p>
                 </section>
-                <section>
+                <section class="m-3">
                   <h2>Geographic Shape Information</h2>
                   <ul class="shapefile-list">
                     <li class="interest-id">
