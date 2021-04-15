@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { MatSnackBarModule, MatSlideToggleModule } from '@angular/material';
+import { MatSnackBarModule} from '@angular/material/snack-bar';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { OrderByPipe } from 'app/pipes/order-by.pipe';
 import { NewlinesPipe } from 'app/pipes/newlines.pipe';
