@@ -28,7 +28,7 @@ class SortKey {
 export class ReviewCommentsComponent implements OnInit, OnDestroy {
   readonly PAGE_SIZE = 20;
 
-  @ViewChild('commentListScrollContainer', { read: ElementRef })
+  @ViewChild('commentListScrollContainer', { static: true })
   public commentListScrollContainer: ElementRef;
 
   readonly sortKeys: SortKey[] = [
@@ -64,7 +64,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-
+    console.log('inside review-compon ngOnInit');
     this.commentListScrollContainer.nativeElement.scrollTop = 0;
     this.comments = commentStubArray;
     this.application = singleApplicationStub;

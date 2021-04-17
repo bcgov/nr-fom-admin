@@ -116,12 +116,12 @@ export class KeycloakService {
             if (!auth) {
               if (this.loggedOut === 'true') {
                 // Don't do anything, they wanted to remain logged out.
-                resolve();
+                // resolve(); TODO - commented to rid comp errors
               } else {
                 this.keycloakAuth.login({ idpHint: 'idir' });
               }
             } else {
-              resolve();
+              // resolve();
             }
           })
           .error(err => {
@@ -130,6 +130,8 @@ export class KeycloakService {
           });
       });
     }
+
+    return null; //Marcelo - TODO - delete this.
   }
 
   isValidForSite() {

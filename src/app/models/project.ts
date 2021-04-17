@@ -1,7 +1,7 @@
 import { District } from './district';
 import { ForestClient } from './forestclient';
 import { PublicComment } from './publiccomment';
-import { WorkflowStateCode } from './workflowstatecode';
+import { WorkflowState } from './workflowstatecode';
 
 export class Project {
   // Database fields
@@ -21,7 +21,7 @@ export class Project {
   workflow_state_code: string;
   district: District;
   forestClient: ForestClient;
-  workflowStateCode: WorkflowStateCode;
+  workflowState: WorkflowState;
   publicComments: PublicComment[] = [];
 
 
@@ -43,7 +43,7 @@ export class Project {
     this.workflow_state_code = (obj && obj.workflow_state_code) || null;
     this.district = (obj && obj.district) || null;
     this.forestClient = (obj && obj.forestClient) || null;
-    this.workflowStateCode = (obj && obj.workflowStateCode) || null;
+    this.workflowState = (obj && obj.workflowState) || null;
     // this.publicComments = (obj && obj.publicComments) || null;
     this.publicComments = new Array<PublicComment>();
 

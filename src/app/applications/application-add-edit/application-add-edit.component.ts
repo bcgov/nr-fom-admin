@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
 import { NgForm } from '@angular/forms';
 // import { Location } from '@angular/common';
-import { MatSnackBarRef, SimpleSnackBar, MatSnackBar } from '@angular/material';
+import { MatSnackBarRef, SimpleSnackBar, MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { DialogService } from 'ng2-bootstrap-modal';
@@ -98,7 +98,8 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
         ConfirmComponent,
         {
           title: 'Unsaved Changes',
-          message: 'Click OK to discard your changes or Cancel to return to the application.'
+          message: 'Click OK to discard your changes or Cancel to return to the application.',
+          okOnly: true // TODO - added this to remove compilation errors but I don't really know what it means
         },
         {
           backdropColor: 'rgba(0, 0, 0, 0.5)'

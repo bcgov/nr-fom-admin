@@ -1,4 +1,4 @@
-export class WorkflowStateCode {
+export class WorkflowState {
 
     code: string;
     description: string;

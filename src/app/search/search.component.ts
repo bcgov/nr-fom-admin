@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MatSnackBarRef, SimpleSnackBar, MatSnackBar } from '@angular/material';
+import { MatSnackBarRef, SimpleSnackBar, MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute, Params, ParamMap } from '@angular/router';
 import { Location } from '@angular/common';
 import { Subject } from 'rxjs';
