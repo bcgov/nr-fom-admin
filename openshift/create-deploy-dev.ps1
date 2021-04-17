@@ -1,14 +1,16 @@
-Set-Variable -Name "name" -Value "admin"
-Set-Variable -Name "env" -Value "dev"
 
-# Potentially saw interference between these deletes so run them together.
-Set-Variable -Name "tag" -Value "demo"
-oc delete all,NetworkPolicy -n a4b31c-$env -l template=fom-$name-deploy,tag=$tag
-Set-Variable -Name "tag" -Value "main"
-oc delete all,NetworkPolicy -n a4b31c-$env -l template=fom-$name-deploy,tag=$tag
+function CreateAdminFrontEnd {
+    param ($ApiVersion, $Suffix, $Env)
 
-Set-Variable -Name "tag" -Value "demo"
-oc process -f fom-$name-deploy.yml -p ENV=$env -p TAG=$tag -p HOSTNAME="nr-fom-$name-$tag-$env" | oc create -n a4b31c-$env -f -
+    Write-Output "Create Admin front-end for suffix $Suffix and env $Env using version $ApiVersion ..."
 
-Set-Variable -Name "tag" -Value "main"
-oc process -f fom-$name-deploy.yml -p ENV=$env -p TAG=$tag -p HOSTNAME="nr-fom-$name-$tag-$env" | oc create -n a4b31c-$env -f -
+    Write-Output "Deleting existing resources..."
+    oc delete all,NetworkPolicy -n a4b31c-$Env -l template=fom-admin-deploy,tag=$Suffix
+
+    Write-Output "Creating admin front-end..."
+    oc process -f fom-admin-deploy.yml -p ENV=$Env -p TAG=$Suffix -p HOSTNAME="nr-fom-admin-$Suffix-$Env" -p IMAGE_STREAM_VERSION=$ApiVersion | oc create -n a4b31c-$Env -f -
+}
+
+CreateAdminFrontEnd -Suffix "demo" -Env "dev" -ApiVersion "demo" 
+CreateAdminFrontEnd -Suffix "main" -Env "dev" -ApiVersion "main" 
+CreateAdminFrontEnd -Suffix "working" -Env "dev" -ApiVersion "dev" 
