@@ -110,8 +110,10 @@ objects:
           containers:
             - name: app
               # Supply a space to image:, will use settings in ImageChange trigger.
-              image:  
+              image: " " 
               env:
+                - name: FOM_ENV
+                  value: ${ENV}
                 - name: PORT
                   value: '${PORT}'
               resources:
