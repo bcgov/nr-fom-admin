@@ -15,5 +15,5 @@ app.listen(port, () => {
 
 //Any routes will be redirected to the angular app
 app.get('*', function(req, res) {
-    res.sendFile(path.join(__dirname, 'nr-fom-admin/dist/index.html'));
+    res.sendFile(path.join(__dirname, 'nr-fom-admin/dist/admin/index.html'));
 });
