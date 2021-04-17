@@ -150,13 +150,13 @@ export class ApiService {
     switch (hostname) {
       case 'localhost':
         // Local
-        this.pathAPI = 'http://localhost:8081/api';
+        this.pathAPI = 'http://localhost:3333/api';
         this.env = 'local';
         break;
 
-      case 'nr-fom-dev.pathfinder.gov.bc.ca':
+      case 'nr-fom-admin-working-dev.apps.silver.devops.gov.bc.ca/':
         // Dev
-        this.pathAPI = 'https://nr-fom-dev.pathfinder.gov.bc.ca/api';
+        this.pathAPI = 'https://nr-fom-api-working-dev.apps.silver.devops.gov.bc.ca/api';
         this.env = 'dev';
         break;
 
