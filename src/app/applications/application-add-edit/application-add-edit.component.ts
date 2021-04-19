@@ -100,7 +100,8 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
         ConfirmComponent,
         {
           title: 'Unsaved Changes',
-          message: 'Click OK to discard your changes or Cancel to return to the application.'
+          message: 'Click OK to discard your changes or Cancel to return to the application.',
+          okOnly: true // TODO - added this to remove compilation errors but I don't really know what it means
         },
         {
           backdropColor: 'rgba(0, 0, 0, 0.5)'

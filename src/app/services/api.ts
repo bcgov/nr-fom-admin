@@ -381,7 +381,7 @@ export class ApiService {
   }
 
   // NB: returns array with 1 element
-  getApplication(id: number): Observable<Application[]> {
+  getApplication(id: string): Observable<Application[]> {
     const fields = [
       'agency',
       'areaHectares',
@@ -524,7 +524,7 @@ export class ApiService {
     return this.http.get<Feature[]>(`${this.pathAPI}/${queryString}`, {});
   }
 
-  getFeaturesByApplicationId(applicationId: number): Observable<Feature[]> {
+  getFeaturesByApplicationId(applicationId: string): Observable<Feature[]> {
     const fields = ['type', 'tags', 'geometry', 'properties', 'isDeleted', 'applicationID'];
     const queryString =
       'feature?isDeleted=false&' +
