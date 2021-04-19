@@ -90,7 +90,8 @@ export class HeaderComponent implements OnInit {
         this.jwt.username === 'admin'
       );
     }
-    return null; //Marcelo - TODO remove
+
+    return null;
   }
 
   navigateToLogout() {

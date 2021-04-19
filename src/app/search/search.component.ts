@@ -13,10 +13,13 @@ import { ConstantUtils, CodeType } from 'app/utils/constants/constantUtils';
 import { StatusCodes, ReasonCodes } from 'app/utils/constants/application';
 import { Project } from 'app/models/project';
 
+// Testing fetching Districts
 import { DistrictService } from 'app/services/district.service';
 import { ForestClientService } from 'app/services/forestclient.service';
 import { WorkflowStateCodeService } from 'app/services/workflowstatecode.service';
 import { PublicCommentService } from 'app/services/publiccomments.service';
+
+import { ProjectDto } from '../api-client/typescript-rxjs';
 
 @Component({
   selector: 'app-search',
@@ -28,7 +31,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   private paramMap: ParamMap = null;
 
   public keywords: string;
-  public projects: Project[] = [];
+  public projects: ProjectDto[] = [];
   public count = 0; // used in template
 
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
@@ -37,16 +40,16 @@ export class SearchComponent implements OnInit, OnDestroy {
   public ranSearch = false;
 
   constructor(
-    private location: Location,
-    public snackBar: MatSnackBar,
-    public searchService: SearchService, // used in template
-    public searcProjecthService: SearchProjectService,
-    public searchDistrictService: DistrictService,
-    public searchforestClientService: ForestClientService,
-    public searchWorkflowStateCodeService: WorkflowStateCodeService,
-    public searchPublicCommentService: PublicCommentService,
-    private router: Router,
-    private route: ActivatedRoute
+  private location: Location,
+  public snackBar: MatSnackBar,
+  public searchService: SearchService, // used in template
+  public searchProjectService: SearchProjectService,
+  public searchDistrictService: DistrictService,
+  public searchForestClientService: ForestClientService,
+  public searchWorkflowStateCodeService: WorkflowStateCodeService,
+  public searchPublicCommentService: PublicCommentService,
+  private router: Router,
+  private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
@@ -69,48 +72,33 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.projects = [];
     this.count = 0;
 
-    this.searcProjecthService.getProjectsByFspId(this.keywords)
+    this.searchProjectService.getProjectsByFspId(this.keywords)
     .subscribe(
-        projects => {
-          projects.forEach(project => {
-            this.projects.push(new Project(project));
-          });
-          this.count = this.projects.length;
-          this.fetchingAllPublicComments();
-        },
-        error => {
-          console.log('error =', error);
+    projects => {
+      projects.forEach(project => {
+        // @ts-ignore
+        this.projects.push(project as Project);
+      });
+      this.count = this.projects.length;
+    },
+    error => {
+      console.log('error =', error);
 
-          this.searching = false;
-          this.ranSearch = true;
+      this.searching = false;
+      this.ranSearch = true;
 
-          this.snackBarRef = this.snackBar.open('Error searching foms ...', 'RETRY');
-          this.snackBarRef.onAction().subscribe(() => this.onSubmit());
-        },
-        () => {
-          this.searching = false;
-          this.ranSearch = true;
-        });
+      this.snackBarRef = this.snackBar.open('Error searching foms ...', 'RETRY');
+      this.snackBarRef.onAction().subscribe(() => this.onSubmit());
+    },
+    () => {
+      this.searching = false;
+      this.ranSearch = true;
+    });
 
     // this.fetchingAllDistricts();
     // this.fetchingAllForestClients();
     // this.fetchingAllWorkflowStateCodes();
-  }
-
-  private fetchingAllPublicComments() {
-    this.projects.forEach(project => {
-    this.searchPublicCommentService.getPublicCommentsByProjectId( project.id)
-    .subscribe(
-      publicComments => {
-        publicComments.forEach(publicComment => {
-            project.publicComments.push(publicComment);
-        });
-
-      },
-      error => {
-        console.log('error =', error);
-      });
-    });
+    // this.fetchingAllPublicComments();
   }
 
   // private fetchingAllDistricts() {
@@ -133,7 +121,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   // }
 
   // private fetchingAllForestClients() {
-  //   this.searchforestClientService.getAll()
+  //   this.searchForestClientService.getAll()
   //   .subscribe(
   //     forestClients => {
   //       forestClients.forEach(forestClient => {
@@ -158,6 +146,25 @@ export class SearchComponent implements OnInit, OnDestroy {
   //       workflowStateCodes.forEach(workflowStateCode => {
 
   //           console.log('workflowStateCodes: ' + JSON.stringify(workflowStateCode));
+  //       });
+
+  //     },
+  //     error => {
+  //       console.log('error =', error);
+  //     },
+  //     () => {
+  //       this.searching = false;
+  //       this.ranSearch = true;
+  //     });
+  // }
+
+  // private fetchingAllPublicComments() {
+  //   this.searchPublicCommentService.getAll()
+  //   .subscribe(
+  //     publicComments => {
+  //       publicComments.forEach(publicComment => {
+
+  //           console.log('publicComments: ' + JSON.stringify(publicComment));
   //       });
 
   //     },
@@ -202,9 +209,9 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 
   public onImport() {
-    if (true) {
-        this.router.navigate(['/a', 0, 'edit']);
-    } else {
+    try {
+      this.router.navigate(['/a', 'create']);
+    } catch (err) {
       // console.log('error, invalid application =', application);
       this.snackBarRef = this.snackBar.open('Error creating application ...', null, { duration: 3000 });
     }
@@ -246,10 +253,10 @@ export class SearchComponent implements OnInit, OnDestroy {
    */
   isAmendment(application: Application): boolean {
     return (
-      application &&
-      ConstantUtils.getCode(CodeType.STATUS, application.status) === StatusCodes.ABANDONED.code &&
-      (ConstantUtils.getCode(CodeType.REASON, application.reason) === ReasonCodes.AMENDMENT_APPROVED.code ||
-        ConstantUtils.getCode(CodeType.REASON, application.reason) === ReasonCodes.AMENDMENT_NOT_APPROVED.code)
+    application &&
+    ConstantUtils.getCode(CodeType.STATUS, application.status) === StatusCodes.ABANDONED.code &&
+    (ConstantUtils.getCode(CodeType.REASON, application.reason) === ReasonCodes.AMENDMENT_APPROVED.code ||
+    ConstantUtils.getCode(CodeType.REASON, application.reason) === ReasonCodes.AMENDMENT_NOT_APPROVED.code)
     );
   }
 
@@ -273,7 +280,7 @@ export class SearchComponent implements OnInit, OnDestroy {
 
     console.log('status: ' + application.status);
     return (
-      (application && ConstantUtils.getTextLong(CodeType.STATUS, application.status)) || StatusCodes.UNKNOWN.text.long
+    (application && ConstantUtils.getTextLong(CodeType.STATUS, application.status)) || StatusCodes.UNKNOWN.text.long
     );
   }
 

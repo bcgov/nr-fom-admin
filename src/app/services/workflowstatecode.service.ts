@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { ApiService } from './api';
 
-import { WorkflowState } from 'app/models/workflowstatecode';
+import { WorkflowStateCode } from 'app/models/workflowstatecode';
 
 
 
@@ -27,10 +27,10 @@ export class WorkflowStateCodeService {
    * @returns {Observable<WorkflowStateCode[]>}
    * @memberof ProjectService
    */
-  getAll(): Observable<WorkflowState[]> {
+  getAll(): Observable<WorkflowStateCode[]> {
 
 
-    let observables: Observable<WorkflowState[]>;
+    let observables: Observable<WorkflowStateCode[]>;
 
 
       observables = this.api.getWorkflowStateCodes();

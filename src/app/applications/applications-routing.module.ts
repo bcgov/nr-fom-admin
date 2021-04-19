@@ -17,6 +17,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'a/:appId/create',
+    component: ApplicationAddEditComponent,
+    resolve: {
+      application: ApplicationDetailResolver
+    },
+    canDeactivate: [CanDeactivateGuard]
+  },
+  {
     path: 'a/:appId/edit',
     component: ApplicationAddEditComponent,
     resolve: {

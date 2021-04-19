@@ -40,8 +40,8 @@
             <option *ngFor="let statusCode of statusCodes" [value]="statusCode.param"
               [selected]="statusCodeFilters[0] === statusCode.param">{{statusCode.text.long}}</option>
           </select> -->
-        
-          <input class="form-control filter-input" (change)="setApplicantFilter($event.target.value)"
+
+          <input class="form-control filter-input" (change)="setApplicantFilter($event.target['value'])"
             [value]="applicantFilter" [disabled]="searching || exporting" placeholder="Filter by Licensee"
             title="Filter by Applicant">
           <!-- <select class="form-control filter-select" (change)="setCommentFilter($event.target.value)"
@@ -156,13 +156,13 @@
                 </span>
               </td>
               <td data-label="Region">
-                <span>{{project.district.name || '-'}}</span>
+                <span>{{project.district ? project.district.name : '-'}}</span>
               </td>
               <td data-label="Created">
-                <span>{{getFormattedDate(project.createTimestamp) || '-'}}</span>
+                <span>{{project.createTimestamp || '-'}}</span>
               </td>
               <td data-label="Status">
-                <span>{{project.workflowStateCode.code || '-'}}</span>
+                <span>{{project.workflowState ? project.workflowState.code : '-'}}</span>
               </td>
               <td data-label="Comment Status">
                 <span>Commenting &nbsp; Closed - {{ project.commentingClosedDate | date:'longDate' || 'Unknown'}}</span>

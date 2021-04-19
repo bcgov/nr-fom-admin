@@ -10,8 +10,8 @@ import { Comment } from 'app/models/comment';
 import { CommentService } from 'app/services/comment.service';
 import { PublicCommentService } from 'app/services/publiccomments.service';
 import { ExportService } from 'app/services/export.service';
-import { commentStubArray } from '../../applications/stubs/comment-stub';
-import { singleApplicationStub } from '../../applications/stubs/application-stub';
+import { commentStubArray } from '../stubs/comment-stub';
+import { singleApplicationStub } from '../stubs/application-stub';
 import { Project } from 'app/models/project';
 import { PublicComment } from 'app/models/publiccomment';
 
@@ -28,8 +28,8 @@ class SortKey {
 export class ReviewCommentsComponent implements OnInit, OnDestroy {
   readonly PAGE_SIZE = 20;
 
-  @ViewChild('commentListScrollContainer', { static: true })
-  public commentListScrollContainer: ElementRef;
+  @ViewChild('commentListScrollContainer', { read: ElementRef })
+  public commentListScrollContainer: ElementRef; // TODO: Something is up with this...
 
   readonly sortKeys: SortKey[] = [
     { innerHTML: 'Oldest', value: '%2BdateAdded' },
@@ -64,8 +64,9 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    console.log('inside review-compon ngOnInit');
-    this.commentListScrollContainer.nativeElement.scrollTop = 0;
+    if (this.commentListScrollContainer && this.commentListScrollContainer.nativeElement) {
+      this.commentListScrollContainer.nativeElement.scrollTop = 0;
+    }
     this.comments = commentStubArray;
     this.application = singleApplicationStub;
     // get data from route resolver
@@ -101,7 +102,9 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
       console.log('getData: ' + this.project.id);
       // safety check
       this.loading = true;
-      this.commentListScrollContainer.nativeElement.scrollTop = 0;
+      if (this.commentListScrollContainer && this.commentListScrollContainer.nativeElement) {
+        this.commentListScrollContainer.nativeElement.scrollTop = 0;
+      }
 
       // get a page of comments
       this.publicCommentService

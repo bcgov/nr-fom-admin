@@ -14,6 +14,8 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "deployUrl": "/admin/",
+            "baseHref": "/admin/",
             "outputPath": "dist/admin",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -56,6 +58,7 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
+            "deployUrl": "/admin/",
             "browserTarget": "nr-fom-admin:build",
             "port": 4200
           },

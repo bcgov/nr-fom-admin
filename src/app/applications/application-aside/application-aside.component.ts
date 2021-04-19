@@ -4,8 +4,9 @@ import { takeUntil } from 'rxjs/operators';
 import * as L from 'leaflet';
 import * as _ from 'lodash';
 
-import { Application } from 'app/models/application';
 import { FeatureService } from 'app/services/feature.service';
+
+import { ProjectDto } from '../../api-client/typescript-rxjs';
 
 @Component({
   selector: 'app-application-aside',
@@ -13,7 +14,7 @@ import { FeatureService } from 'app/services/feature.service';
   styleUrls: ['./application-aside.component.scss']
 })
 export class ApplicationAsideComponent implements OnInit, OnDestroy {
-  @Input() application: Application = null;
+  @Input() project: ProjectDto = null;
 
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
   public fg: L.FeatureGroup;
@@ -136,7 +137,7 @@ export class ApplicationAsideComponent implements OnInit, OnDestroy {
   }
 
   private updateData() {
-    if (this.application) {
+    if (this.project) {
       if (this.fg) {
         _.each(this.layers, layer => {
           this.map.removeLayer(layer);
@@ -149,7 +150,7 @@ export class ApplicationAsideComponent implements OnInit, OnDestroy {
       // NB: always reload results to reduce chance of race condition
       //     with drawing map and features
       this.featureService
-        .getByApplicationId(this.application._id)
+        .getByApplicationId(this.project.id)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
           features => {

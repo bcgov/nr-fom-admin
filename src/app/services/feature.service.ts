@@ -27,7 +27,7 @@ export class FeatureService {
     );
   }
 
-  getByApplicationId(applicationId: string): Observable<Feature[]> {
+  getByApplicationId(applicationId: number): Observable<Feature[]> {
     return this.api.getFeaturesByApplicationId(applicationId).pipe(
       map(res => {
         if (res && res.length > 0) {

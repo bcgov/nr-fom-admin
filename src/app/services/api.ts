@@ -17,7 +17,7 @@ import { User } from 'app/models/user';
 import { Project } from 'app/models/project';
 import { District } from 'app/models/district';
 import { ForestClient } from 'app/models/forestclient';
-import { WorkflowState } from 'app/models/workflowstatecode';
+import { WorkflowStateCode } from 'app/models/workflowstatecode';
 import { PublicComment } from 'app/models/publiccomment';
 
 /**
@@ -138,21 +138,22 @@ export class ApiService {
   // private jwtHelper: JwtHelperService;
   pathAPI: string;
   // params: Params;
-  env: string; 
+  env: string;
 
   constructor(private http: HttpClient) {
     // this.jwtHelper = new JwtHelperService();
     const currentUser = JSON.parse(window.localStorage.getItem('currentUser'));
     this.token = currentUser && currentUser.token;
-    this.isMS = window.navigator.msSaveOrOpenBlob ? true : false;
+    this.isMS = !!window.navigator.msSaveOrOpenBlob;
 
-    this.env = process.env.FOM_ENV || 'local';
+    // TODO: Need to use dotenv or something here...
+    this.env = 'local'; // process !== undefined ? process.env.FOM_ENV : 'local';
 
     const { hostname } = window.location;
     if (hostname == 'localhost') {
       this.pathAPI = 'http://localhost:3333/api';
     } else if (hostname.includes('nr-fom-admin') && hostname.includes('devops.gov.bc.ca')) {
-      this.pathAPI = 'https://'+hostname.replace('fom-admin','fom-api'); 
+      this.pathAPI = 'https://'+hostname.replace('fom-admin','fom-api');
       if (!hostname.endsWith('/')) {
         this.pathAPI += '/';
       }
@@ -212,7 +213,7 @@ export class ApiService {
  * @memberof ApiService
  */
  getProjects(): Observable<Project[]> {
-  console.log('calling the API');
+  console.log('TODO: calling the getProjets API - verify this');
   const queryString =
     'projects/';
 
@@ -228,7 +229,7 @@ export class ApiService {
  getProjectsByFspId(fspId: string): Observable<Project[]> {
   console.log('calling the API');
   const queryString =
-    'projects/byfspid/' + fspId;
+    'projects/byFspId/' + fspId;
 
   return this.http.get<Project[]>(`${this.pathAPI}/${queryString}`, {});
 }
@@ -256,7 +257,7 @@ export class ApiService {
  */
  getPublicCommentsByProjectId(projectId: string): Observable<PublicComment[]> {
   const queryString =
-    'public-comments/byprojectid/' + projectId;
+    'public-comments/byProjectId/' + projectId;
 
   return this.http.get<PublicComment[]>(`${this.pathAPI}/${queryString}`, {});
 }
@@ -309,12 +310,12 @@ export class ApiService {
  * @returns {Observable<WorkflowStateCode[]>}
  * @memberof ApiService
  */
- getWorkflowStateCodes(): Observable<WorkflowState[]> {
+ getWorkflowStateCodes(): Observable<WorkflowStateCode[]> {
   console.log('calling the API forest_clients');
   const queryString =
     'workflow-state-code/';
 
-  return this.http.get<WorkflowState[]>(`${this.pathAPI}/${queryString}`, {});
+  return this.http.get<WorkflowStateCode[]>(`${this.pathAPI}/${queryString}`, {});
 }
 
 
@@ -381,7 +382,7 @@ export class ApiService {
   }
 
   // NB: returns array with 1 element
-  getApplication(id: string): Observable<Application[]> {
+  getApplication(id: number): Observable<Application[]> {
     const fields = [
       'agency',
       'areaHectares',
@@ -524,7 +525,7 @@ export class ApiService {
     return this.http.get<Feature[]>(`${this.pathAPI}/${queryString}`, {});
   }
 
-  getFeaturesByApplicationId(applicationId: string): Observable<Feature[]> {
+  getFeaturesByApplicationId(applicationId: number): Observable<Feature[]> {
     const fields = ['type', 'tags', 'geometry', 'properties', 'isDeleted', 'applicationID'];
     const queryString =
       'feature?isDeleted=false&' +

@@ -6,8 +6,9 @@ import { IApplicationQueryParamSet, QueryParamModifier } from 'app/services/api'
 import { ApplicationService } from 'app/services/application.service';
 import { RegionCodes, StatusCodes, ReasonCodes } from 'app/utils/constants/application';
 import { CodeType, ConstantUtils } from 'app/utils/constants/constantUtils';
-import { Project } from 'app/models/project';
 import { SearchProjectService } from 'app/services/searchproject.service';
+
+import { ProjectDto } from 'app/api-client/typescript-rxjs';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -40,9 +41,9 @@ export class ListComponent implements OnInit, OnDestroy {
   public exporting = false;
 
   // list of applications to display
-  public applications: Application[] = [];
+  public applications: ProjectDto[] = [];
 
-  public projects: Project[] = [];
+  public projects: ProjectDto[] = [];
 
   // drop down filter values
   public regionCodes = new RegionCodes().getCodeGroups();
@@ -79,7 +80,7 @@ export class ListComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private applicationService: ApplicationService,
-    private searcProjecthService: SearchProjectService,
+    private searchProjectService: SearchProjectService,
     private exportService: ExportService
   ) {}
 
@@ -98,27 +99,25 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Fetches applications from ACRFD based on the current filter and pagination parameters.
+   * Fetches projects from API based on the current filter and pagination parameters.
    *
    * Makes 2 calls:
-   * - get applications (fetches at most pagination.itemsPerPage applications)
-   * - get applications count (the total count of matching applications, used when rendering pagination controls)
+   * - get projects (fetches at most pagination.itemsPerPage projects)
+   * - get projects count (the total count of matching projects, used when rendering pagination controls)
    *
    * @memberof ListComponent
    */
   public getProjects(): void {
     this.searching = false;
-    console.log('inside getApplications()');
-
     if (this.filterChanged) {
       this.resetPagination();
     }
 
-    this.searcProjecthService.getProjects()
+    this.searchProjectService.getProjects()
     .subscribe(
         projects => {
           projects.forEach(project => {
-            this.projects.push(new Project(project));
+            this.projects.push(project as ProjectDto);
           });
 
         },
@@ -525,7 +524,7 @@ export class ListComponent implements OnInit, OnDestroy {
   //   return applications.filter(application => {
   //     return _.flatMap(
   //       this.commentCodeFilters.map(commentCode => ConstantUtils.getTextLong(CodeType.COMMENT, commentCode))
-  //     ).includes(application.meta.cpStatusStringLong);
+  //     ).includes(project.meta.cpStatusStringLong);
   //   });
   // }
 
@@ -666,6 +665,7 @@ export class ListComponent implements OnInit, OnDestroy {
     return values.replace(/\|$/, '');
   }
 
+  // @ts-ignore
   /**
    * Returns true if the application has an abandoned status AND an amendment reason.
    *
@@ -673,13 +673,15 @@ export class ListComponent implements OnInit, OnDestroy {
    * @returns {boolean} true if the application has an abandoned status AND an amendment reason, false otherwise.
    * @memberof ListComponent
    */
-  isAmendment(application: Application): boolean {
-    return !!(
-      application &&
-      ConstantUtils.getCode(CodeType.STATUS, application.status) === StatusCodes.ABANDONED.code &&
-      (ConstantUtils.getCode(CodeType.REASON, application.reason) === ReasonCodes.AMENDMENT_APPROVED.code ||
-        ConstantUtils.getCode(CodeType.REASON, application.reason) === ReasonCodes.AMENDMENT_NOT_APPROVED.code)
-    );
+  // @ts-ignore
+  isAmendment(project: ProjectDto): boolean {
+    /* return !!(
+      project &&
+      ConstantUtils.getCode(CodeType.STATUS, project.status) === StatusCodes.ABANDONED.code &&
+      (ConstantUtils.getCode(CodeType.REASON, project.reason) === ReasonCodes.AMENDMENT_APPROVED.code ||
+        ConstantUtils.getCode(CodeType.REASON, project.reason) === ReasonCodes.AMENDMENT_NOT_APPROVED.code)
+    ); */
+    return false;
   }
 
   /**
@@ -689,33 +691,35 @@ export class ListComponent implements OnInit, OnDestroy {
    * @returns {string}
    * @memberof ListComponent
    */
-  getStatusStringLong(application: Application): string {
-    if (!application) {
+  getStatusStringLong(project: ProjectDto): string {
+    if (!project) {
       return StatusCodes.UNKNOWN.text.long;
     }
 
     // If the application was abandoned, but the reason is due to an amendment, then return an amendment string instead
-    if (this.isAmendment(application)) {
-      return ConstantUtils.getTextLong(CodeType.REASON, application.reason);
+    if (this.isAmendment(project)) {
+      // return ConstantUtils.getTextLong(CodeType.REASON, project.reason);
     }
 
-    return (
-      (application && ConstantUtils.getTextLong(CodeType.STATUS, application.status)) || StatusCodes.UNKNOWN.text.long
-    );
+    /* return (
+      (project && ConstantUtils.getTextLong(CodeType.STATUS, project.status)) || StatusCodes.UNKNOWN.text.long
+    ); */
+    return '';
   }
 
-  isApplicationRetired(application: Application): boolean {
-    if (
-      application.statusHistoryEffectiveDate &&
+  // @ts-ignore
+  isApplicationRetired(project: ProjectDto): boolean {
+    /* if (
+      // project.statusHistoryEffectiveDate &&
       [StatusCodes.DECISION_APPROVED.code, StatusCodes.DECISION_NOT_APPROVED.code, StatusCodes.ABANDONED.code].includes(
-        ConstantUtils.getCode(CodeType.STATUS, application.status)
+        ConstantUtils.getCode(CodeType.STATUS, project.status)
       )
     ) {
-      return moment(application.statusHistoryEffectiveDate)
+      return moment(project.statusHistoryEffectiveDate)
         .endOf('day')
         .add(6, 'months')
         .isBefore();
-    }
+    } */
 
     return false;
   }

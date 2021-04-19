@@ -7,22 +7,24 @@ import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { DialogService } from 'ng2-bootstrap-modal';
 import { Observable, Subject, of } from 'rxjs';
 import { takeUntil, concat } from 'rxjs/operators';
-import * as moment from 'moment';
+// import * as moment from 'moment';
 import * as _ from 'lodash';
 
 import { ConfirmComponent } from 'app/confirm/confirm.component';
-import { Application } from 'app/models/application';
+// import { Application } from 'app/models/application';
 import { Project } from 'app/models/project';
-import { CommentPeriod } from 'app/models/commentperiod';
+// import { CommentPeriod } from 'app/models/commentperiod';
 import { Document } from 'app/models/document';
 import { Decision } from 'app/models/decision';
-import { ApplicationService } from 'app/services/application.service';
-import { CommentPeriodService } from 'app/services/commentperiod.service';
+// import { ApplicationService } from 'app/services/application.service';
+// import { CommentPeriodService } from 'app/services/commentperiod.service';
 import { DecisionService } from 'app/services/decision.service';
 import { DocumentService } from 'app/services/document.service';
 
+import { ProjectDto } from 'app/api-client/typescript-rxjs/models';
 
-const DEFAULT_DAYS = 30;
+
+// const DEFAULT_DAYS = 30;
 
 @Component({
   selector: 'app-application-add-edit',
@@ -36,7 +38,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
   public isSubmitSaveClicked = false;
   public isSubmitting = false;
   public isSaving = false;
-  public application: Application = null;
+  public application: ProjectDto = null;
   public project: Project = null;
   public startDate: NgbDateStruct = null;
   public endDate: NgbDateStruct = null;
@@ -53,8 +55,8 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     private router: Router,
     // private location: Location,
     public snackBar: MatSnackBar,
-    private applicationService: ApplicationService,
-    private commentPeriodService: CommentPeriodService,
+    // private applicationService: ApplicationService,
+    // private commentPeriodService: CommentPeriodService,
     private dialogService: DialogService,
     private decisionService: DecisionService,
     private documentService: DocumentService
@@ -111,6 +113,10 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
   // this is needed because we don't have a form control that is marked as dirty
   private anyUnsavedItems(): boolean {
     // look for application documents not yet uploaded to db
+    // TODO: Make sure application.meta exists!
+    /*
+    if (!this.application.meta) return false;
+
     if (this.application.meta.documents) {
       for (const doc of this.application.meta.documents) {
         if (!doc._id) {
@@ -127,6 +133,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
         }
       }
     }
+    */
 
     // look for application or decision documents not yet removed from db
     if (this.docsToDelete && this.docsToDelete.length > 0) {
@@ -144,9 +151,9 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
   public cancelChanges() {
     // this.location.back(); // FAILS WHEN CANCEL IS CANCELLED (DUE TO DIRTY FORM OR UNSAVED DOCUMENTS) MULTIPLE TIMES
 
-    if (this.application._id) {
+    if (this.application.id) {
       // go to details page
-      this.router.navigate(['/a', this.application._id]);
+      this.router.navigate(['/a', this.application.id]);
     } else {
       // go to search page
       this.router.navigate(['/search']);
@@ -155,9 +162,10 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
 
   ngOnInit() {
     // get data from route resolver
-    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: Application }) => {
+    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: ProjectDto }) => {
       if (data.application) {
         this.application = data.application;
+        /* if (!this.application.meta) return;
         this.application.meta.decision = new Decision();
 
         // add comment period if there isn't one already (not just on create but also on edit --
@@ -177,7 +185,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
           // set endDate and delta
           this.endDate = this.dateToNgbDate(this.application.meta.currentPeriod.endDate);
           this.onEndDateChg(this.endDate);
-        }
+        } */
       } else {
         alert("Uh-oh, couldn't load application");
         // application not found --> navigate back to search
@@ -207,11 +215,13 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     this.ngUnsubscribe.complete();
   }
 
-  private dateToNgbDate(date: Date): NgbDateStruct {
+  // @ts-ignore
+  private static dateToNgbDate(date: Date): NgbDateStruct {
     return date ? { year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate() } : null;
   }
 
-  private ngbDateToDate(date: NgbDateStruct): Date {
+  // @ts-ignore
+  private static ngbDateToDate(date: NgbDateStruct): Date {
     return new Date(date.year, date.month - 1, date.day);
   }
 
@@ -222,7 +232,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
 
   public onStartDateChg(startDate: NgbDateStruct) {
     if (startDate !== null) {
-      this.application.meta.currentPeriod.startDate = this.ngbDateToDate(startDate);
+      // this.application.meta.currentPeriod.startDate = this.ngbDateToDate(startDate);
       // to set dates, we also need delta
       if (this.delta) {
         this.setDates(true, false, false);
@@ -234,54 +244,55 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     if (delta !== null) {
       this.delta = delta;
       // to set dates, we also need start date
-      if (this.application.meta.currentPeriod.startDate) {
+      /* if (this.application.meta.currentPeriod.startDate) {
         this.setDates(false, true, false);
-      }
+      } */
     }
   }
 
   public onEndDateChg(endDate: NgbDateStruct) {
     if (endDate !== null) {
-      this.application.meta.currentPeriod.endDate = this.ngbDateToDate(endDate);
+      // this.application.meta.currentPeriod.endDate = this.ngbDateToDate(endDate);
       // to set dates, we also need start date
-      if (this.application.meta.currentPeriod.startDate) {
+      // if (this.application.meta.currentPeriod.startDate) {
         this.setDates(false, false, true);
-      }
+      // }
     }
   }
 
   private setDates(start?: boolean, delta?: boolean, end?: boolean) {
     if (start) {
       // when start changes, adjust end accordingly
-      this.application.meta.currentPeriod.endDate = new Date(this.application.meta.currentPeriod.startDate);
+      /* this.application.meta.currentPeriod.endDate = new Date(this.application.meta.currentPeriod.startDate);
       this.application.meta.currentPeriod.endDate.setDate(
         this.application.meta.currentPeriod.startDate.getDate() + this.delta - 1
       );
-      this.endDate = this.dateToNgbDate(this.application.meta.currentPeriod.endDate);
+      this.endDate = this.dateToNgbDate(this.application.meta.currentPeriod.endDate); */
     } else if (delta) {
       // when delta changes, adjust end accordingly
-      this.application.meta.currentPeriod.endDate = new Date(this.application.meta.currentPeriod.startDate);
+      /* this.application.meta.currentPeriod.endDate = new Date(this.application.meta.currentPeriod.startDate);
       this.application.meta.currentPeriod.endDate.setDate(
         this.application.meta.currentPeriod.startDate.getDate() + this.delta - 1
       );
       this.endDate = this.dateToNgbDate(this.application.meta.currentPeriod.endDate);
+      */
     } else if (end) {
       // when end changes, adjust delta accordingly
       // use moment to handle Daylight Saving Time changes
-      this.delta =
+      /* this.delta =
         moment(this.application.meta.currentPeriod.endDate).diff(
           moment(this.application.meta.currentPeriod.startDate),
           'days'
-        ) + 1;
+        ) + 1; */
     }
   }
 
   public addDecision() {
-    this.application.meta.decision = new Decision();
+    // this.application.meta.decision = new Decision();
   }
 
   public deleteDecision() {
-    if (this.application.meta.decision) {
+    /* if (this.application.meta.decision) {
       // stage decision documents to delete
       if (this.application.meta.decision.meta.documents) {
         for (const doc of this.application.meta.decision.meta.documents) {
@@ -295,7 +306,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
       }
 
       this.application.meta.decision = null;
-    }
+    } */
   }
 
   // add application or decision documents
@@ -342,7 +353,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
 
   // this is part 1 of adding an application and all its objects
   // (multi-part due to dependencies)
-  public addApplication() {
+  /* public addApplication() {
     this.isSubmitSaveClicked = true;
 
     if (this.applicationForm.invalid) {
@@ -379,11 +390,11 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
           alert("Uh-oh, couldn't create application");
         }
       );
-  }
+  } */
 
   // this is part 2 of adding an application and all its objects
   // (multi-part due to dependencies)
-  private addApplication2(application2: Application) {
+  /* private addApplication2(application2: Application) {
     let observables = of(null);
 
     // add all application documents
@@ -434,11 +445,11 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
           );
       }
     );
-  }
+  } */
 
   // this is part 3 of adding an application and all its objects
   // (multi-part due to dependencies)
-  private addApplication3(application3: Application) {
+  /* private addApplication3(application3: Application) {
     let observables = of(null);
 
     // add all decision documents
@@ -477,7 +488,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
         this.router.navigate(['/a', application3._id]);
       }
     );
-  }
+  } */
 
   // this is part 1 of saving an application and all its objects
   // (multi-part due to dependencies)
@@ -485,7 +496,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     this.isSubmitSaveClicked = true;
 
     if (this.applicationForm.invalid) {
-      if (this.application.meta.isPublished) {
+      /* if (this.application.meta.isPublished) {
         this.dialogService
           .addDialog(
             ConfirmComponent,
@@ -515,10 +526,10 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
           )
           .pipe(takeUntil(this.ngUnsubscribe));
         return;
-      }
+      } */
     }
 
-    if (this.application.meta.isPublished && !this.application.description) {
+    /* if (this.application.meta.isPublished && !this.application.description) {
       this.dialogService
         .addDialog(
           ConfirmComponent,
@@ -533,7 +544,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
         )
         .pipe(takeUntil(this.ngUnsubscribe));
       return;
-    }
+    } */
 
     this.isSaving = true;
 
@@ -548,24 +559,24 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     this.docsToDelete = []; // assume delete succeeds
 
     // add any new application documents
-    if (this.application.meta.documents) {
+    /* if (this.application.meta.documents) {
       for (const doc of this.application.meta.documents) {
         if (!doc._id) {
           doc['formData'].append('_application', this.application._id); // set back-reference
           observables = observables.pipe(concat(this.documentService.add(doc['formData'])));
         }
       }
-    }
+    } */
 
     // add/save comment period
-    if (this.application.meta.currentPeriod) {
+    /* if (this.application.meta.currentPeriod) {
       if (!this.application.meta.currentPeriod._id) {
         this.application.meta.currentPeriod._application = this.application._id; // set back-reference
         observables = observables.pipe(concat(this.commentPeriodService.add(this.application.meta.currentPeriod)));
       } else {
         observables = observables.pipe(concat(this.commentPeriodService.save(this.application.meta.currentPeriod)));
       }
-    }
+    } */
 
     // delete staged decision
     // NB: delete first and add below -- in case the user wants to simultaneously
@@ -576,14 +587,14 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     this.decisionToDelete = null; // assume delete succeeds
 
     // add/save decision
-    if (this.application.meta.decision) {
+    /* if (this.application.meta.decision) {
       if (!this.application.meta.decision._id) {
         this.application.meta.decision._application = this.application._id; // set back-reference
         observables = observables.pipe(concat(this.decisionService.add(this.application.meta.decision)));
       } else {
         observables = observables.pipe(concat(this.decisionService.save(this.application.meta.decision)));
       }
-    }
+    } */
 
     observables.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
       () => {
@@ -598,7 +609,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
       () => {
         // onCompleted
         // reload app with documents, current period and decision for next step
-        this.applicationService
+        /* this.applicationService
           .getById(this.application._id, { getDocuments: true, getCurrentPeriod: true, getDecision: true })
           .pipe(takeUntil(this.ngUnsubscribe))
           .subscribe(
@@ -610,14 +621,14 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
               console.log('error =', error);
               alert("Uh-oh, couldn't reload application, part 1");
             }
-          );
+          ); */
       }
     );
   }
 
   // this is part 2 of saving an application and all its objects
   // (multi-part due to dependencies)
-  private saveApplication2(application2: Application) {
+  /* private saveApplication2(application2: Application) {
     let observables = of(null);
 
     // auto-publish application documents
@@ -681,11 +692,11 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
           );
       }
     );
-  }
+  } */
 
   // this is part 3 of saving an application and all its objects
   // (multi-part due to dependencies)
-  private saveApplication3(application3: Application) {
+  /* private saveApplication3(application3: Application) {
     let observables = of(null);
 
     // auto-publish decision documents
@@ -740,5 +751,5 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
         this.router.navigate(['/a', application3._id]);
       }
     );
-  }
+  } */
 }
