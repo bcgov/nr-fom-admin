@@ -4,6 +4,7 @@ import { SearchComponent } from './search.component';
 import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute } from '@angular/router';
+// @ts-ignore // TODO: Fix this!
 import { MatSnackBar } from '@angular/material';
 import { SearchService } from 'app/services/search.service';
 import { Application } from 'app/models/application';
