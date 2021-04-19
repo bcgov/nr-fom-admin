@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve -o  --deploy-url /admin/",
-    "build": "npm run lint && ng build --prod --deploy-url /admin/ --base-href /admin/",
+    "start": "ng serve -o",
+    "build": "npm run lint && ng build --prod",
     "postinstall": "ngcc --properties es5 browser module main --first-only",
     "test": "ng test",
     "lint": "ng lint",

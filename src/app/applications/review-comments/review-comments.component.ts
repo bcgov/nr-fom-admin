@@ -29,7 +29,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
   readonly PAGE_SIZE = 20;
 
   @ViewChild('commentListScrollContainer', { read: ElementRef })
-  public commentListScrollContainer: ElementRef;
+  public commentListScrollContainer: ElementRef; // TODO: Something is up with this...
 
   readonly sortKeys: SortKey[] = [
     { innerHTML: 'Oldest', value: '%2BdateAdded' },
@@ -64,7 +64,9 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.commentListScrollContainer.nativeElement.scrollTop = 0;
+    if (this.commentListScrollContainer && this.commentListScrollContainer.nativeElement) {
+      this.commentListScrollContainer.nativeElement.scrollTop = 0;
+    }
     this.comments = commentStubArray;
     this.application = singleApplicationStub;
     // get data from route resolver
@@ -100,7 +102,9 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
       console.log('getData: ' + this.project.id);
       // safety check
       this.loading = true;
-      this.commentListScrollContainer.nativeElement.scrollTop = 0;
+      if (this.commentListScrollContainer && this.commentListScrollContainer.nativeElement) {
+        this.commentListScrollContainer.nativeElement.scrollTop = 0;
+      }
 
       // get a page of comments
       this.publicCommentService

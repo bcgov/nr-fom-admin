@@ -144,9 +144,10 @@ export class ApiService {
     // this.jwtHelper = new JwtHelperService();
     const currentUser = JSON.parse(window.localStorage.getItem('currentUser'));
     this.token = currentUser && currentUser.token;
-    this.isMS = window.navigator.msSaveOrOpenBlob ? true : false;
+    this.isMS = !!window.navigator.msSaveOrOpenBlob;
 
-    this.env = process.env.FOM_ENV || 'local';
+    // TODO: Need to use dotenv or something here...
+    this.env = 'local'; // process !== undefined ? process.env.FOM_ENV : 'local';
 
     const { hostname } = window.location;
     if (hostname == 'localhost') {
