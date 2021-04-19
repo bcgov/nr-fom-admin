@@ -10,8 +10,8 @@ import { Comment } from 'app/models/comment';
 import { CommentService } from 'app/services/comment.service';
 import { PublicCommentService } from 'app/services/publiccomments.service';
 import { ExportService } from 'app/services/export.service';
-import { commentStubArray } from '../../applications/stubs/comment-stub';
-import { singleApplicationStub } from '../../applications/stubs/application-stub';
+import { commentStubArray } from '../stubs/comment-stub';
+import { singleApplicationStub } from '../stubs/application-stub';
 import { Project } from 'app/models/project';
 import { PublicComment } from 'app/models/publiccomment';
 
@@ -64,7 +64,6 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-
     this.commentListScrollContainer.nativeElement.scrollTop = 0;
     this.comments = commentStubArray;
     this.application = singleApplicationStub;

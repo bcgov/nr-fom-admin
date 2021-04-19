@@ -99,16 +99,17 @@
             </div>
           </td>
         </tr>
-
+        <tr>
           <td colspan="6">
             <span class="comment-info">
-              <span *ngIf="project.publicComments && project.publicComments.length > 0">
+              <!-- TODO: Fix me! -->
+              <!--<span *ngIf="project.publicComments && project.publicComments.length > 0">
                 <strong>
                   <a [routerLink]="['/comments', project.id]">{{ project.publicComments.length }}
                     {{project.publicComments.length === 1 ? 'comment' : 'comments'}}</a>
                 </strong>
                 &nbsp;-&nbsp;
-              </span>
+              </span> -->
               <span>
                 &nbsp;&nbsp; Commenting &nbsp; Closed - {{ project.commentingClosedDate | date:'longDate' || 'Unknown'}}
               </span>
@@ -122,6 +123,7 @@
               </span> -->
             </span>
           </td>
+        </tr>
        </ng-template>
     </table>
   </div>

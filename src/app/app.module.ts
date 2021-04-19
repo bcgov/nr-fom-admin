@@ -119,6 +119,6 @@ export function kcFactory(keycloakService: KeycloakService) {
 })
 export class AppModule {
   constructor(applicationRef: ApplicationRef) {
-    Object.defineProperty(applicationRef, '_rootComponents', { get: () => applicationRef['components'] });
+    Object.defineProperty(applicationRef, '_rootComponents', { get: () => applicationRef.components });
   }
 }

@@ -26,7 +26,7 @@ import { ExportService } from 'app/services/export.service';
     CommonModule,
     SharedModule,
     NgxPaginationModule,
-    NgbModule.forRoot(),
+    NgbModule,
     InlineSVGModule.forRoot(),
     ApplicationsRoutingModule
   ],

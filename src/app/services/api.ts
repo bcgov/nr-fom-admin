@@ -138,7 +138,7 @@ export class ApiService {
   // private jwtHelper: JwtHelperService;
   pathAPI: string;
   // params: Params;
-  env: 'local' | 'dev' | 'test' | 'master' | 'prod';
+  env: string;
 
   constructor(private http: HttpClient) {
     // this.jwtHelper = new JwtHelperService();
@@ -146,36 +146,20 @@ export class ApiService {
     this.token = currentUser && currentUser.token;
     this.isMS = window.navigator.msSaveOrOpenBlob ? true : false;
 
+    this.env = process.env.FOM_ENV || 'local';
+
     const { hostname } = window.location;
-    switch (hostname) {
-      case 'localhost':
-        // Local
-        this.pathAPI = 'http://localhost:3333/api';
-        this.env = 'local';
-        break;
-
-      case 'nr-fom-dev.pathfinder.gov.bc.ca':
-        // Dev
-        this.pathAPI = 'https://nr-fom-dev.pathfinder.gov.bc.ca/api';
-        this.env = 'dev';
-        break;
-
-      case 'nr-fom-master.pathfinder.gov.bc.ca':
-        // Master
-        this.pathAPI = 'https://nr-fom-master.pathfinder.gov.bc.ca/api';
-        this.env = 'master';
-        break;
-
-      case 'nr-fom-test.pathfinder.gov.bc.ca':
-        // Test
-        this.pathAPI = 'https://nr-fom-test.pathfinder.gov.bc.ca/api';
-        this.env = 'test';
-        break;
-
-      default:
-        // Prod
-        this.pathAPI = 'https://comment.nrs.gov.bc.ca/api';
-        this.env = 'prod';
+    if (hostname == 'localhost') {
+      this.pathAPI = 'http://localhost:3333/api';
+    } else if (hostname.includes('nr-fom-admin') && hostname.includes('devops.gov.bc.ca')) {
+      this.pathAPI = 'https://'+hostname.replace('fom-admin','fom-api');
+      if (!hostname.endsWith('/')) {
+        this.pathAPI += '/';
+      }
+      this.pathAPI += 'api';
+    } else {
+      // TODO: May need special case for production vanity URL, or implement solution for dynamically loading from a config map.
+      throwError('Unrecognized hostname ' + hostname + ' cannot infer API URL.');
     }
   }
 
@@ -228,9 +212,9 @@ export class ApiService {
  * @memberof ApiService
  */
  getProjects(): Observable<Project[]> {
-  console.log('calling the API');
+  console.log('TODO: calling the getProjets API - verify this');
   const queryString =
-    'project/';
+    'projects/';
 
   return this.http.get<Project[]>(`${this.pathAPI}/${queryString}`, {});
 }

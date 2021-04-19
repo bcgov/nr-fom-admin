@@ -275,12 +275,13 @@ export class ApplicationService {
     { getFeatures = false, getDocuments = false, getCurrentPeriod = false, getDecision = false }: IGetParameters
   ): Observable<Application> {
     return forkJoin(
-      getFeatures ? this.featureService.getByApplicationId(application._id) : of(null),
+      // getFeatures ? this.featureService.getByApplicationId(application._id) : of(null),
       getDocuments ? this.documentService.getAllByApplicationId(application._id) : of(null),
       getCurrentPeriod ? this._getExtraCommentData(application) : of(null),
       getDecision ? this.decisionService.getByApplicationId(application._id, { getDocuments: true }) : of(null)
     ).pipe(
       map(payloads => {
+        /*
         if (getFeatures) {
           application.meta.features = payloads[0];
         }
@@ -320,6 +321,7 @@ export class ApplicationService {
           // set flag if retire date is in the past
           application.meta.isRetired = moment(application.meta.retireDate).isBefore();
         }
+        */
 
         // finally update the object and return
         return application;
