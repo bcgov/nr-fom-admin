@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve -o",
-    "build": "npm run lint && ng build --prod",
+    "build": "ng build --prod",
     "postinstall": "ngcc --properties es5 browser module main --first-only",
     "test": "ng test",
     "lint": "ng lint",

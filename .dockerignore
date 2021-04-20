@@ -1,3 +1,7 @@
-node_modules
 dist
-package-lock.json
+e2e
+node_modules
+.*
+openshift
+# Keep node-server directory as it is needed to build
+!openshift/node-server
