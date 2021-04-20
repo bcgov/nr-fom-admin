@@ -146,8 +146,12 @@ export class ApiService {
     this.token = currentUser && currentUser.token;
     this.isMS = !!window.navigator.msSaveOrOpenBlob;
 
-    // TODO: Need to use dotenv or something here...
-    this.env = 'local'; // process !== undefined ? process.env.FOM_ENV : 'local';
+    // In index.html we load a javascript file with environment-specific settings, 
+    // populated from mounted ConfigMap in OpenShift. This file sets window.localStorage settings
+    // Locally, this will be empty and local defaults will be used.
+
+    const envName = window.localStorage.getItem('fom_environment_name');
+    this.env = (envName == undefined || envName.length == 0) ? 'local' : envName;
 
     const { hostname } = window.location;
     if (hostname == 'localhost') {
