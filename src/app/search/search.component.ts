@@ -16,7 +16,7 @@ import { Project } from 'app/models/project';
 // Testing fetching Districts
 import { DistrictService } from 'app/services/district.service';
 import { ForestClientService } from 'app/services/forestclient.service';
-import { WorkflowStateCodeService } from 'app/services/workflowstatecode.service';
+import { WorkflowStateService } from 'app/services/workflowstatecode.service';
 import { PublicCommentService } from 'app/services/publiccomments.service';
 
 import { ProjectDto } from '../api-client/typescript-rxjs';
@@ -46,7 +46,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   public searchProjectService: SearchProjectService,
   public searchDistrictService: DistrictService,
   public searchForestClientService: ForestClientService,
-  public searchWorkflowStateCodeService: WorkflowStateCodeService,
+  public searchWorkflowStateCodeService: WorkflowStateService,
   public searchPublicCommentService: PublicCommentService,
   private router: Router,
   private route: ActivatedRoute

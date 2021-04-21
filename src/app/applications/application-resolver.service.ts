@@ -72,7 +72,7 @@ export class ApplicationDetailResolver implements Resolve<ProjectDto> {
       return new Observable<ProjectDto>();
     } else {
       // view/edit existing application
-      return this.projectService.getProjectById(projectId);
+      return this.projectService.getById(projectId);
     }
   }
 }

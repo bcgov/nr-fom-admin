@@ -41,7 +41,7 @@ import { CanDeactivateGuard } from 'app/services/can-deactivate-guard.service';
 import { KeycloakService } from 'app/services/keycloak.service';
 import { DistrictService } from 'app/services/district.service';
 import { ForestClientService } from 'app/services/forestclient.service';
-import { WorkflowStateCodeService } from 'app/services/workflowstatecode.service';
+import { WorkflowStateService } from 'app/services/workflowstatecode.service';
 import { PublicCommentService } from 'app/services/publiccomments.service';
 
 // feature modules
@@ -100,7 +100,7 @@ export function kcFactory(keycloakService: KeycloakService) {
     ProjectService,
     DistrictService,
     ForestClientService,
-    WorkflowStateCodeService,
+    WorkflowStateService,
     PublicCommentService,
     FeatureService,
     AuthenticationService,
