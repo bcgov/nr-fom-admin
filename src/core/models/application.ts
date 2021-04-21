@@ -3,7 +3,7 @@ import { CommentPeriod } from './commentperiod';
 import { Decision } from './decision';
 import { Document } from './document';
 import { Feature } from './feature';
-import { ConstantUtils, CodeType } from 'app/utils/constants/constantUtils';
+import { ConstantUtils, CodeType } from 'core/utils/constants/constantUtils';
 
 export class Application {
   // Database fields

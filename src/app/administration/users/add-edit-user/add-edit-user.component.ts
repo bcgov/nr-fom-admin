@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { DialogComponent, DialogService } from 'ng2-bootstrap-modal';
 
-import { User } from 'app/models/user';
-import { UserService } from 'app/services/user.service';
+import { User } from 'core/models/user';
+// import { UserService } from 'core/services/user.service';
 
 export interface IDataModel {
   title: string;
@@ -26,7 +26,8 @@ export class AddEditUserComponent extends DialogComponent<IDataModel, boolean> i
   powers: string[];
   networkMsg: string;
 
-  constructor(dialogService: DialogService, private userService: UserService) {
+  // constructor(dialogService: DialogService, private userService: UserService) {
+  constructor(dialogService: DialogService) {
     super(dialogService);
   }
 
@@ -49,7 +50,7 @@ export class AddEditUserComponent extends DialogComponent<IDataModel, boolean> i
   save() {
     this.networkMsg = '';
     if (this.isNew) {
-      this.userService.add(this.user).subscribe(
+      /* this.userService.add(this.user).subscribe(
         () => {
           this.result = true;
           this.isNew = false;
@@ -59,9 +60,9 @@ export class AddEditUserComponent extends DialogComponent<IDataModel, boolean> i
           console.log('error =', error);
           this.networkMsg = error;
         }
-      );
+      ); */
     } else {
-      this.userService.save(this.user).subscribe(
+      /* this.userService.save(this.user).subscribe(
         () => {
           this.result = true;
           this.isNew = false;
@@ -71,7 +72,7 @@ export class AddEditUserComponent extends DialogComponent<IDataModel, boolean> i
           console.log('error =', error);
           this.networkMsg = error;
         }
-      );
+      ); */
     }
   }
 }

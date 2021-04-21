@@ -8,17 +8,12 @@ import { Subject, of, throwError } from 'rxjs';
 import { takeUntil, concat, mergeMap } from 'rxjs/operators';
 
 import { ConfirmComponent } from 'app/confirm/confirm.component';
-import { Application } from 'app/models/application';
-import { ApiService } from 'app/services/api';
-import { ApplicationService } from 'app/services/application.service';
-import { CommentPeriodService } from 'app/services/commentperiod.service';
-import { DecisionService } from 'app/services/decision.service';
-import { DocumentService } from 'app/services/document.service';
-import { FeatureService } from 'app/services/feature.service';
-import { PublicCommentService } from 'app/services/publiccomments.service';
-import { PublicComment } from 'app/models/publiccomment';
+import { Application } from 'core/models/application';
+import { PublicComment } from 'core/models/publiccomment';
 
-import { ProjectDto } from 'app/api-client/typescript-rxjs/models/ProjectDto';
+import { ProjectService } from 'core/services/project.service';
+
+import { ProjectDto } from 'core/api-client/typescript-rxjs/models/ProjectDto';
 
 @Component({
   selector: 'app-application-detail',
@@ -42,14 +37,8 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     public snackBar: MatSnackBar,
-    public api: ApiService, // also used in template
     private dialogService: DialogService,
-    public applicationService: ApplicationService, // also used in template
-    public searchPublicCommentService: PublicCommentService,
-    public commentPeriodService: CommentPeriodService,
-    public decisionService: DecisionService,
-    public documentService: DocumentService,
-    public featureService: FeatureService
+    public projectService: ProjectService, // also used in template
   ) {}
 
   ngOnInit() {
@@ -170,7 +159,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
 
     // delete application
     // do this last in case of prior failures
-    observables = observables.pipe(concat(this.applicationService.delete(this.application)));
+    observables = observables.pipe(concat(this.projectService.delete(this.application)));
     */
 
     observables.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
@@ -208,7 +197,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
         // the current this.application.
         mergeMap(updatedApplicationAndFeatures => {
           if (updatedApplicationAndFeatures) {
-            return this.applicationService.getById(updatedApplicationAndFeatures.application._id, {
+            return this.projectService.getById(updatedApplicationAndFeatures.application._id, {
               getFeatures: true,
               getDocuments: true,
               getCurrentPeriod: true,
@@ -313,13 +302,13 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
     // publish application
     // do this last in case of prior failures
     if (!this.application.meta.isPublished) {
-      observables = observables.pipe(concat(this.applicationService.publish(this.application)));
+      observables = observables.pipe(concat(this.projectService.publish(this.application)));
     }
 
     // finally, save publish date (first time only)
     if (!this.application.publishDate) {
       this.application.publishDate = new Date(); // now
-      observables = observables.pipe(concat(this.applicationService.save(this.application)));
+      observables = observables.pipe(concat(this.projectService.save(this.application)));
     } */
 
     observables.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
@@ -337,7 +326,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
         // onCompleted
         this.snackBarRef = this.snackBar.open('Application published...', null, { duration: 2000 });
         // reload all data
-        /* this.applicationService
+        /* this.projectService
           .getById(this.application.id, {
             getFeatures: true,
             getDocuments: true,
@@ -397,7 +386,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
     // unpublish application
     // do this last in case of prior failures
     if (this.application.meta.isPublished) {
-      observables = observables.pipe(concat(this.applicationService.unPublish(this.application)));
+      observables = observables.pipe(concat(this.projectService.unPublish(this.application)));
     }
     */
 
@@ -416,13 +405,8 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
         // onCompleted
         this.snackBarRef = this.snackBar.open('Application unpublished...', null, { duration: 2000 });
         // reload all data
-        this.applicationService
-          .getById(this.application.id, {
-            getFeatures: true,
-            getDocuments: true,
-            getCurrentPeriod: true,
-            getDecision: true
-          })
+        this.projectService
+          .getById(this.application.id)
           .pipe(takeUntil(this.ngUnsubscribe))
           .subscribe(
             // @ts-ignore
@@ -441,7 +425,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
   }
 
   public fetchingAllPublicComments() {
-    this.searchPublicCommentService.getPublicCommentsByProjectId(this.project.id)
+    /* this.searchPublicCommentService.getPublicCommentsByProjectId(this.project.id)
     .subscribe(
       publicComments => {
         publicComments.forEach(publicComment => {
@@ -452,6 +436,6 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
       },
       error => {
         console.log('error =', error);
-      });
+      }); */
   }
 }

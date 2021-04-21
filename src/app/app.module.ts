@@ -26,30 +26,21 @@ import { UsersComponent } from 'app/administration/users/users.component';
 import { AddEditUserComponent } from 'app/administration/users/add-edit-user/add-edit-user.component';
 
 // services
-import { SearchService } from 'app/services/search.service';
-import { FeatureService } from 'app/services/feature.service';
-import { AuthenticationService } from 'app/services/authentication.service';
-import { ApplicationService } from 'app/services/application.service';
-import { SearchProjectService } from 'app/services/searchproject.service';
-import { ProjectService } from 'app/services/project.service';
-import { CommentPeriodService } from 'app/services/commentperiod.service';
-import { CommentService } from 'app/services/comment.service';
-import { DocumentService } from 'app/services/document.service';
-import { DecisionService } from 'app/services/decision.service';
-import { UserService } from 'app/services/user.service';
-import { CanDeactivateGuard } from 'app/services/can-deactivate-guard.service';
-import { KeycloakService } from 'app/services/keycloak.service';
-import { DistrictService } from 'app/services/district.service';
-import { ForestClientService } from 'app/services/forestclient.service';
-import { WorkflowStateService } from 'app/services/workflowstatecode.service';
-import { PublicCommentService } from 'app/services/publiccomments.service';
+import { SearchService } from 'core/services/search.service';
+import { SearchProjectService } from 'core/services/search-project.service';
+import { AuthenticationService } from 'core/services/authentication.service';
+import { ProjectService } from 'core/services/project.service';
+import { CanDeactivateGuard } from 'core/services/can-deactivate-guard.service';
+import { KeycloakService } from 'core/services/keycloak.service';
+import { DistrictService } from 'core/services/district.service';
+import { ForestClientService } from 'core/services/forest-client.service';
+import { ResponseService } from 'core/services/response.service';
+import { AttachmentTypeService } from 'core/services/attachment-type.service';
+import { SubmissionTypeService } from 'core/services/submission-type.service';
+import { WorkflowStateService } from 'core/services/workflow-state.service';
 
-// feature modules
-import { TokenInterceptor } from './utils/token-interceptor';
+import { TokenInterceptor } from 'core/utils/token-interceptor';
 import { NotAuthorizedComponent } from './not-authorized/not-authorized.component';
-
-// api modules
-// import { ProjectsApi, ProjectApi } from 'app/api-client/typescript-rxjs';
 
 export function kcFactory(keycloakService: KeycloakService) {
   return () => keycloakService.init();
@@ -100,19 +91,12 @@ export function kcFactory(keycloakService: KeycloakService) {
     ProjectService,
     DistrictService,
     ForestClientService,
+    ResponseService,
+    AttachmentTypeService,
+    SubmissionTypeService,
     WorkflowStateService,
-    PublicCommentService,
-    FeatureService,
     AuthenticationService,
-    ApplicationService,
-    CommentPeriodService,
-    CommentService,
-    DocumentService,
-    DecisionService,
-    UserService,
-    CanDeactivateGuard,
-    // ProjectsApi,
-    // ProjectApi
+    CanDeactivateGuard
   ],
   entryComponents: [ConfirmComponent, AddEditUserComponent],
   bootstrap: [AppComponent]

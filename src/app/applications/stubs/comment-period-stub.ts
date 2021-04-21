@@ -1,4 +1,4 @@
-import { CommentPeriod } from 'app/models/commentperiod';
+import { CommentPeriod } from 'core/models/commentperiod';
 
 export  const commentPeriodStubArray: CommentPeriod[] =  [
     new CommentPeriod(

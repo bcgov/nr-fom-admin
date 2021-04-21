@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { Router } from '@angular/router';
-import { ApiService } from 'app/services/api';
-// import { JwtUtil } from 'app/jwt-util';
-import { KeycloakService } from 'app/services/keycloak.service';
+import { KeycloakService } from 'core/services/keycloak.service';
 
 @Component({
   selector: 'app-header',
@@ -30,7 +28,7 @@ export class HeaderComponent implements OnInit {
     scopes: string[];
   };
 
-  constructor(public api: ApiService, private keycloakService: KeycloakService, public router: Router) {
+  constructor(private keycloakService: KeycloakService, public router: Router) {
     // this._api = api;
     router.events.subscribe(() => {
       const token = this.keycloakService.getToken();
@@ -96,7 +94,7 @@ export class HeaderComponent implements OnInit {
 
   navigateToLogout() {
     // reset login status
-    this.api.logout();
+    // this.api.logout();
     window.location.href = this.keycloakService.getLogoutURL();
   }
 

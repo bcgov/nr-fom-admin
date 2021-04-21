@@ -20,7 +20,7 @@
               Name is required
             </div>
           </div>
-     
+
           <div class="form-group">
             <label for="username">Username</label>
             <input type="text" class="form-control" id="username"
@@ -31,7 +31,7 @@
             <input type="password" class="form-control" id="password"
                    [(ngModel)]="user.password" name="password">
           </div>
-     
+
           <div class="form-group">
             <label for="roles">Access Role</label>
             <select class="form-control" id="roles"
@@ -46,13 +46,15 @@
           </div>
         </form>
       </div>
-     
-    <div class="modal-footer">
-      <button type="button" class="btn btn-success" [disabled]="!userForm.form.valid" (click)="save()">{{message}}</button>
-      <button type="button" class="btn btn-secondary" (click)="close()">Cancel</button>
-    </div>
-    <div [hidden]="!networkMsg" class="alert alert-danger">
-      Error {{networkMsg}}
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" [disabled]="!userForm.form.valid"
+                (click)="save()">{{message}}</button>
+        <button type="button" class="btn btn-secondary" (click)="close()">Cancel</button>
+      </div>
+      <div [hidden]="!networkMsg" class="alert alert-danger">
+        Error {{networkMsg}}
+      </div>
     </div>
   </div>
 </div>

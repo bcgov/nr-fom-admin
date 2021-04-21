@@ -4,14 +4,14 @@ import { Observable} from 'rxjs';
 // import * as _ from 'lodash';
 // import * as moment from 'moment';
 
-// import { ApplicationService } from 'app/services/application.service';
-import { ProjectService } from 'app/services/project.service';
-// import { Application } from 'app/models/application';
-// import { Project } from 'app/models/project';
+// import { ApplicationService } from 'core/services/application.service';
+import { ProjectService } from 'core/services/project.service';
+// import { Application } from 'core/models/application';
+// import { Project } from 'core/models/project';
 // import { StatusCodes } from 'app/utils/constants/application';
 // import { ConstantUtils, CodeType } from 'app/utils/constants/constantUtils';
 
-import { ProjectDto } from '../api-client/typescript-rxjs';
+import { ProjectDto } from 'core/api-client/typescript-rxjs';
 
 @Injectable()
 export class ApplicationDetailResolver implements Resolve<ProjectDto> {

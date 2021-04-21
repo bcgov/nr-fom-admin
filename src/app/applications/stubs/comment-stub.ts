@@ -1,4 +1,4 @@
-import { Comment } from 'app/models/comment';
+import { Comment } from 'core/models/comment';
 
 export  const commentStubArray: Comment[] =  [
     new Comment(

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { count } from 'rxjs/operators';
 
 import {
   ProjectDto,
@@ -7,10 +8,11 @@ import {
   ProjectApi as RxJsProjectApi
 } from '../api-client/typescript-rxjs';
 
-  import { IAbstractService, serviceConfiguration } from './abstract/abstract.service';
+import { BaseService, IAbstractService, serviceConfiguration} from './abstract/abstract.service';
 
 @Injectable()
-export class ProjectService implements IAbstractService<ProjectDto> {
+export class ProjectService extends BaseService<ProjectDto>
+  implements IAbstractService<ProjectDto> {
   protected projectsApi: RxJsProjectsApi;
   protected projectApi: RxJsProjectApi;
 
@@ -19,6 +21,8 @@ export class ProjectService implements IAbstractService<ProjectDto> {
     // private projectsApi: RxJsProjectsApi,
     // private projectApi: RxJsProjectApi
   ) {
+    super();
+
     try {
       this.projectsApi = new RxJsProjectsApi(serviceConfiguration);
       this.projectApi = new RxJsProjectApi(serviceConfiguration);
