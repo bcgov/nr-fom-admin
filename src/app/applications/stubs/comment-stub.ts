@@ -4,7 +4,7 @@ export  const commentStubArray: Comment[] =  [
     new Comment(
     {
         '_id': '22233',
-        '_addedBy': 'Marcelo M',
+        '_addedBy': 'Sample User',
         '_commentPeriod' : '234543',
         'commentNumber': 2,
         'comment': 'Hi there. The trees you are trying to cut are absolutely amazing and the entiry community ' +
@@ -35,7 +35,7 @@ export  const commentStubArray: Comment[] =  [
     new Comment(
       {
           '_id': '22234',
-          '_addedBy': 'Marcelo M 2nd',
+          '_addedBy': 'Sample User 2nd',
           '_commentPeriod' : '234544',
           'commentNumber': 3,
           'comment': 'Hi there? When are you actually planning on executing this work? Will there be any further \n' +
@@ -66,7 +66,7 @@ export  const commentStubArray: Comment[] =  [
       new Comment(
         {
             '_id': '22235',
-            '_addedBy': 'Marcelo M 2nd',
+            '_addedBy': 'Sample User 2nd',
             '_commentPeriod' : '234544',
             'commentNumber': 3,
             'comment': 'I really don\'t like this FOM. It\s going to interfere with my home, which faces the trees ' +

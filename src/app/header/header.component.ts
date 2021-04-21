@@ -34,8 +34,8 @@ export class HeaderComponent implements OnInit {
       const token = this.keycloakService.getToken();
       // let jwt = new JwtUtil().decodeToken(token);
       let jwt = {
-        username: 'Marcelo',
-        displayName: 'Marcelo',
+        username: 'sample-user',
+        displayName: 'Sample User',
         realm_access: {
           roles: ['sysadmin']
         },
@@ -52,8 +52,8 @@ export class HeaderComponent implements OnInit {
         // this.welcomeMsg = 'Login';
         // TODO: Marcelo addded this
         jwt = {
-          username: 'Marcelo',
-          displayName: 'Marcelo',
+          username: 'sample-user',
+          displayName: 'Sample User',
           realm_access: {
             roles: ['sysadmin']
           },
