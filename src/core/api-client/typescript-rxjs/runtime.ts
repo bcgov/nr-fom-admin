@@ -103,7 +103,7 @@ export class BaseAPI {
           // TODO: Why does this say respone? Is that some kind of typo? Can we change it?
           return (responseOpts ? responseOpts.respone : responseOpts) === 'raw'
             ? res
-            : response;
+            : JSON.parse(response);
         }
         throw res;
       })
