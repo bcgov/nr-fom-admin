@@ -30,12 +30,6 @@ export class AttachmentTypeService implements IAbstractService<AttachmentTypeCod
     }
   }
 
-  /**
-   * Get all attachmentTypeCodes.
-   *
-   * @returns {Observable<AttachmentTypeCode[]>}
-   * @memberof ProjectService
-   */
   getAll(): Observable<AttachmentTypeCodeDto[]> {
     return this.attachmentTypeCodeApi.attachmentTypeCodeControllerFindAll();
   }

@@ -30,12 +30,6 @@ export class DistrictService implements IAbstractService<DistrictDto> {
     }
   }
 
-  /**
-   * Get all districts.
-   *
-   * @returns {Observable<District[]>}
-   * @memberof ProjectService
-   */
   getAll(): Observable<DistrictDto[]> {
     return this.districtApi.districtControllerFindAll();
   }

@@ -30,12 +30,6 @@ export class SubmissionTypeService implements IAbstractService<SubmissionTypeCod
     }
   }
 
-  /**
-   * Get all submissionTypeCodes.
-   *
-   * @returns {Observable<SubmissionTypeCode[]>}
-   * @memberof ProjectService
-   */
   getAll(): Observable<SubmissionTypeCodeDto[]> {
     return this.submissionTypeCodeApi.submissionTypeCodeControllerFindAll();
   }

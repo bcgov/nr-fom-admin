@@ -7,7 +7,7 @@ import {
   ProjectApi as RxJsProjectApi
 } from '../api-client/typescript-rxjs';
 
-import { IAbstractService, serviceConfiguration } from './abstract/abstract.service';
+  import { IAbstractService, serviceConfiguration } from './abstract/abstract.service';
 
 @Injectable()
 export class ProjectService implements IAbstractService<ProjectDto> {

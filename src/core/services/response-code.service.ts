@@ -30,12 +30,6 @@ export class ResponseService implements IAbstractService<ResponseCodeDto> {
     }
   }
 
-  /**
-   * Get all responseCodes.
-   *
-   * @returns {Observable<ResponseCode[]>}
-   * @memberof ProjectService
-   */
   getAll(): Observable<ResponseCodeDto[]> {
     return this.responseCodeApi.responseCodeControllerFindAll();
   }

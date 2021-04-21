@@ -30,12 +30,6 @@ export class ForestClientService implements IAbstractService<ForestClientDto> {
     }
   }
 
-  /**
-   * Get all forestClients.
-   *
-   * @returns {Observable<ForestClient[]>}
-   * @memberof ProjectService
-   */
   getAll(): Observable<ForestClientDto[]> {
     return this.forestClientApi.forestClientControllerFindAll();
   }

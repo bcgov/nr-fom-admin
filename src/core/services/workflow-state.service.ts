@@ -30,12 +30,6 @@ export class WorkflowStateService implements IAbstractService<WorkflowStateCodeD
     }
   }
 
-  /**
-   * Get all workflowStateCodes.
-   *
-   * @returns {Observable<WorkflowStateCode[]>}
-   * @memberof ProjectService
-   */
   getAll(): Observable<WorkflowStateCodeDto[]> {
     return this.workflowStateCodeApi.workflowStateCodeControllerFindAll();
   }
