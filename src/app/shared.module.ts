@@ -10,10 +10,13 @@ import { ObjectFilterPipe } from 'core/pipes/object-filter.pipe';
 import { LinkifyPipe } from 'core/pipes/linkify.pipe';
 
 import { FileUploadComponent } from 'app/file-upload/file-upload.component';
+import { DialogComponent } from '../core/components/dialog/dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ButtonComponent } from 'core/components/button/button.component';
 
 @NgModule({
-  imports: [BrowserModule, MatSlideToggleModule, MatSnackBarModule],
-  declarations: [OrderByPipe, NewlinesPipe, PublishedPipe, ObjectFilterPipe, LinkifyPipe, FileUploadComponent],
+  imports: [BrowserModule, MatSlideToggleModule, MatSnackBarModule, MatDialogModule, ],
+  declarations: [OrderByPipe, NewlinesPipe, PublishedPipe, ObjectFilterPipe, LinkifyPipe, FileUploadComponent, DialogComponent, ButtonComponent],
   exports: [
     MatSlideToggleModule,
     MatSnackBarModule,
@@ -21,7 +24,9 @@ import { FileUploadComponent } from 'app/file-upload/file-upload.component';
     NewlinesPipe,
     PublishedPipe,
     LinkifyPipe,
-    FileUploadComponent
+    FileUploadComponent,
+    DialogComponent,
+    ButtonComponent
   ]
 })
 export class SharedModule {}

@@ -11,9 +11,8 @@ import { ConfirmComponent } from 'app/confirm/confirm.component';
 import { Application } from 'core/models/application';
 import { PublicComment } from 'core/models/publiccomment';
 
-import { ProjectService } from 'core/services/project.service';
+import { ProjectDto, ProjectService } from 'core/api';
 
-import { ProjectDto } from 'core/api-client/typescript-rxjs/models/ProjectDto';
 
 @Component({
   selector: 'app-application-detail',
@@ -43,7 +42,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // get data from route resolver
-    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: ProjectDto }) => {
+     this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: ProjectDto }) => {
       if (data.application) {
         this.project = data.application;
         if (this.project.workflowState['code'] === 'INITIAL') {
@@ -406,7 +405,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
         this.snackBarRef = this.snackBar.open('Application unpublished...', null, { duration: 2000 });
         // reload all data
         this.projectService
-          .getById(this.application.id)
+          .projectControllerFindOne(this.application.id)
           .pipe(takeUntil(this.ngUnsubscribe))
           .subscribe(
             // @ts-ignore

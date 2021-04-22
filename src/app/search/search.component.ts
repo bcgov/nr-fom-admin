@@ -14,12 +14,10 @@ import { StatusCodes, ReasonCodes } from 'core/utils/constants/application';
 import { Project } from 'core/models/project';
 
 // Testing fetching Districts
-import { DistrictService } from 'core/services/district.service';
-import { ForestClientService } from 'core/services/forest-client.service';
-import { WorkflowStateService } from 'core/services/workflow-state.service';
+
+import { ProjectDto } from 'core/api';
 // import { PublicCommentService } from 'core/services/public-comments.service';
 
-import { ProjectDto } from 'core/api-client/typescript-rxjs';
 
 @Component({
   selector: 'app-search',
@@ -44,9 +42,6 @@ export class SearchComponent implements OnInit, OnDestroy {
   public snackBar: MatSnackBar,
   public searchService: SearchService, // used in template
   public searchProjectService: SearchProjectService,
-  public searchDistrictService: DistrictService,
-  public searchForestClientService: ForestClientService,
-  public searchWorkflowStateCodeService: WorkflowStateService,
   // public searchPublicCommentService: PublicCommentService,
   private router: Router,
   private route: ActivatedRoute
@@ -209,12 +204,13 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 
   public onImport() {
-    try {
-      this.router.navigate(['/a', 'create']);
-    } catch (err) {
+    // try {
+    this.router.navigate( [ '/a/create' ] );
+    console.log('on import')
+    // } catch (err) {
       // console.log('error, invalid application =', application);
-      this.snackBarRef = this.snackBar.open('Error creating application ...', null, { duration: 3000 });
-    }
+      // this.snackBarRef = this.snackBar.open('Error creating application ...', null, { duration: 3000 });
+    // }
   }
 
   // TODO - Marcelo

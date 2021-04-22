@@ -1,19 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Observable} from 'rxjs';
-import { ProjectService } from 'core/services/project.service';
-import { ProjectDto }  from '../api-client/typescript-rxjs';
+import { ProjectDto, ProjectsService } from '../api';
 
 @Injectable()
 export class SearchProjectService {
   public isError = false;
 
-  constructor(private projectService: ProjectService) {}
+  constructor(private projectsService: ProjectsService) {}
 
   getProjects(): Observable<ProjectDto[]> {
-    return this.projectService.getAll();
+    return this.projectsService.projectsControllerFindAll();
   }
 
   getProjectsByFspId(fspId: string): Observable<ProjectDto[]> {
-    return this.projectService.getByFspId(parseInt(fspId));
+    return this.projectsService.projectsControllerFindByFspId(parseInt(fspId));
   }
 }

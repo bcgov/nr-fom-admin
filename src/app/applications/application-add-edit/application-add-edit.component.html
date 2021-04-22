@@ -2,7 +2,7 @@
   <div class="container">
     <div class="title-container">
       <div class="title-container__title">
-        <h1 class="text-muted" style="margin-left: 6.5rem">Create / Edit FOM</h1>
+        <h1 class="text-muted" style="margin-left: 6.5rem">{{isCreate ? 'Create': 'Edit'}} FOM</h1>
       </div>
       <div class="title-container__actions">
         <button
@@ -13,53 +13,16 @@
         >
           Cancel
         </button>
-        <div class="btn-container">
-          <button
-            class="btn btn-primary ml-1"
-            type="button"
-            title="Submit new application"
-          >
-            <i class="spinner rotating" [hidden]="!isSubmitting"></i>
-            <span>{{ isSubmitting ? "Submitting" : "Submit" }}</span>
-          </button>
-          <span title="You cannot save a retired application"></span>
-        </div>
-        <div class="btn-container">
-          <button
-            class="btn btn-success ml-1"
-            type="button"
-            title="Save application"
-            (click)="saveApplication()"
-            [disabled]="isSaving"
-          >
-            <i class="spinner rotating" [hidden]="!isSaving"></i>
-            <span>{{ isSaving ? "Saving" : "Save" }}</span>
-          </button>
-          <span title="You cannot save a retired application"></span>
-        </div>
-        <div class="btn-container">
-          <button
-            class="publish-btn btn btn-primary ml-1"
-            type="button"
-            title="Publish changes"
-            (click)="saveApplication()"
-            [disabled]="isSaving"
-          >
-            <i class="spinner rotating" [hidden]="!isSaving"></i>
-            <span>{{ isSaving ? "Publishing" : "Publish Changes" }}</span>
-          </button>
-          <span
-            title="You cannot publish changes to a retired application"
-          ></span>
-        </div>
+        <app-button  *ngIf="isCreate; else saveButton" title="You cannot save a retired application" (click)="submit()">{{ isSubmitting ? "Submitting" : "Submit" }}</app-button>
+
       </div>
     </div>
   </div>
 </div>
 
-<div class="bottom-container" *ngIf="application">
+<div class="bottom-container" *ngIf="applicationFormGroup">
   <div class="container">
-    <form class="mb-3" #applicationForm="ngForm">
+    <form class="mb-3"  [formGroup]="applicationFormGroup">
       <fieldset>
         <div class="row">
           <div class="col-md-5">
@@ -72,7 +35,18 @@
               class="form-control"
               id="fsp-id"
               name="fsp-id"
-              [(ngModel)]="application.fspId"
+              formControlName="fspId"
+
+            />
+          </div>
+                    <div class="col-md-2">
+            <label for="fsp-id" style="white-space: nowrap;">District ID</label>
+            <input
+              type="number"
+              class="form-control"
+              id="fsp-id"
+              name="fsp-id"
+              formControlName="districtId"
             />
           </div>
           <div class="col-md-5">
@@ -100,7 +74,7 @@
             class="form-control"
             id="client"
             name="client"
-            [(ngModel)]="application.forestClient.name"
+            formControlName="forestClientNumber"
           />
         </div>
         <div class="form-group">
@@ -110,7 +84,7 @@
             class="form-control"
             id="name"
             name="name"
-            [(ngModel)]="application.name"
+            formControlName="name"
           />
         </div>
 
@@ -121,8 +95,7 @@
             rows="3"
             id="description"
             name="description"
-            #description="ngModel"
-            [(ngModel)]="application.description"
+            formControlName="description"
           >
           </textarea>
         </div>
@@ -231,3 +204,10 @@
     </form>
   </div>
 </div>
+
+<ng-template #saveButton>
+
+
+        <app-button
+ title="You cannot save a retired application"             (click)="saveApplication()">{{ isSaving ? "Saving" : "Save" }}</app-button>
+</ng-template>

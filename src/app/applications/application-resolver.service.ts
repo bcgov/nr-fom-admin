@@ -5,13 +5,12 @@ import { Observable} from 'rxjs';
 // import * as moment from 'moment';
 
 // import { ApplicationService } from 'core/services/application.service';
-import { ProjectService } from 'core/services/project.service';
 // import { Application } from 'core/models/application';
 // import { Project } from 'core/models/project';
 // import { StatusCodes } from 'app/utils/constants/application';
 // import { ConstantUtils, CodeType } from 'app/utils/constants/constantUtils';
 
-import { ProjectDto } from 'core/api-client/typescript-rxjs';
+import { ProjectDto, ProjectService } from 'core/api';
 
 @Injectable()
 export class ApplicationDetailResolver implements Resolve<ProjectDto> {
@@ -69,10 +68,10 @@ export class ApplicationDetailResolver implements Resolve<ProjectDto> {
       }
 
       return of(project); */
-      return new Observable<ProjectDto>();
+      return this.projectService.projectControllerFindOne(projectId)
     } else {
       // view/edit existing application
-      return this.projectService.getById(projectId);
+      return this.projectService.projectControllerFindOne(projectId);
     }
   }
 }
