@@ -16,9 +16,8 @@ import { ReviewCommentsComponent } from './review-comments/review-comments.compo
 import { CommentDetailComponent } from './review-comments/comment-detail/comment-detail.component';
 
 // services
-import { ApiService } from 'app/services/api';
-import { ApplicationService } from 'app/services/application.service';
-import { ExportService } from 'app/services/export.service';
+import { ProjectService } from 'core/services/project.service';
+// import { ExportService } from 'core/services/export.service';
 
 @NgModule({
   imports: [
@@ -44,6 +43,6 @@ import { ExportService } from 'app/services/export.service';
     ReviewCommentsComponent,
     CommentDetailComponent
   ],
-  providers: [ApiService, ApplicationService, ExportService]
+  providers: [ProjectService]
 })
 export class ApplicationsModule {}

@@ -7,24 +7,13 @@ import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { DialogService } from 'ng2-bootstrap-modal';
 import { Observable, Subject, of } from 'rxjs';
 import { takeUntil, concat } from 'rxjs/operators';
-// import * as moment from 'moment';
 import * as _ from 'lodash';
 
 import { ConfirmComponent } from 'app/confirm/confirm.component';
-// import { Application } from 'app/models/application';
-import { Project } from 'app/models/project';
-// import { CommentPeriod } from 'app/models/commentperiod';
-import { Document } from 'app/models/document';
-import { Decision } from 'app/models/decision';
-// import { ApplicationService } from 'app/services/application.service';
-// import { CommentPeriodService } from 'app/services/commentperiod.service';
-import { DecisionService } from 'app/services/decision.service';
-import { DocumentService } from 'app/services/document.service';
+import { Document } from 'core/models/document';
+import { Decision } from 'core/models/decision';
 
-import { ProjectDto } from 'app/api-client/typescript-rxjs/models';
-
-
-// const DEFAULT_DAYS = 30;
+import { ProjectDto } from 'core/api-client/typescript-rxjs/models';
 
 @Component({
   selector: 'app-application-add-edit',
@@ -39,7 +28,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
   public isSubmitting = false;
   public isSaving = false;
   public application: ProjectDto = null;
-  public project: Project = null;
+  public project: ProjectDto = null;
   public startDate: NgbDateStruct = null;
   public endDate: NgbDateStruct = null;
   public delta: number; // # days (including today)
@@ -55,11 +44,9 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     private router: Router,
     // private location: Location,
     public snackBar: MatSnackBar,
-    // private applicationService: ApplicationService,
+    // private projectService: ProjectService,
     // private commentPeriodService: CommentPeriodService,
-    private dialogService: DialogService,
-    private decisionService: DecisionService,
-    private documentService: DocumentService
+    private dialogService: DialogService
   ) {
     // if we have an URL fragment, save it for future scrolling
     router.events.subscribe(event => {
@@ -376,7 +363,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     this.isSubmitting = true;
 
     // add application
-    this.applicationService
+    this.projectService
       .add(this.application)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
@@ -430,7 +417,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
       () => {
         // onCompleted
         // reload app with decision for next step
-        this.applicationService
+        this.projectService
           .getById(application2._id, { getDecision: true })
           .pipe(takeUntil(this.ngUnsubscribe))
           .subscribe(
@@ -554,7 +541,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     // NB: delete first and add below -- in case the user wants to simultaneously
     //     delete an old doc and add a new doc with the same name
     for (const doc of this.docsToDelete) {
-      observables = observables.pipe(concat(this.documentService.delete(doc)));
+      observables = observables; //.pipe(concat(this.documentService.delete(doc)));
     }
     this.docsToDelete = []; // assume delete succeeds
 
@@ -582,7 +569,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     // NB: delete first and add below -- in case the user wants to simultaneously
     //     delete an old decision and add a new decision
     if (this.decisionToDelete) {
-      observables = observables.pipe(concat(this.decisionService.delete(this.decisionToDelete)));
+      observables = observables; //.pipe(concat(this.decisionService.delete(this.decisionToDelete)));
     }
     this.decisionToDelete = null; // assume delete succeeds
 
@@ -609,7 +596,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
       () => {
         // onCompleted
         // reload app with documents, current period and decision for next step
-        /* this.applicationService
+        /* this.projectService
           .getById(this.application._id, { getDocuments: true, getCurrentPeriod: true, getDecision: true })
           .pipe(takeUntil(this.ngUnsubscribe))
           .subscribe(
@@ -677,7 +664,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
       () => {
         // onCompleted
         // reload app with decision for next step
-        this.applicationService
+        this.projectService
           .getById(application2._id, { getDecision: true })
           .pipe(takeUntil(this.ngUnsubscribe))
           .subscribe(
@@ -709,7 +696,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     }
 
     // save application
-    observables = observables.pipe(concat(this.applicationService.save(this.application)));
+    observables = observables.pipe(concat(this.projectService.save(this.application)));
 
     observables.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
       () => {

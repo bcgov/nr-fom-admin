@@ -4,9 +4,7 @@ import { takeUntil } from 'rxjs/operators';
 import * as L from 'leaflet';
 import * as _ from 'lodash';
 
-import { FeatureService } from 'app/services/feature.service';
-
-import { ProjectDto } from '../../api-client/typescript-rxjs';
+import { ProjectDto } from 'core/api-client/typescript-rxjs';
 
 @Component({
   selector: 'app-application-aside',
@@ -23,7 +21,7 @@ export class ApplicationAsideComponent implements OnInit, OnDestroy {
   private maxZoom = { maxZoom: 17 };
   private mapBaseLayerName = 'World Topographic';
 
-  constructor(private featureService: FeatureService) {}
+  constructor() {}
 
   ngOnInit() {
     const World_Topo_Map = L.tileLayer(
@@ -149,7 +147,7 @@ export class ApplicationAsideComponent implements OnInit, OnDestroy {
 
       // NB: always reload results to reduce chance of race condition
       //     with drawing map and features
-      this.featureService
+      /* this.featureService
         .getByApplicationId(this.project.id)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
@@ -175,7 +173,7 @@ export class ApplicationAsideComponent implements OnInit, OnDestroy {
             } catch (e) {}
           },
           error => console.log('error =', error)
-        );
+        ); */
     }
   }
 

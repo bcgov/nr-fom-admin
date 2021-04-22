@@ -4,8 +4,8 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as _ from 'lodash';
 
-import { User } from 'app/models/user';
-import { UserService } from 'app/services/user.service';
+import { User } from 'core/models/user';
+// import { UserService } from 'core/services/user.service';
 import { AddEditUserComponent } from 'app/administration/users/add-edit-user/add-edit-user.component';
 
 @Component({
@@ -22,7 +22,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
 
   constructor(
-    private userService: UserService,
+    // private userService: UserService,
     private dialogService: DialogService,
     private _changeDetectionRef: ChangeDetectorRef
   ) {}
@@ -34,7 +34,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   refreshUsersUI() {
     this.sysadmins = [];
     this.standards = [];
-    this.userService
+    /* this.userService
       .getAll()
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
@@ -56,7 +56,7 @@ export class UsersComponent implements OnInit, OnDestroy {
         () => {
           this.loading = false;
         }
-      );
+      ); */
   }
 
   addUser() {

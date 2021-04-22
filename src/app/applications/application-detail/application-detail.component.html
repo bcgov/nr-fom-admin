@@ -91,15 +91,15 @@
       <div class="col-md-8">
         <section class="main-card">
           <!-- Tabs -->
-          <ngb-tabset>
-            <ngb-tab>
-              <ng-template ngbTabTitle>
+          <ul ngbNav #nav="ngbNav" class="nav-tabs">
+            <li ngbNavItem>
+              <a ngbNavLink>
                 <i class="material-icons">
                   info
                 </i>
                 Applications Information
-              </ng-template>
-              <ng-template ngbTabContent>
+              </a>
+              <ng-template ngbNavContent>
                 <section>
                   <h2>Name</h2>
                   <p class="mb-0" [innerHTML]="project.name ? (project.name | titlecase) : '<em>No applicant on this file</em>'"></p>
@@ -172,15 +172,15 @@
                   </ul>
                 </section>
               </ng-template>
-            </ngb-tab>
-            <ngb-tab>
-              <ng-template ngbTabTitle>
+            </li>
+            <li ngbNavItem>
+              <a ngbNavLink>
                 <i class="material-icons">
                   pin_drop
                 </i>
                 Location
-              </ng-template>
-              <ng-template ngbTabContent>
+              </a>
+              <ng-template ngbNavContent>
                 <section class="m-3">
                   <app-application-aside [project]="project"></app-application-aside>
                 </section>
@@ -211,8 +211,9 @@
                   </ul>
                 </section>
               </ng-template>
-            </ngb-tab>
-          </ngb-tabset>
+            </li>
+          </ul>
+          <div [ngbNavOutlet]="nav"></div>
         </section>
       </div>
 
@@ -276,19 +277,19 @@
               <ul class="doc-list">
                 <li *ngFor="let doc of (project['attachments'] || [])">
                   <span class="cell icon">
-                    <i class="material-icons link" (click)="api.openDocument(doc)">
+                    <!--<i class="material-icons link" (click)="api.openDocument(doc)">
                       insert_drive_file
-                    </i>
+                    </i>-->
                   </span>
                   <span class="cell name" [title]="doc.displayName || ''">
-                      <span class="cell__txt-content">
+                      <!--<span class="cell__txt-content">
                         <a (click)="api.openDocument(doc)">{{doc.documentFileName}}</a>
-                      </span>
+                      </span>-->
                   </span>
                   <span class="cell actions">
-                    <button class="btn btn-icon" title="Download this document" (click)="api.downloadDocument(doc)">
+                    <!--<button class="btn btn-icon" title="Download this document" (click)="api.downloadDocument(doc)">
                       <i class="material-icons">file_download</i>
-                    </button>
+                    </button>-->
                   </span>
                 </li>
                 <li class="no-results" *ngIf="(project['attachments'] || []) === 0">

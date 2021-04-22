@@ -6,20 +6,20 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as _ from 'lodash';
 
-import { SearchService } from 'app/services/search.service';
-import { SearchProjectService } from 'app/services/searchproject.service';
-import { Application } from 'app/models/application';
-import { ConstantUtils, CodeType } from 'app/utils/constants/constantUtils';
-import { StatusCodes, ReasonCodes } from 'app/utils/constants/application';
-import { Project } from 'app/models/project';
+import { SearchService } from 'core/services/search.service';
+import { SearchProjectService } from 'core/services/search-project.service';
+import { Application } from 'core/models/application';
+import { ConstantUtils, CodeType } from 'core/utils/constants/constantUtils';
+import { StatusCodes, ReasonCodes } from 'core/utils/constants/application';
+import { Project } from 'core/models/project';
 
 // Testing fetching Districts
-import { DistrictService } from 'app/services/district.service';
-import { ForestClientService } from 'app/services/forestclient.service';
-import { WorkflowStateCodeService } from 'app/services/workflowstatecode.service';
-import { PublicCommentService } from 'app/services/publiccomments.service';
+import { DistrictService } from 'core/services/district.service';
+import { ForestClientService } from 'core/services/forest-client.service';
+import { WorkflowStateService } from 'core/services/workflow-state.service';
+// import { PublicCommentService } from 'core/services/public-comments.service';
 
-import { ProjectDto } from '../api-client/typescript-rxjs';
+import { ProjectDto } from 'core/api-client/typescript-rxjs';
 
 @Component({
   selector: 'app-search',
@@ -46,8 +46,8 @@ export class SearchComponent implements OnInit, OnDestroy {
   public searchProjectService: SearchProjectService,
   public searchDistrictService: DistrictService,
   public searchForestClientService: ForestClientService,
-  public searchWorkflowStateCodeService: WorkflowStateCodeService,
-  public searchPublicCommentService: PublicCommentService,
+  public searchWorkflowStateCodeService: WorkflowStateService,
+  // public searchPublicCommentService: PublicCommentService,
   private router: Router,
   private route: ActivatedRoute
   ) {}

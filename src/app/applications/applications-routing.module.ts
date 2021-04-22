@@ -6,7 +6,7 @@ import { ApplicationAddEditComponent } from './application-add-edit/application-
 import { ApplicationDetailResolver } from './application-resolver.service';
 import { ReviewCommentsComponent } from './review-comments/review-comments.component';
 
-import { CanDeactivateGuard } from 'app/services/can-deactivate-guard.service';
+import { CanDeactivateGuard } from 'core/services/can-deactivate-guard.service';
 
 const routes: Routes = [
   {
