@@ -7,7 +7,7 @@ import { SearchComponent } from './search/search.component';
 import { AdministrationComponent } from './administration/administration.component';
 import { UsersComponent } from './administration/users/users.component';
 
-import { CanDeactivateGuard } from 'app/services/can-deactivate-guard.service';
+import { CanDeactivateGuard } from 'core/services/can-deactivate-guard.service';
 import { ListComponent } from './list/list.component';
 
 const routes: Routes = [

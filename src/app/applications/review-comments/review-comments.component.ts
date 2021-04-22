@@ -2,18 +2,14 @@ import { Component, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/co
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import * as moment from 'moment';
 import * as _ from 'lodash';
 
-import { Application } from 'app/models/application';
-import { Comment } from 'app/models/comment';
-import { CommentService } from 'app/services/comment.service';
-import { PublicCommentService } from 'app/services/publiccomments.service';
-import { ExportService } from 'app/services/export.service';
+import { Application } from 'core/models/application';
+import { Comment } from 'core/models/comment';
 import { commentStubArray } from '../stubs/comment-stub';
 import { singleApplicationStub } from '../stubs/application-stub';
-import { Project } from 'app/models/project';
-import { PublicComment } from 'app/models/publiccomment';
+import { Project } from 'core/models/project';
+import { PublicComment } from 'core/models/publiccomment';
 
 class SortKey {
   innerHTML: string;
@@ -57,10 +53,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
-    private commentService: CommentService,
-    private publicCommentService: PublicCommentService,
-    private exportService: ExportService
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -107,7 +100,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
       }
 
       // get a page of comments
-      this.publicCommentService
+      /* this.publicCommentService
       .getPublicCommentsByProjectId(this.project.id)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
@@ -128,7 +121,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
             }
             this.alerts.push('Error loading comments');
           }
-        );
+        ); */
     }
   }
 
@@ -153,62 +146,6 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
 
   isCurrentComment(item: PublicComment): boolean {
     return item === this.currentPublicComment;
-  }
-
-  exportToExcel() {
-    // get all comments
-    this.commentService
-      .getAllByApplicationId(this.application._id, 0, 1000000, null, { getDocuments: true }) // max 1M records
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(
-        comments => {
-          // FUTURE: instead of flattening, copy to new 'export object' with user-friendly keys?
-          const flatComments = comments.map(comment => {
-            // sanitize and flatten each comment object
-            delete comment._commentPeriod;
-            delete comment.commentNumber;
-            // sanitize documents
-            comment.documents.forEach(document => {
-              delete document._id;
-              delete document._addedBy;
-              delete document._application;
-              delete document._decision;
-              delete document._comment;
-              delete document.internalURL;
-              delete document.internalMime;
-              delete document.isDeleted;
-              delete document.meta;
-            });
-            // add necessary properties
-            // comment.applicants = this.application.meta.applicants; // FUTURE
-            comment['cl_file'] = this.application.meta.clFile;
-            return this.flatten_fastest(comment);
-          });
-
-          const excelFileName =
-            'comments-' + this.application.meta.applicants.replace(/\s/g, '_') + moment(new Date()).format('-YYYYMMDD');
-          const columnOrder: string[] = [
-            'cl_file',
-            '_id',
-            '_addedBy',
-            'dateAdded',
-            'commentAuthor.contactName',
-            'commentAuthor.orgName',
-            'commentAuthor.location',
-            'commentAuthor.requestedAnonymous',
-            'commentAuthor.internal.email',
-            'commentAuthor.internal.phone',
-            'comment',
-            'review.reviewerDate',
-            'review.reviewerNotes',
-            'commentStatus',
-            'isPublished'
-            // document columns go here
-          ];
-          this.exportService.exportAsExcelFile(flatComments, excelFileName, columnOrder);
-        },
-        error => console.log('error =', error)
-      );
   }
 
   //

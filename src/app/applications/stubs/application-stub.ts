@@ -1,4 +1,4 @@
-import { Application } from 'app/models/application';
+import { Application } from 'core/models/application';
 
         export const singleApplicationStub: Application =
          new Application(

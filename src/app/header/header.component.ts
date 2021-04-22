@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { Router } from '@angular/router';
-import { ApiService } from 'app/services/api';
-// import { JwtUtil } from 'app/jwt-util';
-import { KeycloakService } from 'app/services/keycloak.service';
+import { KeycloakService } from 'core/services/keycloak.service';
 
 @Component({
   selector: 'app-header',
@@ -30,14 +28,14 @@ export class HeaderComponent implements OnInit {
     scopes: string[];
   };
 
-  constructor(public api: ApiService, private keycloakService: KeycloakService, public router: Router) {
+  constructor(private keycloakService: KeycloakService, public router: Router) {
     // this._api = api;
     router.events.subscribe(() => {
       const token = this.keycloakService.getToken();
       // let jwt = new JwtUtil().decodeToken(token);
       let jwt = {
-        username: 'Marcelo',
-        displayName: 'Marcelo',
+        username: 'sample-user',
+        displayName: 'Sample User',
         realm_access: {
           roles: ['sysadmin']
         },
@@ -54,8 +52,8 @@ export class HeaderComponent implements OnInit {
         // this.welcomeMsg = 'Login';
         // TODO: Marcelo addded this
         jwt = {
-          username: 'Marcelo',
-          displayName: 'Marcelo',
+          username: 'sample-user',
+          displayName: 'Sample User',
           realm_access: {
             roles: ['sysadmin']
           },
@@ -96,7 +94,7 @@ export class HeaderComponent implements OnInit {
 
   navigateToLogout() {
     // reset login status
-    this.api.logout();
+    // this.api.logout();
     window.location.href = this.keycloakService.getLogoutURL();
   }
 
