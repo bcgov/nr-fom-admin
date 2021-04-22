@@ -1,6 +1,6 @@
 // modules
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from 'app/shared.module';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -16,12 +16,12 @@ import { ReviewCommentsComponent } from './review-comments/review-comments.compo
 import { CommentDetailComponent } from './review-comments/comment-detail/comment-detail.component';
 
 // services
-import { ProjectService } from 'core/services/project.service';
 // import { ExportService } from 'core/services/export.service';
 
 @NgModule({
   imports: [
     FormsModule,
+    ReactiveFormsModule,
     CommonModule,
     SharedModule,
     NgxPaginationModule,
@@ -43,6 +43,5 @@ import { ProjectService } from 'core/services/project.service';
     ReviewCommentsComponent,
     CommentDetailComponent
   ],
-  providers: [ProjectService]
 })
 export class ApplicationsModule {}

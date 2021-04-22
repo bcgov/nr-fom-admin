@@ -4,7 +4,7 @@ import { takeUntil } from 'rxjs/operators';
 import * as L from 'leaflet';
 import * as _ from 'lodash';
 
-import { ProjectDto } from 'core/api-client/typescript-rxjs';
+import { ProjectDto } from 'core/api';
 
 @Component({
   selector: 'app-application-aside',

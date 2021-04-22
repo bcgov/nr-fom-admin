@@ -3,12 +3,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
 import { Application } from 'core/models/application';
 // import { IApplicationQueryParamSet, QueryParamModifier } from 'core/services/api';
-import { ProjectService } from 'core/services/project.service';
+
 import { RegionCodes, StatusCodes, ReasonCodes } from 'core/utils/constants/application';
 import { CodeType, ConstantUtils } from 'core/utils/constants/constantUtils';
 import { SearchProjectService } from 'core/services/search-project.service';
 
-import { ProjectDto } from 'core/api-client/typescript-rxjs';
+import { ProjectDto, ProjectService, ProjectsService } from 'core/api';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -78,7 +78,7 @@ export class ListComponent implements OnInit, OnDestroy {
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
-    private projectService: ProjectService,
+    private projectService: ProjectsService,
     private searchProjectService: SearchProjectService,
     // private exportService: ExportService
   ) {}
@@ -172,7 +172,7 @@ export class ListComponent implements OnInit, OnDestroy {
     }); */
 
     this.projectService
-      .getAll()
+      .projectsControllerFindAll()
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         applications => {

@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ProjectService, ProjectsService } from 'core/api';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { count, takeUntil } from 'rxjs/operators';
 
-import { ProjectService } from 'core/services/project.service';
 
 @Component({
   selector: 'app-home',
@@ -12,14 +12,15 @@ import { ProjectService } from 'core/services/project.service';
 export class HomeComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private projectService: ProjectService) {}
+  constructor(private projectService: ProjectsService) {}
 
   ngOnInit() {
     // although we aren't currently using numApplications,
     // this verifies our login token and redirects in case of error
     this.projectService
-      .getCount()
-      .pipe(takeUntil(this.ngUnsubscribe))
+      .projectsControllerFindAll()
+
+      .pipe(count(),takeUntil(this.ngUnsubscribe))
       .subscribe(
         () => {},
         () => {
