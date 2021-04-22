@@ -10,34 +10,28 @@ import { CanDeactivateGuard } from 'core/services/can-deactivate-guard.service';
 
 const routes: Routes = [
   {
+    path: 'a/create',
+    component: ApplicationAddEditComponent,
+  },
+  {
     path: 'a/:appId',
     component: ApplicationDetailComponent,
     resolve: {
       application: ApplicationDetailResolver
-    }
-  },
-  {
-    path: 'a/:appId/create',
-    component: ApplicationAddEditComponent,
-    resolve: {
-      application: ApplicationDetailResolver
     },
-    canDeactivate: [CanDeactivateGuard]
   },
-  {
+    {
     path: 'a/:appId/edit',
     component: ApplicationAddEditComponent,
-    resolve: {
-      application: ApplicationDetailResolver
-    },
-    canDeactivate: [CanDeactivateGuard]
+
   },
+
+
   {
     path: 'comments/:appId',
     component: ReviewCommentsComponent,
-    resolve: {
-      application: ApplicationDetailResolver
-    }
+
+
   }
 ];
 

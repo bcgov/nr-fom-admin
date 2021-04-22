@@ -23,6 +23,7 @@ const routes: Routes = [
     path: 'administration/users',
     component: UsersComponent
   },
+
   {
     path: 'not-authorized',
     component: NotAuthorizedComponent

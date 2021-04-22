@@ -1,7 +1,7 @@
 import { NgModule, APP_INITIALIZER, ApplicationRef } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
+
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -29,22 +29,24 @@ import { AddEditUserComponent } from 'app/administration/users/add-edit-user/add
 import { SearchService } from 'core/services/search.service';
 import { SearchProjectService } from 'core/services/search-project.service';
 import { AuthenticationService } from 'core/services/authentication.service';
-import { ProjectService } from 'core/services/project.service';
 import { CanDeactivateGuard } from 'core/services/can-deactivate-guard.service';
 import { KeycloakService } from 'core/services/keycloak.service';
-import { DistrictService } from 'core/services/district.service';
-import { ForestClientService } from 'core/services/forest-client.service';
-import { ResponseService } from 'core/services/response.service';
-import { AttachmentTypeService } from 'core/services/attachment-type.service';
-import { SubmissionTypeService } from 'core/services/submission-type.service';
-import { WorkflowStateService } from 'core/services/workflow-state.service';
 
 import { TokenInterceptor } from 'core/utils/token-interceptor';
 import { NotAuthorizedComponent } from './not-authorized/not-authorized.component';
+import { ApiModule, Configuration } from 'core/api';
+import { ErrorInterceptor } from 'core/interceptors/http-error.interceptor';
+
+import { ReactiveFormsModule,  FormsModule} from '@angular/forms'
+import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
 
 export function kcFactory(keycloakService: KeycloakService) {
   return () => keycloakService.init();
 }
+
+const apiConfig = new Configuration( {
+  basePath: 'http://localhost:3333'
+})
 
 @NgModule({
   declarations: [
@@ -68,10 +70,14 @@ export function kcFactory(keycloakService: KeycloakService) {
     HttpClientModule,
     SharedModule,
     ApplicationsModule,
-    AppRoutingModule, // <-- module import order matters - https://angular.io/guide/router#module-import-order-matters
+    ReactiveFormsModule,
     NgbModule,
+    ApiModule.forRoot(() => apiConfig),
     NgxPaginationModule,
-    BootstrapModalModule.forRoot({ container: document.body })
+    BootstrapModalModule.forRoot( { container: document.body } ),
+    AppRoutingModule,
+    RxReactiveFormsModule
+
   ],
   providers: [
     KeycloakService,
@@ -86,15 +92,14 @@ export function kcFactory(keycloakService: KeycloakService) {
       useClass: TokenInterceptor,
       multi: true
     },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true,
+    },
     SearchService,
     SearchProjectService,
-    ProjectService,
-    DistrictService,
-    ForestClientService,
-    ResponseService,
-    AttachmentTypeService,
-    SubmissionTypeService,
-    WorkflowStateService,
+
     AuthenticationService,
     CanDeactivateGuard
   ],
