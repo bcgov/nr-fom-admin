@@ -5,7 +5,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { BootstrapModalModule } from 'ng2-bootstrap-modal';
 
 // modules
 import { SharedModule } from 'app/shared.module';
@@ -21,9 +20,6 @@ import { LoginComponent } from 'app/login/login.component';
 import { ConfirmComponent } from 'app/confirm/confirm.component';
 import { HeaderComponent } from 'app/header/header.component';
 import { FooterComponent } from 'app/footer/footer.component';
-import { AdministrationComponent } from 'app/administration/administration.component';
-import { UsersComponent } from 'app/administration/users/users.component';
-import { AddEditUserComponent } from 'app/administration/users/add-edit-user/add-edit-user.component';
 
 // services
 import { SearchService } from 'core/services/search.service';
@@ -57,9 +53,6 @@ const apiConfig = new Configuration( {
     ConfirmComponent,
     HeaderComponent,
     FooterComponent,
-    AdministrationComponent,
-    UsersComponent,
-    AddEditUserComponent,
     NotAuthorizedComponent,
     ListComponent
   ],
@@ -74,7 +67,6 @@ const apiConfig = new Configuration( {
     NgbModule,
     ApiModule.forRoot(() => apiConfig),
     NgxPaginationModule,
-    BootstrapModalModule.forRoot( { container: document.body } ),
     AppRoutingModule,
     RxReactiveFormsModule
 
@@ -103,7 +95,7 @@ const apiConfig = new Configuration( {
     AuthenticationService,
     CanDeactivateGuard
   ],
-  entryComponents: [ConfirmComponent, AddEditUserComponent],
+  entryComponents: [ConfirmComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {

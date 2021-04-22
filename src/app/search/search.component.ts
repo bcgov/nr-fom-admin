@@ -197,9 +197,6 @@ export class SearchComponent implements OnInit, OnDestroy {
     }
 
     this.saveQueryParameters();
-
-    console.log('pressed find');
-
     this.doSearch();
   }
 

@@ -156,13 +156,15 @@
                 </span>
               </td>
               <td data-label="Region">
-                <span>{{project.district ? project.district.name : '-'}}</span>
+                <!-- <span>{{project.district ? project.district.name : '-'}}</span> -->
+                <span>{{project.district ? project.district : '-'}}</span>
               </td>
               <td data-label="Created">
                 <span>{{project.createTimestamp || '-'}}</span>
               </td>
               <td data-label="Status">
-                <span>{{project.workflowState ? project.workflowState.code : '-'}}</span>
+                <!-- <span>{{project.workflowState ? project.workflowState.code : '-'}}</span> -->
+                <span>{{project.workflowState ? project.workflowState : '-'}}</span>
               </td>
               <td data-label="Comment Status">
                 <span>Commenting &nbsp; Closed - {{ project.commentingClosedDate | date:'longDate' || 'Unknown'}}</span>

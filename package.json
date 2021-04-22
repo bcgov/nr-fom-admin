@@ -40,7 +40,6 @@
     "moment": "^2.29.1",
     "mygovbc-bootstrap-theme": "^0.4.1",
     "ng-inline-svg": "^12.1.0",
-    "ng2-bootstrap-modal": "^1.0.1",
     "ngx-pagination": "^5.0.0",
     "popper.js": "^1.16.0",
     "remeda": "0.0.27",
