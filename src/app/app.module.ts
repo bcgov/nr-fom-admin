@@ -40,13 +40,37 @@ import {ErrorInterceptor} from 'core/interceptors/http-error.interceptor';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms'
 import {RxReactiveFormsModule} from '@rxweb/reactive-form-validators';
 import {LeafletModule} from '@asymmetrik/ngx-leaflet';
+import {throwError} from 'rxjs';
 
 export function kcFactory(keycloakService: KeycloakService) {
   return () => keycloakService.init();
 }
 
+// this.jwtHelper = new JwtHelperService();
+const currentUser = JSON.parse(window.localStorage.getItem('currentUser'));
+const token = currentUser && currentUser.token;
+const isMS = !!window.navigator.msSaveOrOpenBlob;
+
+// In index.html we load a javascript file with environment-specific settings,
+// populated from mounted ConfigMap in OpenShift. This file sets window.localStorage settings
+// Locally, this will be empty and local defaults will be used.
+
+const envName = window.localStorage.getItem('fom_environment_name');
+const env = (envName == undefined || envName.length == 0) ? 'local' : envName;
+let apiBasePath;
+
+const { hostname } = window.location;
+if (hostname == 'localhost') {
+  apiBasePath = 'http://localhost:3333';
+} else if (hostname.includes('nr-fom-admin') && hostname.includes('devops.gov.bc.ca')) {
+  apiBasePath = 'https://' + hostname.replace('fom-admin', 'fom-api');
+} else {
+  // TODO: May need special case for production vanity URL, or implement solution for dynamically loading from a config map.
+  throwError('Unrecognized hostname ' + hostname + ' cannot infer API URL.');
+}
+
 const apiConfig = new Configuration({
-  basePath: 'http://localhost:3333'
+  basePath: apiBasePath
 })
 
 @NgModule({
