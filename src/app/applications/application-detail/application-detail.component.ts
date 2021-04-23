@@ -1,7 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatSnackBar, MatSnackBarRef, SimpleSnackBar} from '@angular/material/snack-bar';
 import {ActivatedRoute, Router} from '@angular/router';
-import {DialogService} from 'ng2-bootstrap-modal';
 // @ts-ignore
 import {of, Subject, throwError} from 'rxjs';
 // @ts-ignore
@@ -36,7 +35,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     public snackBar: MatSnackBar,
-    private dialogService: DialogService,
+    // private dialogService: DialogService,
     public projectService: ProjectService // also used in template
   ) {
   }
@@ -104,24 +103,24 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
       return;
     } */
 
-    this.dialogService
-      .addDialog(
-        ConfirmComponent,
-        {
-          title: 'Confirm Deletion',
-          message: 'Do you really want to delete this application?',
-          okOnly: false
-        },
-        {
-          backdropColor: 'rgba(0, 0, 0, 0.5)'
-        }
-      )
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(isConfirmed => {
-        if (isConfirmed) {
-          this.internalDeleteApplication();
-        }
-      });
+    // this.dialogService
+    //   .addDialog(
+    //     ConfirmComponent,
+    //     {
+    //       title: 'Confirm Deletion',
+    //       message: 'Do you really want to delete this application?',
+    //       okOnly: false
+    //     },
+    //     {
+    //       backdropColor: 'rgba(0, 0, 0, 0.5)'
+    //     }
+    //   )
+    //   .pipe(takeUntil(this.ngUnsubscribe))
+    //   .subscribe(isConfirmed => {
+    //     if (isConfirmed) {
+    //       this.internalDeleteApplication();
+    //     }
+    //   });
   }
 
   private internalDeleteApplication() {
@@ -230,40 +229,42 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
 
   public publishApplication() {
     if (!this.application.description) {
-      this.dialogService
-        .addDialog(
-          ConfirmComponent,
-          {
-            title: 'Cannot Publish Application',
-            message: 'A description for this application is required to publish.',
-            okOnly: true
-          },
-          {
-            backdropColor: 'rgba(0, 0, 0, 0.5)'
-          }
-        )
-        .pipe(takeUntil(this.ngUnsubscribe));
-      return;
+      // this.dialogService
+      //   .addDialog(
+      //     ConfirmComponent,
+      //     {
+      //       title: 'Cannot Publish Application',
+      //       message: 'A description for this application is required to publish.',
+      //       okOnly: true
+      //     },
+      //     {
+      //       backdropColor: 'rgba(0, 0, 0, 0.5)'
+      //     }
+      //   )
+      //   .pipe(takeUntil(this.ngUnsubscribe));
+      // return;
     }
 
-    this.dialogService
-      .addDialog(
-        ConfirmComponent,
-        {
-          title: 'Confirm Publish',
-          message: 'Publishing this application will make it visible to the public. Are you sure you want to proceed?',
-          okOnly: false
-        },
-        {
-          backdropColor: 'rgba(0, 0, 0, 0.5)'
-        }
-      )
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(isConfirmed => {
-        if (isConfirmed) {
-          this.internalPublishApplication();
-        }
-      });
+    // this.dialogService
+    //   .addDialog(
+    //     ConfirmComponent,
+    //     {
+    //       title: 'Confirm Publish',
+    //       message: 'Publishing this application will make it visible to the public. Are you sure you want to proceed?',
+    //       okOnly: false
+    //     },
+    //     {
+    //       backdropColor: 'rgba(0, 0, 0, 0.5)'
+    //     }
+    //   )
+    //   .pipe(takeUntil(this.ngUnsubscribe))
+    //   .subscribe(isConfirmed => {
+    //     if (isConfirmed) {
+    //       this.internalPublishApplication();
+    //     }
+    //   });
+
+    return; // TODO - Marcelo
   }
 
   private internalPublishApplication() {

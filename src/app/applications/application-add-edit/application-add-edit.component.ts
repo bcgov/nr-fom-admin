@@ -4,7 +4,6 @@ import {NgForm} from '@angular/forms';
 import {MatSnackBar, MatSnackBarRef, SimpleSnackBar} from '@angular/material/snack-bar';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
-import {DialogService} from 'ng2-bootstrap-modal';
 import {Observable, of, Subject} from 'rxjs';
 import {switchMap, takeUntil, tap} from 'rxjs/operators';
 import * as _ from 'lodash';
@@ -62,7 +61,6 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     private router: Router,
     // private location: Location,
     public snackBar: MatSnackBar,
-    private dialogService: DialogService,
     private projectSvc: ProjectService,
     private formBuilder: RxFormBuilder,
     private stateSvc: StateService,
@@ -104,19 +102,21 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     }
 
     // otherwise prompt the user with observable (asynchronous) dialog
-    return this.dialogService
-      .addDialog(
-        ConfirmComponent,
-        {
-          title: 'Unsaved Changes',
-          message: 'Click OK to discard your changes or Cancel to return to the application.',
-          okOnly: true // TODO - added this to remove compilation errors but I don't really know what it means
-        },
-        {
-          backdropColor: 'rgba(0, 0, 0, 0.5)'
-        }
-      )
-      .pipe(takeUntil(this.ngUnsubscribe));
+    // return this.dialogService
+    //   .addDialog(
+    //     ConfirmComponent,
+    //     {
+    //       title: 'Unsaved Changes',
+    //       message: 'Click OK to discard your changes or Cancel to return to the application.',
+    //       okOnly: true // TODO - added this to remove compilation errors but I don't really know what it means
+    //     },
+    //     {
+    //       backdropColor: 'rgba(0, 0, 0, 0.5)'
+    //     }
+    //   )
+    //   .pipe(takeUntil(this.ngUnsubscribe));
+
+    return true; // TODO - Marcelo
   }
 
   // this is needed because we don't have a form control that is marked as dirty
