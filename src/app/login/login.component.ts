@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { KeycloakService } from 'core/services/keycloak.service';
+import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
+import {KeycloakService} from 'core/services/keycloak.service';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +13,8 @@ export class LoginComponent implements OnInit {
   loading = false;
   error = '';
 
-  constructor(private router: Router, private keycloakService: KeycloakService) {}
+  constructor(private router: Router, private keycloakService: KeycloakService) {
+  }
 
   ngOnInit() {
     // Redir to the main index page if they try to get here.

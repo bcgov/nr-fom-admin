@@ -23,9 +23,9 @@ export interface ProjectDto {
   commentingClosedDate: string;
   fspId: number;
   districtId: number;
-  district: object;
+  district: { name: string };
   forestClientNumber: string;
-  forestClient: object;
+  forestClient: { name: string };
   workflowStateCode: string;
-  workflowState: object;
+  workflowState: { description: string };
 }

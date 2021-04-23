@@ -6,13 +6,13 @@ import { ProjectDto, ProjectsService } from '../api';
 export class SearchProjectService {
   public isError = false;
 
-  constructor(private projectsService: ProjectsService) {}
+  constructor(private projectsSvc: ProjectsService) {}
 
   getProjects(): Observable<ProjectDto[]> {
-    return this.projectsService.projectsControllerFindAll();
+    return this.projectsSvc.projectsControllerFindAll();
   }
 
   getProjectsByFspId(fspId: string): Observable<ProjectDto[]> {
-    return this.projectsService.projectsControllerFindByFspId(parseInt(fspId));
+    return this.projectsSvc.projectsControllerFindByFspId(parseInt(fspId));
   }
 }

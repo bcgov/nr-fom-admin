@@ -1,5 +1,5 @@
-import { Feature } from './feature';
-import { InterestedParty } from './interestedParty';
+import {Feature} from './feature';
+import {InterestedParty} from './interestedParty';
 
 export class SearchResults {
   _id: string;

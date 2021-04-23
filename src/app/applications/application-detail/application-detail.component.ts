@@ -1,16 +1,17 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MatSnackBarRef, SimpleSnackBar, MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, Router } from '@angular/router';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {MatSnackBar, MatSnackBarRef, SimpleSnackBar} from '@angular/material/snack-bar';
+import {ActivatedRoute, Router} from '@angular/router';
+import {DialogService} from 'ng2-bootstrap-modal';
 // @ts-ignore
-import { Subject, of, throwError } from 'rxjs';
+import {of, Subject, throwError} from 'rxjs';
 // @ts-ignore
-import { takeUntil, concat, mergeMap } from 'rxjs/operators';
+import {concat, mergeMap, takeUntil} from 'rxjs/operators';
 
-import { ConfirmComponent } from 'app/confirm/confirm.component';
-import { Application } from 'core/models/application';
-import { PublicComment } from 'core/models/publiccomment';
+import {ConfirmComponent} from 'app/confirm/confirm.component';
+import {Application} from 'core/models/application';
+import {PublicComment} from 'core/models/publiccomment';
 
-import { ProjectDto, ProjectService } from 'core/api';
+import {ProjectDto, ProjectService} from 'core/api';
 
 
 @Component({
@@ -35,17 +36,16 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     public snackBar: MatSnackBar,
-    // private dialogService: DialogService,
-    public projectService: ProjectService, // also used in template
-  ) {}
+    private dialogService: DialogService,
+    public projectService: ProjectService // also used in template
+  ) {
+  }
 
   ngOnInit() {
     // get data from route resolver
-     this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: ProjectDto }) => {
-      console.log('data application: ') + JSON.stringify(data);
+    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: ProjectDto }) => {
       if (data.application) {
         this.project = data.application;
-        console.log('Project details: ') + JSON.stringify(this.project);
         if (this.project.workflowState['code'] === 'INITIAL') {
           this.isProjectActive = true;
         }
@@ -104,83 +104,83 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
       return;
     } */
 
-    // this.dialogService
-    //   .addDialog(
-    //     ConfirmComponent,
-    //     {
-    //       title: 'Confirm Deletion',
-    //       message: 'Do you really want to delete this application?',
-    //       okOnly: false
-    //     },
-    //     {
-    //       backdropColor: 'rgba(0, 0, 0, 0.5)'
-    //     }
-    //   )
-    //   .pipe(takeUntil(this.ngUnsubscribe))
-    //   .subscribe(isConfirmed => {
-    //     if (isConfirmed) {
-    //       this.internalDeleteApplication();
-    //     }
-    //   });
+    this.dialogService
+      .addDialog(
+        ConfirmComponent,
+        {
+          title: 'Confirm Deletion',
+          message: 'Do you really want to delete this application?',
+          okOnly: false
+        },
+        {
+          backdropColor: 'rgba(0, 0, 0, 0.5)'
+        }
+      )
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(isConfirmed => {
+        if (isConfirmed) {
+          this.internalDeleteApplication();
+        }
+      });
   }
 
-  // private internalDeleteApplication() {
-  //   this.isDeleting = true;
+  private internalDeleteApplication() {
+    this.isDeleting = true;
 
-  //   let observables = of(null);
+    let observables = of(null);
 
-  //   /*
-  //   // delete comment period
-  //   if (this.application.meta.currentPeriod) {
-  //     observables = observables.pipe(concat(this.commentPeriodService.delete(this.application.meta.currentPeriod)));
-  //   }
+    /*
+    // delete comment period
+    if (this.application.meta.currentPeriod) {
+      observables = observables.pipe(concat(this.commentPeriodService.delete(this.application.meta.currentPeriod)));
+    }
 
-  //   // delete decision documents
-  //   if (this.application.meta.decision && this.application.meta.decision.meta.documents) {
-  //     for (const doc of this.application.meta.decision.meta.documents) {
-  //       observables = observables.pipe(concat(this.documentService.delete(doc)));
-  //     }
-  //   }
+    // delete decision documents
+    if (this.application.meta.decision && this.application.meta.decision.meta.documents) {
+      for (const doc of this.application.meta.decision.meta.documents) {
+        observables = observables.pipe(concat(this.documentService.delete(doc)));
+      }
+    }
 
-  //   // delete decision
-  //   if (this.application.meta.decision) {
-  //     observables = observables.pipe(concat(this.decisionService.delete(this.application.meta.decision)));
-  //   }
+    // delete decision
+    if (this.application.meta.decision) {
+      observables = observables.pipe(concat(this.decisionService.delete(this.application.meta.decision)));
+    }
 
-  //   // delete application documents
-  //   if (this.application.meta.documents) {
-  //     for (const doc of this.application.meta.documents) {
-  //       observables = observables.pipe(concat(this.documentService.delete(doc)));
-  //     }
-  //   }
+    // delete application documents
+    if (this.application.meta.documents) {
+      for (const doc of this.application.meta.documents) {
+        observables = observables.pipe(concat(this.documentService.delete(doc)));
+      }
+    }
 
-  //   // delete features
-  //   observables = observables.pipe(concat(this.featureService.deleteByApplicationId(this.application._id)));
+    // delete features
+    observables = observables.pipe(concat(this.featureService.deleteByApplicationId(this.application._id)));
 
-  //   // delete application
-  //   // do this last in case of prior failures
-  //   observables = observables.pipe(concat(this.projectService.delete(this.application)));
-  //   */
+    // delete application
+    // do this last in case of prior failures
+    observables = observables.pipe(concat(this.projectService.delete(this.application)));
+    */
 
-  //   observables.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-  //     () => {
-  //       // onNext
-  //       // do nothing here - see onCompleted() function below
-  //     },
-  //     error => {
-  //       this.isDeleting = false;
-  //       console.log('error =', error);
-  //       alert("Uh-oh, couldn't delete application");
-  //       // TODO: should fully reload application here so we have latest non-deleted objects
-  //     },
-  //     () => {
-  //       // onCompleted
-  //       this.isDeleting = false;
-  //       // delete succeeded --> navigate back to search
-  //       this.router.navigate(['/search']);
-  //     }
-  //   );
-  // }
+    observables.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
+      () => {
+        // onNext
+        // do nothing here - see onCompleted() function below
+      },
+      error => {
+        this.isDeleting = false;
+        console.log('error =', error);
+        alert("Uh-oh, couldn't delete application");
+        // TODO: should fully reload application here so we have latest non-deleted objects
+      },
+      () => {
+        // onCompleted
+        this.isDeleting = false;
+        // delete succeeded --> navigate back to search
+        this.router.navigate(['/search']);
+      }
+    );
+  }
 
   /**
    * Refreshes the application meta and features with the latest data from Tantalis.
@@ -230,40 +230,40 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
 
   public publishApplication() {
     if (!this.application.description) {
-      // this.dialogService
-      //   .addDialog(
-      //     ConfirmComponent,
-      //     {
-      //       title: 'Cannot Publish Application',
-      //       message: 'A description for this application is required to publish.',
-      //       okOnly: true
-      //     },
-      //     {
-      //       backdropColor: 'rgba(0, 0, 0, 0.5)'
-      //     }
-      //   )
-      //   .pipe(takeUntil(this.ngUnsubscribe));
-      // return;
+      this.dialogService
+        .addDialog(
+          ConfirmComponent,
+          {
+            title: 'Cannot Publish Application',
+            message: 'A description for this application is required to publish.',
+            okOnly: true
+          },
+          {
+            backdropColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        )
+        .pipe(takeUntil(this.ngUnsubscribe));
+      return;
     }
 
-    // this.dialogService
-    //   .addDialog(
-    //     ConfirmComponent,
-    //     {
-    //       title: 'Confirm Publish',
-    //       message: 'Publishing this application will make it visible to the public. Are you sure you want to proceed?',
-    //       okOnly: false
-    //     },
-    //     {
-    //       backdropColor: 'rgba(0, 0, 0, 0.5)'
-    //     }
-    //   )
-    //   .pipe(takeUntil(this.ngUnsubscribe))
-    //   .subscribe(isConfirmed => {
-    //     if (isConfirmed) {
-    //       this.internalPublishApplication();
-    //     }
-    //   });
+    this.dialogService
+      .addDialog(
+        ConfirmComponent,
+        {
+          title: 'Confirm Publish',
+          message: 'Publishing this application will make it visible to the public. Are you sure you want to proceed?',
+          okOnly: false
+        },
+        {
+          backdropColor: 'rgba(0, 0, 0, 0.5)'
+        }
+      )
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(isConfirmed => {
+        if (isConfirmed) {
+          this.internalPublishApplication();
+        }
+      });
   }
 
   private internalPublishApplication() {
@@ -324,7 +324,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
       },
       () => {
         // onCompleted
-        this.snackBarRef = this.snackBar.open('Application published...', null, { duration: 2000 });
+        this.snackBarRef = this.snackBar.open('Application published...', null, {duration: 2000});
         // reload all data
         /* this.projectService
           .getById(this.application.id, {
@@ -371,7 +371,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
 
     // unpublish decision
     if (this.application.meta.decision && this.application.meta.decision.meta.isPublished) {
-      observables = observables.pipe(concat(this.decisionService.unPublish(this.application.meta.decision)));
+      observables = observables.pipe(concat(this.decisionService.0unPublish(this.application.meta.decision)));
     }
 
     // unpublish application documents
@@ -403,7 +403,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
       },
       () => {
         // onCompleted
-        this.snackBarRef = this.snackBar.open('Application unpublished...', null, { duration: 2000 });
+        this.snackBarRef = this.snackBar.open('Application unpublished...', null, {duration: 2000});
         // reload all data
         this.projectService
           .projectControllerFindOne(this.application.id)

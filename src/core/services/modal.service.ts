@@ -6,14 +6,15 @@ import { DialogData } from 'core/models/dialog';
 
 import * as R from 'remeda';
 import { DialogComponent } from 'core/components/dialog/dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export const dialogTypes = ['cancel'] as const;
 
 export const ERROR_DIALOG = {
-  title: 'Something went wrong with the request.',
-  message: 'Please try again.',
-  width: '240px',
-  height: '300px',
+  title: '',
+  message: 'Something went wrong with the request. Please try again.',
+  width: '340px',
+  height: '200px',
   buttons: {
     cancel: {
       text: 'Close',
@@ -34,8 +35,14 @@ export class ModalService {
     return this._errorDialog;
   }
 
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog, public snackBar: MatSnackBar) {
     this._errorDialog = R.clone(ERROR_DIALOG);
+  }
+
+
+  openSnackBar( { message, button }: { message: string, button?: string; } ) {
+    return this.snackBar.open( message, button ?? button, { verticalPosition: 'top', panelClass: 'snackbar'} )
+
   }
 
   /**

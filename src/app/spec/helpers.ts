@@ -1,5 +1,5 @@
-import { convertToParamMap } from '@angular/router';
-import { of } from 'rxjs';
+import {convertToParamMap} from '@angular/router';
+import {of} from 'rxjs';
 
 /**
  * Helper class to make mocking ActivatedRoute easier.

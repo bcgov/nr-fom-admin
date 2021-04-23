@@ -1,19 +1,19 @@
-import { Location } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
-import { Application } from 'core/models/application';
+import {Location} from '@angular/common';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute, ParamMap, Params, Router} from '@angular/router';
+import {Application} from 'core/models/application';
 // import { IApplicationQueryParamSet, QueryParamModifier } from 'core/services/api';
+import {ReasonCodes, RegionCodes, StatusCodes} from 'core/utils/constants/application';
+import {CodeType, ConstantUtils} from 'core/utils/constants/constantUtils';
+import {SearchProjectService} from 'core/services/search-project.service';
 
-import { RegionCodes, StatusCodes, ReasonCodes } from 'core/utils/constants/application';
-import { CodeType, ConstantUtils } from 'core/utils/constants/constantUtils';
-import { SearchProjectService } from 'core/services/search-project.service';
-
-import { ProjectDto, ProjectService, ProjectsService } from 'core/api';
+import {ProjectDto, ProjectsService} from 'core/api';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
+
 // import { ExportService } from 'core/services/export.service';
 
 interface IPaginationParameters {
@@ -79,9 +79,10 @@ export class ListComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private projectService: ProjectsService,
-    private searchProjectService: SearchProjectService,
+    private searchProjectService: SearchProjectService
     // private exportService: ExportService
-  ) {}
+  ) {
+  }
 
   /**
    * Component init.
@@ -113,7 +114,7 @@ export class ListComponent implements OnInit, OnDestroy {
     }
 
     this.searchProjectService.getProjects()
-    .subscribe(
+      .subscribe(
         projects => {
           projects.forEach(project => {
             this.projects.push(project as ProjectDto);
@@ -127,7 +128,7 @@ export class ListComponent implements OnInit, OnDestroy {
 
         });
 
-    this.updatePagination({ totalItems: 1 });
+    this.updatePagination({totalItems: 1});
     // this.applications = applications;
     this.loading = false;
 
@@ -179,27 +180,27 @@ export class ListComponent implements OnInit, OnDestroy {
           // All fields that will be included in the csv, and optionally what the column header text will be.
           // See www.npmjs.com/package/json2csv for details on the format of the fields array.
           const fields: any[] = [
-            { label: 'CL File', value: this.getExportPadStartFormatter('cl_file') },
-            { label: 'Disposition ID', value: 'tantalisID' },
-            { label: 'Applicant (client)', value: 'client' },
-            { label: 'Business Unit', value: 'businessUnit' },
-            { label: 'Location', value: 'location' },
-            { label: 'Area (hectares)', value: 'areaHectares' },
-            { label: 'Created Date', value: this.getExportDateFormatter('createdDate') },
-            { label: 'Publish Date', value: this.getExportDateFormatter('publishDate') },
-            { label: 'Status', value: this.getExportStatusFormatter('status', 'reason') },
-            { label: 'Last Status Update Date', value: this.getExportDateFormatter('statusHistoryEffectiveDate') },
-            { label: 'Type', value: 'type' },
-            { label: 'Subtype', value: 'subtype' },
-            { label: 'Tenure Stage', value: 'tenureStage' },
-            { label: 'Description', value: 'description' },
-            { label: 'Legal Description', value: 'legalDescription' },
-            { label: 'Is Retired', value: 'meta.isRetired' },
-            { label: 'Retire Date', value: this.getExportDateFormatter('meta.retireDate') },
-            { label: 'Comment Period: Status', value: 'meta.cpStatusStringLong' },
-            { label: 'Comment Period: Start Date', value: this.getExportDateFormatter('meta.currentPeriod.startDate') },
-            { label: 'Comment Period: End Date', value: this.getExportDateFormatter('meta.currentPeriod.endDate') },
-            { label: 'Comment Period: Number of Comments', value: 'meta.numComments' }
+            {label: 'CL File', value: this.getExportPadStartFormatter('cl_file')},
+            {label: 'Disposition ID', value: 'tantalisID'},
+            {label: 'Applicant (client)', value: 'client'},
+            {label: 'Business Unit', value: 'businessUnit'},
+            {label: 'Location', value: 'location'},
+            {label: 'Area (hectares)', value: 'areaHectares'},
+            {label: 'Created Date', value: this.getExportDateFormatter('createdDate')},
+            {label: 'Publish Date', value: this.getExportDateFormatter('publishDate')},
+            {label: 'Status', value: this.getExportStatusFormatter('status', 'reason')},
+            {label: 'Last Status Update Date', value: this.getExportDateFormatter('statusHistoryEffectiveDate')},
+            {label: 'Type', value: 'type'},
+            {label: 'Subtype', value: 'subtype'},
+            {label: 'Tenure Stage', value: 'tenureStage'},
+            {label: 'Description', value: 'description'},
+            {label: 'Legal Description', value: 'legalDescription'},
+            {label: 'Is Retired', value: 'meta.isRetired'},
+            {label: 'Retire Date', value: this.getExportDateFormatter('meta.retireDate')},
+            {label: 'Comment Period: Status', value: 'meta.cpStatusStringLong'},
+            {label: 'Comment Period: Start Date', value: this.getExportDateFormatter('meta.currentPeriod.startDate')},
+            {label: 'Comment Period: End Date', value: this.getExportDateFormatter('meta.currentPeriod.endDate')},
+            {label: 'Comment Period: Number of Comments', value: 'meta.numComments'}
           ];
           /* this.exportService.exportAsCSV(
             applications,
@@ -329,11 +330,11 @@ export class ListComponent implements OnInit, OnDestroy {
       pageNum: this.pagination.currentPage - 1, // API starts at 0, while this component starts at 1
       pageSize: this.pagination.itemsPerPage,
       businessUnit: {
-        value: ConstantUtils.getCode(CodeType.REGION, this.regionCodeFilter),
+        value: ConstantUtils.getCode(CodeType.REGION, this.regionCodeFilter)
         // modifier: undefined
       },
       client: {
-        value: this.applicantFilter,
+        value: this.applicantFilter
         // modifier: QueryParamModifier.Text
       }
     };
@@ -357,7 +358,7 @@ export class ListComponent implements OnInit, OnDestroy {
         // Fetch applications with Abandoned Status that don't have a Reason indicating an amendment.
         applicationQueryParamSets.push({
           ...basicQueryParams,
-          status: { value: StatusCodes.ABANDONED.mappedCodes, modifier: undefined },
+          status: {value: StatusCodes.ABANDONED.mappedCodes, modifier: undefined},
           reason: {
             value: [ReasonCodes.AMENDMENT_APPROVED.code, ReasonCodes.AMENDMENT_NOT_APPROVED.code],
             modifier: undefined
@@ -367,13 +368,13 @@ export class ListComponent implements OnInit, OnDestroy {
         // Fetch applications with Approved status
         applicationQueryParamSets.push({
           ...basicQueryParams,
-          status: { value: statusCodeGroup.mappedCodes, modifier: undefined }
+          status: {value: statusCodeGroup.mappedCodes, modifier: undefined}
         });
 
         // Also fetch applications with an Abandoned status that also have a Reason indicating an approved amendment.
         applicationQueryParamSets.push({
           ...basicQueryParams,
-          status: { value: StatusCodes.ABANDONED.mappedCodes, modifier: undefined },
+          status: {value: StatusCodes.ABANDONED.mappedCodes, modifier: undefined},
           reason: {
             value: [ReasonCodes.AMENDMENT_APPROVED.code],
             modifier: undefined
@@ -383,13 +384,13 @@ export class ListComponent implements OnInit, OnDestroy {
         // Fetch applications with Not Approved status
         applicationQueryParamSets.push({
           ...basicQueryParams,
-          status: { value: statusCodeGroup.mappedCodes, modifier: undefined }
+          status: {value: statusCodeGroup.mappedCodes, modifier: undefined}
         });
 
         // Also fetch applications with an Abandoned status that also have a Reason indicating a not approved amendment.
         applicationQueryParamSets.push({
           ...basicQueryParams,
-          status: { value: StatusCodes.ABANDONED.mappedCodes, modifier: undefined },
+          status: {value: StatusCodes.ABANDONED.mappedCodes, modifier: undefined},
           reason: {
             value: [ReasonCodes.AMENDMENT_NOT_APPROVED.code],
             modifier: undefined
@@ -399,14 +400,14 @@ export class ListComponent implements OnInit, OnDestroy {
         // This status requires no special treatment, fetch as normal
         applicationQueryParamSets.push({
           ...basicQueryParams,
-          status: { value: statusCodeGroup.mappedCodes, modifier: undefined}
+          status: {value: statusCodeGroup.mappedCodes, modifier: undefined}
         });
       }
     });
 
     // if no status filters selected, still add the basic query filters
     if (applicationQueryParamSets.length === 0) {
-      applicationQueryParamSets = [{ ...basicQueryParams }];
+      applicationQueryParamSets = [{...basicQueryParams}];
     }
 
     return applicationQueryParamSets;
@@ -440,7 +441,7 @@ export class ListComponent implements OnInit, OnDestroy {
     // }
 
     // change browser URL without reloading page (so any query params are saved in history)
-    this.location.go(this.router.createUrlTree([], { relativeTo: this.route, queryParams: params }).toString());
+    this.location.go(this.router.createUrlTree([], {relativeTo: this.route, queryParams: params}).toString());
   }
 
   /**
@@ -460,7 +461,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.applicantFilter = '';
     // this.commentCodeFilters = [];
 
-    this.location.go(this.router.createUrlTree([], { relativeTo: this.route }).toString());
+    this.location.go(this.router.createUrlTree([], {relativeTo: this.route}).toString());
   }
 
   // Filters
@@ -624,7 +625,7 @@ export class ListComponent implements OnInit, OnDestroy {
       (page === -1 && this.pagination.currentPage + page >= 1) ||
       (page === 1 && this.pagination.pageCount >= this.pagination.currentPage + page)
     ) {
-      this.updatePagination({ currentPage: this.pagination.currentPage += page });
+      this.updatePagination({currentPage: this.pagination.currentPage += page});
       this.saveQueryParameters();
       this.getProjects();
     }
@@ -638,7 +639,7 @@ export class ListComponent implements OnInit, OnDestroy {
    */
   public setPage(page: number = 0): void {
     if (page >= 1 && this.pagination.pageCount >= page) {
-      this.updatePagination({ currentPage: page });
+      this.updatePagination({currentPage: page});
       this.saveQueryParameters();
       this.getProjects();
     }

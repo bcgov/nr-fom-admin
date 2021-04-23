@@ -1,5 +1,5 @@
 <div class="files-info" *ngIf="showInfo">
-  <ng-container *ngIf="maxFiles > 0">Maximum of {{maxFiles}} files. </ng-container>
+  <ng-container *ngIf="maxFiles > 0">Maximum of {{maxFiles}} files.</ng-container>
   <ng-container *ngIf="maxSize > 0">File size up to {{maxSize}}MB each.</ng-container>
   <br>
   <ng-container *ngIf="fileExt.length > 0">Acceptable file types: {{fileExt.slice().join(', ')}}</ng-container>
@@ -12,7 +12,7 @@
         <i class="material-icons">file_upload</i>
         Drop files to attach, or browse.
       </a>
-      <input type="file" #file [multiple]="(maxFiles !== 1)" (change)="onFileChange($event)" style="display:none" />
+      <input type="file" #file [multiple]="(maxFiles !== 1)" (change)="onFileChange($event)" style="display:none"/>
     </div>
   </div>
 </div>

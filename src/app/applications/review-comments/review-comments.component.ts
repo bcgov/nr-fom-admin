@@ -1,21 +1,27 @@
-import { Component, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, merge, Observable, Subject } from 'rxjs';
-import { map, mergeMap, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
-import * as _ from 'lodash';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {forkJoin, Observable, Subject} from 'rxjs';
+import {map, startWith, takeUntil} from 'rxjs/operators';
 
-import { Application } from 'core/models/application';
-import { Comment } from 'core/models/comment';
-import { commentStubArray } from '../stubs/comment-stub';
-import { singleApplicationStub } from '../stubs/application-stub';
-import { Project } from 'core/models/project';
-import { PublicComment } from 'core/models/publiccomment';
-import { ProjectDto, ProjectService, PublicCommentsService } from 'core/api';
-import { FormControl } from '@angular/forms';
+import {Application} from 'core/models/application';
+import {Comment} from 'core/models/comment';
+import {Project} from 'core/models/project';
+import {PublicComment} from 'core/models/publiccomment';
+import {
+  ProjectDto,
+  ProjectService,
+  PublicCommentService,
+  PublicCommentsService,
+  UpdatePublicCommentDto
+} from 'core/api';
+import {FormControl} from '@angular/forms';
 import * as R from 'remeda'
+import {ModalService} from 'core/services/modal.service';
+import {StateService} from 'core/services/state.service';
 
 type SortKeysType = keyof Pick<PublicComment, 'createTimestamp' | 'name'>
 type SortDirType = 'asc' | 'desc'
+
 class SortKey {
   innerHTML: string;
   value: SortKeysType;
@@ -23,6 +29,17 @@ class SortKey {
 }
 
 
+export const ERROR_DIALOG = {
+  // title: 'The requested project does not exist.',
+  // message: 'Please try again.',
+  width: '340px',
+  height: '200px',
+  buttons: {
+    cancel: {
+      text: 'Close'
+    }
+  }
+};
 
 @Component({
   selector: 'app-review-comments',
@@ -32,37 +49,30 @@ class SortKey {
 export class ReviewCommentsComponent implements OnInit, OnDestroy {
   readonly PAGE_SIZE = 20;
 
-  @ViewChild('commentListScrollContainer', { read: ElementRef })
+  @ViewChild('commentListScrollContainer', {read: ElementRef})
   public commentListScrollContainer: ElementRef; // TODO: Something is up with this...
 
   comment: PublicComment;
 
   readonly sortKeys: SortKey[] = [
-    { innerHTML: 'Oldest', value: 'createTimestamp' , dir: 'desc' },
-    { innerHTML: 'Newest', value: 'createTimestamp', dir: 'asc' },
-    { innerHTML: 'Name (A-Z)', value: 'name', dir: 'desc' },
-    { innerHTML: 'Name (Z-A)', value: 'name', dir: 'asc' }
+    {innerHTML: 'Oldest', value: 'createTimestamp', dir: 'desc'},
+    {innerHTML: 'Newest', value: 'createTimestamp', dir: 'asc'},
+    {innerHTML: 'Name (A-Z)', value: 'name', dir: 'desc'},
+    {innerHTML: 'Name (Z-A)', value: 'name', dir: 'asc'}
   ];
-  sortControl: FormControl =  new FormControl( [ this.sortKeys[ 1 ] ] );
+  sortControl: FormControl = new FormControl(this.sortKeys[1]);
 
   data$: Observable<{ project: ProjectDto, comments: PublicComment[]; }>
 
-  currIndex = 0;
+  responseCodes = this.stateSvc.getCodeTable('responseCode')
+
   commentsList: PublicComment[];
 
+  results$: Observable<PublicComment[]> = this.sortControl.valueChanges.pipe(startWith(this.sortKeys[1].value), map(dir => {
 
-  changeIndex( index: number ) {
-    this.currIndex = index;
-    const chunkedComments = R.chunk( this.comments, this.PAGE_SIZE );
-    this.commentsList = chunkedComments[ index - 1 ];
+    return dir.dir === 'asc' ? R.sortBy(this.comments, (item) => item[dir.value]) : R.reverse(R.sortBy(this.comments, (item) => item[dir.value]));
 
-  }
-
-  results$: Observable<PublicComment[]> = this.sortControl.valueChanges.pipe( startWith( this.sortKeys[ 1 ].value ), map( dir => {
-
-return  dir.dir === 'asc' ?  R.sortBy( this.comments, (item) => item[dir.value] ) : R.reverse( R.sortBy( this.comments, (item) => item[dir.value] ));
-
-  } ) )
+  }))
 
   public loading = false;
   public application: Application = null;
@@ -72,40 +82,41 @@ return  dir.dir === 'asc' ?  R.sortBy( this.comments, (item) => item[dir.value] 
   public alerts: string[] = [];
   public currentComment: Comment;
   public currentPublicComment: PublicComment;
-  public pageCount = 1; // in case getCount() fails
-  public pageNum = 1; // first page
-  public sortBy = this.sortKeys[1].value; // initial sort is by descending date
-  // see official solution:
-  // https://stackoverflow.com/questions/38008334/angular-rxjs-when-should-i-unsubscribe-from-subscription
-  // or http://brianflove.com/2016/12/11/anguar-2-unsubscribe-observables/
+
+
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private projectSvc: ProjectService,
-    private commentsSvc: PublicCommentsService
-  ) {}
+    private commentsSvc: PublicCommentsService,
+    private modalSvc: ModalService,
+    private commentSvc: PublicCommentService,
+    private stateSvc: StateService
+  ) {
+  }
 
   ngOnInit() {
     if (this.commentListScrollContainer && this.commentListScrollContainer.nativeElement) {
       this.commentListScrollContainer.nativeElement.scrollTop = 0;
     }
-    // this.comments = commentStubArray;
-    // this.application = singleApplicationStub;
-    // get data from route resolver
-    const { appId } = this.route.snapshot.params;
+    const {appId} = this.route.snapshot.params;
 
+    this.data$ = forkJoin(this.projectSvc.projectControllerFindOne(appId), this.commentsSvc.publicCommentsControllerFindByProjectId(appId)).pipe(takeUntil(this.ngUnsubscribe), map(result => {
 
-    this.data$ = forkJoin( this.projectSvc.projectControllerFindOne( appId ), this.commentsSvc.
-      publicCommentsControllerFindByProjectId( appId ) ).pipe( takeUntil( this.ngUnsubscribe ), map( result => {
+      const [project, comments] = result;
 
-        const [ project, comments ] = result;
+      this.comments = comments;
 
-        this.comments = comments;
+      if (!project) {
+        const ref = this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Home', title: ''}});
 
-        return {project, comments}
-    } ) )
+        ref.afterClosed().subscribe(() => this.router.navigate(['admin/search']))
+      }
+
+      return {project, comments}
+    }))
   }
 
   ngOnDestroy() {
@@ -113,16 +124,25 @@ return  dir.dir === 'asc' ?  R.sortBy( this.comments, (item) => item[dir.value] 
     this.ngUnsubscribe.complete();
   }
 
-  prevPage() {
-    this.pageNum--;
-    // this.getData();
-  }
+  async saveComment(update: UpdatePublicCommentDto, selectedComment: PublicComment) {
 
-  nextPage() {
-    this.pageNum++;
-    // this.getData();
-  }
+    const {id} = selectedComment;
 
+    try {
+      const result = await this.commentSvc.publicCommentControllerUpdate(id, {...selectedComment, ...update}).toPromise()
+      console.log(result)
+      if (result) {
+        this.modalSvc.openSnackBar({message: 'Comment saved', button: 'OK'})
+        this.comments = await this.commentsSvc.publicCommentsControllerFindAll().toPromise();
+        this.sortControl.setValue(this.sortControl.value)
+      } else {
+        this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Failed to update', title: ''}})
+      }
+    } catch (err) {
+
+    }
+
+  }
 
 
 }

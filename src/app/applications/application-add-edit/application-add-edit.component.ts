@@ -1,25 +1,24 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
-import { FormGroup, NgForm } from '@angular/forms';
+import {AfterViewInit, Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {NgForm} from '@angular/forms';
 // import { Location } from '@angular/common';
-import { MatSnackBarRef, SimpleSnackBar, MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
-import { Observable, Subject, of } from 'rxjs';
-import { takeUntil, concat, tap, switchMap } from 'rxjs/operators';
+import {MatSnackBar, MatSnackBarRef, SimpleSnackBar} from '@angular/material/snack-bar';
+import {ActivatedRoute, Router} from '@angular/router';
+import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
+import {DialogService} from 'ng2-bootstrap-modal';
+import {Observable, of, Subject} from 'rxjs';
+import {switchMap, takeUntil, tap} from 'rxjs/operators';
 import * as _ from 'lodash';
 
-import { ConfirmComponent } from 'app/confirm/confirm.component';
-import { Document } from 'core/models/document';
-import { Decision } from 'core/models/decision';
-import { ProjectDto, ProjectService } from 'core/api';
-import { RxFormBuilder } from '@rxweb/reactive-form-validators';
-import { ApplicationAddEditForm } from './application-add-edit.form';
-import { StateService } from 'core/services/state.service';
+import {ConfirmComponent} from 'app/confirm/confirm.component';
+import {Document} from 'core/models/document';
+import {Decision} from 'core/models/decision';
+import {DistrictDto, ProjectDto, ProjectService} from 'core/api';
+import {RxFormBuilder, RxFormGroup} from '@rxweb/reactive-form-validators';
+import {ApplicationAddEditForm} from './application-add-edit.form';
+import {StateService} from 'core/services/state.service';
+import {ModalService} from 'core/services/modal.service';
 
 export type ApplicationPageType = 'create' | 'edit';
-
-
-
 
 @Component({
   selector: 'app-application-add-edit',
@@ -27,28 +26,19 @@ export type ApplicationPageType = 'create' | 'edit';
   styleUrls: ['./application-add-edit.component.scss']
 })
 export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild( 'applicationForm' ) applicationForm: NgForm;
-  applicationFormGroup: FormGroup;
-
+  @ViewChild('applicationForm') applicationForm: NgForm;
+  fg: RxFormGroup;
+// test = this.fg.get('')
   state: ApplicationPageType;
+  originalApplication: ProjectDto;
+
   get isCreate() {
     return this.state === 'create'
   }
-  private scrollToFragment: string = null;
-  public isSubmitSaveClicked = false;
-  public isSubmitting = false;
-  public isSaving = false;
-  public application: Partial<ProjectDto> = {
-    name: '',
-    description: '',
-    commentingOpenDate: new Date().toISOString(),
-    commentingClosedDate:new Date().toISOString(),
-    fspId: 0,
-    districtId: 0,
-    forestClientNumber: '1011',
-    workflowStateCode: 'INITIAL',
 
-  };
+  private scrollToFragment: string = null;
+
+  districts: DistrictDto[] = this.stateSvc.getCodeTable('district')
 
   public project: ProjectDto = null;
   public startDate: NgbDateStruct = null;
@@ -61,6 +51,10 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
   public applicationFiles: File[] = [];
   public decisionFiles: File[] = [];
 
+  get isLoading() {
+    return this.stateSvc.loading;
+  }
+
   // Access to XMLHttpRequest at 'localhost:3333/api/project' from origin 'http://localhost:4200' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, chrome-untrusted, https.
 
   constructor(
@@ -68,17 +62,21 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     private router: Router,
     // private location: Location,
     public snackBar: MatSnackBar,
+    private dialogService: DialogService,
     private projectSvc: ProjectService,
     private formBuilder: RxFormBuilder,
     private stateSvc: StateService,
+    private modalSvc: ModalService
   ) {
     // if we have an URL fragment, save it for future scrolling
-    router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        const url = router.parseUrl(router.url);
-        this.scrollToFragment = (url && url.fragment) || null;
-      }
-    });
+
+    /* What's trying to be accomplished here? This is a really bad subscription */
+    // router.events.subscribe(event => {
+    //   if (event instanceof NavigationEnd) {
+    //     const url = router.parseUrl(router.url);
+    //     this.scrollToFragment = (url && url.fragment) || null;
+    //   }
+    // });
   }
 
   // check for unsaved changes before closing (or reloading) current tab/window
@@ -96,31 +94,29 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
 
   // check for unsaved changes before navigating away from current route (ie, this page)
   public canDeactivate(): Observable<boolean> | boolean {
-    if (!this.applicationForm) {
-      return true; // no form means page error -- allow deactivate
-    }
-
-    // allow synchronous navigation if everything is OK
-    if (!this.applicationForm.dirty && !this.anyUnsavedItems()) {
+    if (!this.fg) {
       return true;
     }
 
-    return true; // TODO - Marcelo
+    // allow synchronous navigation if everything is OK
+    if (!this.fg.dirty && !this.fg.isModified) {
+      return true;
+    }
 
     // otherwise prompt the user with observable (asynchronous) dialog
-    // return this.dialogService
-    //   .addDialog(
-    //     ConfirmComponent,
-    //     {
-    //       title: 'Unsaved Changes',
-    //       message: 'Click OK to discard your changes or Cancel to return to the application.',
-    //       okOnly: true // TODO - added this to remove compilation errors but I don't really know what it means
-    //     },
-    //     {
-    //       backdropColor: 'rgba(0, 0, 0, 0.5)'
-    //     }
-    //   )
-    //   .pipe(takeUntil(this.ngUnsubscribe));
+    return this.dialogService
+      .addDialog(
+        ConfirmComponent,
+        {
+          title: 'Unsaved Changes',
+          message: 'Click OK to discard your changes or Cancel to return to the application.',
+          okOnly: true // TODO - added this to remove compilation errors but I don't really know what it means
+        },
+        {
+          backdropColor: 'rgba(0, 0, 0, 0.5)'
+        }
+      )
+      .pipe(takeUntil(this.ngUnsubscribe));
   }
 
   // this is needed because we don't have a form control that is marked as dirty
@@ -163,29 +159,25 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
 
   public cancelChanges() {
     // this.location.back(); // FAILS WHEN CANCEL IS CANCELLED (DUE TO DIRTY FORM OR UNSAVED DOCUMENTS) MULTIPLE TIMES
+    const routerFragment = this.isCreate ? ['/search'] : ['/a', this.originalApplication.id]
 
-    if (this.application.id) {
-      // go to details page
-      this.router.navigate(['/a', this.application.id]);
-    } else {
-      // go to search page
-      this.router.navigate(['/search']);
-    }
+    this.router.navigate(routerFragment);
+
   }
 
   ngOnInit() {
 
-    this.route.url.pipe( switchMap( url => {
-      this.state = url[ 1 ].path === 'create' ? 'create' : 'edit'
+    this.route.url.pipe(takeUntil(this.ngUnsubscribe), switchMap(url => {
+        this.state = url[1].path === 'create' ? 'create' : 'edit'
 
-      return this.isCreate ? of(this.application) : this.projectSvc.projectControllerFindOne( this.route.snapshot.params.appId ) ;
-    }
-    )).subscribe( ( data  ) => {
-
-      this.application = data;
+        return this.isCreate ? of(new ApplicationAddEditForm()) : this.projectSvc.projectControllerFindOne(this.route.snapshot.params.appId);
+      }
+    )).subscribe((data: ProjectDto) => {
+      if (!this.isCreate) this.originalApplication = data as ProjectDto;
       const form = new ApplicationAddEditForm(data)
-      this.applicationFormGroup = this.formBuilder.formGroup(form)
-    } );
+      this.fg = <RxFormGroup>this.formBuilder.formGroup(form)
+
+    });
   }
 
   ngAfterViewInit() {
@@ -211,7 +203,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
 
   // @ts-ignore
   private static dateToNgbDate(date: Date): NgbDateStruct {
-    return date ? { year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate() } : null;
+    return date ? {year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate()} : null;
   }
 
   // @ts-ignore
@@ -249,7 +241,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
       // this.application.meta.currentPeriod.endDate = this.ngbDateToDate(endDate);
       // to set dates, we also need start date
       // if (this.application.meta.currentPeriod.startDate) {
-        this.setDates(false, false, true);
+      this.setDates(false, false, true);
       // }
     }
   }
@@ -281,27 +273,6 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     }
   }
 
-  public addDecision() {
-    // this.application.meta.decision = new Decision();
-  }
-
-  public deleteDecision() {
-    /* if (this.application.meta.decision) {
-      // stage decision documents to delete
-      if (this.application.meta.decision.meta.documents) {
-        for (const doc of this.application.meta.decision.meta.documents) {
-          this.deleteDocument(doc, this.application.meta.decision.meta.documents);
-        }
-      }
-
-      // if decision exists in db, stage it for deletion
-      if (this.application.meta.decision._id) {
-        this.decisionToDelete = this.application.meta.decision;
-      }
-
-      this.application.meta.decision = null;
-    } */
-  }
 
   // add application or decision documents
   public addDocuments(files: FileList, documents: Document[]) {
@@ -312,7 +283,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
         if (files[i]) {
           // ensure file is not already in the list
           if (_.find(documents, doc => doc.documentFileName === files[i].name)) {
-            this.snackBarRef = this.snackBar.open("Can't add duplicate file", null, { duration: 2000 });
+            this.snackBarRef = this.snackBar.open("Can't add duplicate file", null, {duration: 2000});
             continue;
           }
 
@@ -349,31 +320,63 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
   // this is part 1 of saving an application and all its objects
   // (multi-part due to dependencies)
 
+  validate() {
+    if (!this.fg.valid) {
+      this.fg.markAllAsTouched();
+      this.fg.updateValueAndValidity({onlySelf: false, emitEvent: true});
+      this.modalSvc.openDialog({
+        data: {
+          message: 'Invalid inputs',
+          title: '',
+          width: '340px',
+          height: '200px',
+          buttons: {confirm: {text: 'OK'}}
+        }
+      })
+      console.log(this.fg)
+    }
+    return this.fg.valid;
+  }
+
   async submit() {
-    if ( this.stateSvc.loading ) return;
-    const result = await this.projectSvc.projectControllerCreate( this.applicationFormGroup.value as ProjectDto ).pipe( tap( obs => console.log( obs ) ) ).toPromise()
-    const { id } = result;
-    if ( !id ) { }
+    this.validate();
+    if (!this.fg.valid) return;
+    if (this.stateSvc.loading) return;
+    const result = await this.projectSvc.projectControllerCreate(this.fg.value as ProjectDto).pipe(tap(obs => console.log(obs))).toPromise()
+    const {id} = result;
+    if (!id) {
+    }
     this.onSuccess(id)
   }
 
-  onSuccess( id: number ) {
-        this.router.navigate([`a/${id}`])
+  onSuccess(id: number) {
+    this.router.navigate([`a/${id}`])
 
   }
 
 
   async saveApplication() {
-    const { id, district, forestClient, workflowState, ...rest } = this.application;
+    const {id, district, forestClient, workflowState, ...rest} = this.originalApplication;
 
-    const updateDto = {...rest, ...this.applicationFormGroup.value}
+    const updateDto = {...rest, ...this.fg.value}
     try {
-      const result = await this.projectSvc.projectControllerUpdate( id, updateDto as ProjectDto ).pipe( tap( obs => console.log( obs ) ) ).toPromise();
-      console.log( result );
+      const result = await this.projectSvc.projectControllerUpdate(id, updateDto as ProjectDto).pipe(tap(obs => console.log(obs))).toPromise();
+      console.log(result);
+      if (result) return this.onSuccess(id);
+      this.modalSvc.openDialog({
+        data: {
+          message: 'There was an error with the request please try again',
+          title: '',
+          width: '340px',
+          height: '200px',
+          buttons: {confirm: {text: 'OK'}}
+        }
+      })
+
+
       // this.onSuccess( id )
-      console.log( this.application );
-    }
-    catch ( err ) {
+      // console.log( this.application );
+    } catch (err) {
 
     }
 

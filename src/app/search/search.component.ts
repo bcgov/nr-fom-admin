@@ -1,21 +1,21 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MatSnackBarRef, SimpleSnackBar, MatSnackBar } from '@angular/material/snack-bar';
-import { Router, ActivatedRoute, Params, ParamMap } from '@angular/router';
-import { Location } from '@angular/common';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {MatSnackBar, MatSnackBarRef, SimpleSnackBar} from '@angular/material/snack-bar';
+import {ActivatedRoute, ParamMap, Params, Router} from '@angular/router';
+import {Location} from '@angular/common';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 import * as _ from 'lodash';
 
-import { SearchService } from 'core/services/search.service';
-import { SearchProjectService } from 'core/services/search-project.service';
-import { Application } from 'core/models/application';
-import { ConstantUtils, CodeType } from 'core/utils/constants/constantUtils';
-import { StatusCodes, ReasonCodes } from 'core/utils/constants/application';
-import { Project } from 'core/models/project';
+import {SearchService} from 'core/services/search.service';
+import {SearchProjectService} from 'core/services/search-project.service';
+import {Application} from 'core/models/application';
+import {CodeType, ConstantUtils} from 'core/utils/constants/constantUtils';
+import {ReasonCodes, StatusCodes} from 'core/utils/constants/application';
+import {Project} from 'core/models/project';
 
 // Testing fetching Districts
+import {ProjectDto} from 'core/api';
 
-import { ProjectDto } from 'core/api';
 // import { PublicCommentService } from 'core/services/public-comments.service';
 
 
@@ -38,14 +38,15 @@ export class SearchComponent implements OnInit, OnDestroy {
   public ranSearch = false;
 
   constructor(
-  private location: Location,
-  public snackBar: MatSnackBar,
-  public searchService: SearchService, // used in template
-  public searchProjectService: SearchProjectService,
-  // public searchPublicCommentService: PublicCommentService,
-  private router: Router,
-  private route: ActivatedRoute
-  ) {}
+    private location: Location,
+    public snackBar: MatSnackBar,
+    public searchService: SearchService, // used in template
+    public searchProjectService: SearchProjectService,
+    // public searchPublicCommentService: PublicCommentService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+  }
 
   ngOnInit() {
     // get search terms from route
@@ -68,27 +69,27 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.count = 0;
 
     this.searchProjectService.getProjectsByFspId(this.keywords)
-    .subscribe(
-    projects => {
-      projects.forEach(project => {
-        // @ts-ignore
-        this.projects.push(project as Project);
-      });
-      this.count = this.projects.length;
-    },
-    error => {
-      console.log('error =', error);
+      .subscribe(
+        projects => {
+          projects.forEach(project => {
+            // @ts-ignore
+            this.projects.push(project as Project);
+          });
+          this.count = this.projects.length;
+        },
+        error => {
+          console.log('error =', error);
 
-      this.searching = false;
-      this.ranSearch = true;
+          this.searching = false;
+          this.ranSearch = true;
 
-      this.snackBarRef = this.snackBar.open('Error searching foms ...', 'RETRY');
-      this.snackBarRef.onAction().subscribe(() => this.onSubmit());
-    },
-    () => {
-      this.searching = false;
-      this.ranSearch = true;
-    });
+          this.snackBarRef = this.snackBar.open('Error searching foms ...', 'RETRY');
+          this.snackBarRef.onAction().subscribe(() => this.onSubmit());
+        },
+        () => {
+          this.searching = false;
+          this.ranSearch = true;
+        });
 
     // this.fetchingAllDistricts();
     // this.fetchingAllForestClients();
@@ -188,7 +189,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     params['keywords'] = this.keywords;
 
     // change browser URL without reloading page (so any query params are saved in history)
-    this.location.go(this.router.createUrlTree([], { relativeTo: this.route, queryParams: params }).toString());
+    this.location.go(this.router.createUrlTree([], {relativeTo: this.route, queryParams: params}).toString());
   }
 
   public onSubmit() {
@@ -197,16 +198,19 @@ export class SearchComponent implements OnInit, OnDestroy {
     }
 
     this.saveQueryParameters();
+
+    console.log('pressed find');
+
     this.doSearch();
   }
 
   public onImport() {
     // try {
-    this.router.navigate( [ '/a/create' ] );
+    this.router.navigate(['/a/create']);
     console.log('on import')
     // } catch (err) {
-      // console.log('error, invalid application =', application);
-      // this.snackBarRef = this.snackBar.open('Error creating application ...', null, { duration: 3000 });
+    // console.log('error, invalid application =', application);
+    // this.snackBarRef = this.snackBar.open('Error creating application ...', null, { duration: 3000 });
     // }
   }
 
@@ -246,10 +250,10 @@ export class SearchComponent implements OnInit, OnDestroy {
    */
   isAmendment(application: Application): boolean {
     return (
-    application &&
-    ConstantUtils.getCode(CodeType.STATUS, application.status) === StatusCodes.ABANDONED.code &&
-    (ConstantUtils.getCode(CodeType.REASON, application.reason) === ReasonCodes.AMENDMENT_APPROVED.code ||
-    ConstantUtils.getCode(CodeType.REASON, application.reason) === ReasonCodes.AMENDMENT_NOT_APPROVED.code)
+      application &&
+      ConstantUtils.getCode(CodeType.STATUS, application.status) === StatusCodes.ABANDONED.code &&
+      (ConstantUtils.getCode(CodeType.REASON, application.reason) === ReasonCodes.AMENDMENT_APPROVED.code ||
+        ConstantUtils.getCode(CodeType.REASON, application.reason) === ReasonCodes.AMENDMENT_NOT_APPROVED.code)
     );
   }
 
@@ -273,7 +277,7 @@ export class SearchComponent implements OnInit, OnDestroy {
 
     console.log('status: ' + application.status);
     return (
-    (application && ConstantUtils.getTextLong(CodeType.STATUS, application.status)) || StatusCodes.UNKNOWN.text.long
+      (application && ConstantUtils.getTextLong(CodeType.STATUS, application.status)) || StatusCodes.UNKNOWN.text.long
     );
   }
 

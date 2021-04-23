@@ -12,12 +12,12 @@ import { DialogData } from '../../../core/models/dialog';
     <mat-dialog-content [innerHTML]="message"></mat-dialog-content>
 
     <mat-dialog-actions>
-      <button mat-button mat-dialog-close *ngIf="data.buttons.cancel">
+      <app-button  mat-dialog-close *ngIf="data.buttons.cancel">
         {{ data['buttons']['cancel']['text'] | titlecase }}
-      </button>
-      <button mat-button [mat-dialog-close]="true" *ngIf="data.buttons.confirm">
+      </app-button>
+      <app-button  [mat-dialog-close]="true" *ngIf="data.buttons.confirm">
         {{ data['buttons']['confirm']['text'] | titlecase }}
-      </button>
+      </app-button>
     </mat-dialog-actions>
   `,
   styleUrls: ['./dialog.component.scss'],

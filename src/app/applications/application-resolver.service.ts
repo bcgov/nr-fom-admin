@@ -1,20 +1,19 @@
-import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
-import { Observable} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, Resolve} from '@angular/router';
+import {Observable} from 'rxjs';
 // import * as _ from 'lodash';
 // import * as moment from 'moment';
-
 // import { ApplicationService } from 'core/services/application.service';
 // import { Application } from 'core/models/application';
 // import { Project } from 'core/models/project';
 // import { StatusCodes } from 'app/utils/constants/application';
 // import { ConstantUtils, CodeType } from 'app/utils/constants/constantUtils';
-
-import { ProjectDto, ProjectService } from 'core/api';
+import {ProjectDto, ProjectService} from 'core/api';
 
 @Injectable()
 export class ApplicationDetailResolver implements Resolve<ProjectDto> {
-  constructor(private projectService: ProjectService) {}
+  constructor(private projectService: ProjectService) {
+  }
 
   resolve(route: ActivatedRouteSnapshot): Observable<ProjectDto> {
     const projectId = parseInt(route.paramMap.get('appId'));

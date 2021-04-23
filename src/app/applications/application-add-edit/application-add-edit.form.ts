@@ -1,5 +1,5 @@
-import {  prop } from "@rxweb/reactive-form-validators"
-import { ProjectDto } from 'core/api';
+import {minLength, prop, required} from "@rxweb/reactive-form-validators"
+import {ProjectDto} from 'core/api';
 import * as R from 'remeda';
 
 const updateFields = [
@@ -10,41 +10,61 @@ const updateFields = [
   'fspId',
   'districtId',
   'forestClientNumber',
-  'workflowStateCode',
+  'workflowStateCode'
 ] as const;
 
 export class ApplicationAddEditForm implements Pick<ProjectDto,
- typeof updateFields[number]
-> {
+  typeof updateFields[number]> {
 
-    @prop()
-    name: string = '';
+  @prop()
+  @required()
+  @minLength({value: 5})
+  name: string;
 
 
-    @prop()
+  @prop()
+  @required()
+  @minLength({value: 25})
+  description: string;
 
-    description: string = '';
+  @prop()
 
-    @prop()
 
-    commentingOpenDate: string = '';
-    @prop()
+  commentingOpenDate: string = new Date().toISOString();
 
-    commentingClosedDate: string = '';
-    @prop()
+  @prop({})
 
-    fspId: number = 0;
-    @prop()
+  commentingClosedDate: string = new Date().toISOString();
 
-    districtId: number = 0;
-    @prop()
+  @prop()
+  @required()
+  @minLength({value: 1})
 
-    forestClientNumber: string = '1101';
-    @prop()
+  fspId: number;
 
-    workflowStateCode: string = 'INITIAL';
+  @prop()
+  @required()
+  @minLength({value: 1})
 
-  constructor ( project?: Partial<ProjectDto> ) {
-    if (project) Object.assign( this, R.pick(project, updateFields));
+  districtId: number;
+
+  @prop()
+  @required()
+
+  @minLength({value: 1})
+  forestClientNumber: string = '1011';
+
+  @prop()
+  @required()
+
+  workflowStateCode: string = 'INITIAL';
+
+  constructor(project?: Partial<ProjectDto>) {
+    if (project) {
+
+
+      Object.assign(this, R.pick(project, updateFields));
+    }
   }
+
 }
