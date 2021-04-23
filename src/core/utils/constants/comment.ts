@@ -1,4 +1,4 @@
-import { ICodeGroup } from './interfaces';
+import {ICodeGroup} from './interfaces';
 
 /**
  * Comment Status codes.
@@ -12,7 +12,7 @@ export class CommentCodes {
   public static readonly NOT_OPEN: ICodeGroup = {
     code: 'NOT_OPEN',
     param: 'NO',
-    text: { long: 'Not Open For Commenting', short: 'Not Open' },
+    text: {long: 'Not Open For Commenting', short: 'Not Open'},
     mappedCodes: []
   };
 
@@ -20,7 +20,7 @@ export class CommentCodes {
   public static readonly NOT_STARTED: ICodeGroup = {
     code: 'NOT_STARTED',
     param: 'NS',
-    text: { long: 'Commenting Not Started', short: 'Not Started' },
+    text: {long: 'Commenting Not Started', short: 'Not Started'},
     mappedCodes: []
   };
 
@@ -28,7 +28,7 @@ export class CommentCodes {
   public static readonly CLOSED: ICodeGroup = {
     code: 'CLOSED',
     param: 'CL',
-    text: { long: 'Commenting Closed', short: 'Closed' },
+    text: {long: 'Commenting Closed', short: 'Closed'},
     mappedCodes: []
   };
 
@@ -36,7 +36,7 @@ export class CommentCodes {
   public static readonly OPEN: ICodeGroup = {
     code: 'OPEN',
     param: 'OP',
-    text: { long: 'Commenting Open', short: 'Open' },
+    text: {long: 'Commenting Open', short: 'Open'},
     mappedCodes: []
   };
 

@@ -1,8 +1,8 @@
-import { HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { KeycloakService } from 'core/services/keycloak.service';
-import { Observable, Subject, throwError } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import {HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {KeycloakService} from 'core/services/keycloak.service';
+import {Observable, Subject, throwError} from 'rxjs';
+import {catchError, switchMap, tap} from 'rxjs/operators';
 
 /**
  * Intercepts all http requests and allows for the request and/or response to be manipulated.
@@ -18,7 +18,8 @@ export class TokenInterceptor implements HttpInterceptor {
   private tokenRefreshedSource = new Subject();
   private tokenRefreshed$ = this.tokenRefreshedSource.asObservable();
 
-  constructor(private auth: KeycloakService) {}
+  constructor(private auth: KeycloakService) {
+  }
 
   /**
    * Main request intercept handler to automatically add the bearer auth token to every request.
@@ -63,7 +64,7 @@ export class TokenInterceptor implements HttpInterceptor {
     const authToken: string = this.auth.getToken() || '';
 
     request = request.clone({
-      setHeaders: { Authorization: 'Bearer ' + authToken }
+      setHeaders: {Authorization: 'Bearer ' + authToken}
     });
 
     return request;

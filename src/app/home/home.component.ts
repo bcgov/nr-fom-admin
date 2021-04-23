@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ProjectService, ProjectsService } from 'core/api';
-import { Subject } from 'rxjs';
-import { count, takeUntil } from 'rxjs/operators';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ProjectsService} from 'core/api';
+import {Subject} from 'rxjs';
+import {count, takeUntil} from 'rxjs/operators';
 
 
 @Component({
@@ -12,7 +12,8 @@ import { count, takeUntil } from 'rxjs/operators';
 export class HomeComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private projectService: ProjectsService) {}
+  constructor(private projectService: ProjectsService) {
+  }
 
   ngOnInit() {
     // although we aren't currently using numApplications,
@@ -20,9 +21,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.projectService
       .projectsControllerFindAll()
 
-      .pipe(count(),takeUntil(this.ngUnsubscribe))
+      .pipe(count(), takeUntil(this.ngUnsubscribe))
       .subscribe(
-        () => {},
+        () => {
+        },
         () => {
           console.log('error = could not count applications');
         }

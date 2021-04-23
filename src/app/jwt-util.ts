@@ -19,6 +19,7 @@ export class JwtUtil {
     }
     return decodeURIComponent(encodeURI(window.atob(output)));
   }
+
   public decodeToken(token: string) {
     const parts = token.split('.');
     if (parts.length !== 3) {

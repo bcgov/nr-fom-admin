@@ -24,12 +24,12 @@ const defaultDialog = {
   height: '400',
   buttons: {
     cancel: {
-      text: 'Cancel',
+      text: 'Cancel'
     },
     confirm: {
-      text: 'Discard',
-    },
-  },
+      text: 'Discard'
+    }
+  }
 };
 
 function baseDialogBuilder(data: DialogData) {
@@ -43,5 +43,5 @@ function baseDialogBuilder(data: DialogData) {
 export const customDialogData = baseDialogBuilder(defaultDialog);
 
 export const DIALOGS = {
-  defaultDialog,
+  defaultDialog
 } as const;

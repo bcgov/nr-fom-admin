@@ -26,30 +26,29 @@
   <hr>
 
 
+  <div class="row">
+    <div class="col-md-6">
+      <label>Classify comment</label>
+    </div>
+    <div class="col-md-6">
+      <label>Details</label>
+    </div>
+  </div>
+  <form [formGroup]="commentFormGroup">
     <div class="row">
       <div class="col-md-6">
-        <label>Classify comment</label>
+        <select class="sort-comments form-control mb-3" id="comment-response" formControlName="responseCode">
+          <option *ngFor="let code of responseCodes" [ngValue]="code.code">{{code.description}}</option>
+
+        </select>
       </div>
       <div class="col-md-6">
-        <label>Details</label>
-      </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <select class="sort-comments form-control mb-3" id="comment-response">
-        <option value="addressed">Addressed</option>
-        <option value="considered">Considered</option>
-        <option value="irrelevant">Irrelevant</option>
-      </select>
-    </div>
-    <div class="col-md-6">
-      <textarea class="form-control  mb" rows="3" id="detail" name="detail">
+      <textarea class="form-control  mb" rows="3" id="detail" name="detail" formControlName="responseDetails">
       </textarea>
+      </div>
     </div>
-  </div>
-  <div class="row">
-    <button class="btn btn-sm btn-primary btn-container" type="button" title="Save this comment response">
-    Save response
-   </button>
-  </div>
+    <ng-content>
+
+    </ng-content>
+  </form>
 </div>

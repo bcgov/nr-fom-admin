@@ -33,7 +33,7 @@
             <option value="c-closed">Commenting Closed</option>
             <option value="finalized">Finalized</option>
             <option value="expired">Expired</option>
-         </select>
+          </select>
           <!-- <select class="form-control filter-select" (change)="setStatusFilter($event.target.value)"
             [disabled]="searching || exporting" title="Filter by Status">
             <option value="">Filter by Status</option>
@@ -42,8 +42,8 @@
           </select> -->
 
           <input class="form-control filter-input" (change)="setApplicantFilter($event.target['value'])"
-            [value]="applicantFilter" [disabled]="searching || exporting" placeholder="Filter by Licensee"
-            title="Filter by Applicant">
+                 [value]="applicantFilter" [disabled]="searching || exporting" placeholder="Filter by Licensee"
+                 title="Filter by Applicant">
           <!-- <select class="form-control filter-select" (change)="setCommentFilter($event.target.value)"
             [disabled]="searching || exporting" title="Filter by comment period">
             <option value="">Filter by Comment Period</option>
@@ -55,14 +55,15 @@
 
         <div class="filter-buttons">
           <button class="filter-btn-clear btn btn-secondary" (click)="clearQueryParameters()"
-            [disabled]="searching || exporting" title="Clear search filters">Clear</button>
+                  [disabled]="searching || exporting" title="Clear search filters">Clear
+          </button>
           <button class="filter-btn-search btn btn-primary" type="submit" (click)="getProjects()"
-            [disabled]="searching || exporting" title="Search for FOMs">
+                  [disabled]="searching || exporting" title="Search for FOMs">
             Search
             <i class="spinner-border" [hidden]="!searching"></i>
           </button>
           <button class="filter-btn-export btn btn-light" (click)="export()" [disabled]="searching || exporting"
-            title="Export application list as CSV">
+                  title="Export application list as CSV">
             Export
             <i class="material-icons" [hidden]="exporting">file_download</i>
             <i class="spinner-border" [hidden]="!exporting"></i>
@@ -78,25 +79,25 @@
             <ul class="pagination" [ngClass]="{'disabled': searching || exporting}">
               <li>
                 <a class="page-link" (click)="updatePage(-1)" [hidden]="pagination.currentPage <= 1"
-                  title="Previous page">Prev</a>
+                   title="Previous page">Prev</a>
               </li>
               <li>
                 <a class="page-link" (click)="setPage(pagination.currentPage - 1)"
-                  [hidden]="pagination.currentPage <= 1"
-                  title="Page {{pagination.currentPage - 1}}">{{pagination.currentPage - 1}}</a>
+                   [hidden]="pagination.currentPage <= 1"
+                   title="Page {{pagination.currentPage - 1}}">{{pagination.currentPage - 1}}</a>
               </li>
               <li>
                 <a class="page-link current-page" (click)="setPage(pagination.currentPage)"
-                  title="Page {{pagination.currentPage}}">{{pagination.currentPage}}</a>
+                   title="Page {{pagination.currentPage}}">{{pagination.currentPage}}</a>
               </li>
               <li>
                 <a class="page-link" (click)="setPage(pagination.currentPage + 1)"
-                  [hidden]="pagination.currentPage >= pagination.pageCount"
-                  title="Page {{pagination.currentPage + 1}}">{{pagination.currentPage + 1}}</a>
+                   [hidden]="pagination.currentPage >= pagination.pageCount"
+                   title="Page {{pagination.currentPage + 1}}">{{pagination.currentPage + 1}}</a>
               </li>
               <li>
                 <a class="page-link" (click)="updatePage(1)" [hidden]="pagination.currentPage === pagination.pageCount"
-                  title="Next page">Next</a>
+                   title="Next page">Next</a>
               </li>
             </ul>
           </div>
@@ -113,67 +114,65 @@
     <div *ngIf="!loading">
       <table class="table-cards" id="table-card">
         <thead>
-          <tr>
-            <th class="sortable" (click)="sort('client')">FSP ID
-              <i class="sort"
-                [ngClass]="{'sort-asc': (sorting.column == 'client' && sorting.direction < 0), 'sort-desc': (sorting.column == 'client' && sorting.direction > 0) }"
-                aria-hidden="true" title="Sort by applicant"></i>
-            </th>
-            <th class="sortable" (click)="sort('cl_file')">FOM ID
-              <i class="sort"
-                [ngClass]="{'sort-asc': (sorting.column == 'cl_file' && sorting.direction < 0), 'sort-desc': (sorting.column == 'cl_file' && sorting.direction > 0) }"
-                aria-hidden="true" title="Sort by cl file"></i>
-            </th>
-            <th class="sortable" (click)="sort('businessUnit')">District
-              <i class="sort"
-                [ngClass]="{'sort-asc': (sorting.column == 'businessUnit' && sorting.direction < 0), 'sort-desc': (sorting.column == 'businessUnit' && sorting.direction > 0) }"
-                aria-hidden="true" title="Sort by region"></i>
-            </th>
-            <th class="sortable" (click)="sort('createdDate')">Created
-              <i class="sort"
-                [ngClass]="{'sort-asc': (sorting.column == 'createdDate' && sorting.direction < 0), 'sort-desc': (sorting.column == 'createdDate' && sorting.direction > 0) }"
-                aria-hidden="true" title="Sort by created date"></i>
-            </th>
-            <th>Status</th>
-            <th>Commenting</th>
-            <th>Comments</th>
-          </tr>
+        <tr>
+          <th class="sortable" (click)="sort('client')">FSP ID
+            <i class="sort"
+               [ngClass]="{'sort-asc': (sorting.column == 'client' && sorting.direction < 0), 'sort-desc': (sorting.column == 'client' && sorting.direction > 0) }"
+               aria-hidden="true" title="Sort by applicant"></i>
+          </th>
+          <th class="sortable" (click)="sort('cl_file')">FOM ID
+            <i class="sort"
+               [ngClass]="{'sort-asc': (sorting.column == 'cl_file' && sorting.direction < 0), 'sort-desc': (sorting.column == 'cl_file' && sorting.direction > 0) }"
+               aria-hidden="true" title="Sort by cl file"></i>
+          </th>
+          <th class="sortable" (click)="sort('businessUnit')">District
+            <i class="sort"
+               [ngClass]="{'sort-asc': (sorting.column == 'businessUnit' && sorting.direction < 0), 'sort-desc': (sorting.column == 'businessUnit' && sorting.direction > 0) }"
+               aria-hidden="true" title="Sort by region"></i>
+          </th>
+          <th class="sortable" (click)="sort('createdDate')">Created
+            <i class="sort"
+               [ngClass]="{'sort-asc': (sorting.column == 'createdDate' && sorting.direction < 0), 'sort-desc': (sorting.column == 'createdDate' && sorting.direction > 0) }"
+               aria-hidden="true" title="Sort by created date"></i>
+          </th>
+          <th>Status</th>
+          <th>Commenting</th>
+          <th>Comments</th>
+        </tr>
         </thead>
 
         <tbody>
-          <ng-container *ngFor="let project of projects">
-            <tr>
-              <!-- <td data-label="Applicant(s)">
-                <span>{{(app.meta.applicants | titlecase) || '-'}}</span>
-              </td> -->
-               <td data-label="FSP ID">
-                <span>{{project.fspId}}</span>
-              </td>
+        <ng-container *ngFor="let project of projects">
+          <tr>
+            <!-- <td data-label="Applicant(s)">
+              <span>{{(app.meta.applicants | titlecase) || '-'}}</span>
+            </td> -->
+            <td data-label="FSP ID">
+              <span>{{project.fspId}}</span>
+            </td>
 
-              <td data-label="FOM ID">
+            <td data-label="FOM ID">
                 <span>
                   <a [routerLink]="['/a', project.id]" title="View application details">{{project.id}}</a>
                 </span>
-              </td>
-              <td data-label="Region">
-                <!-- <span>{{project.district ? project.district.name : '-'}}</span> -->
-                <span>{{project.district ? project.district : '-'}}</span>
-              </td>
-              <td data-label="Created">
-                <span>{{project.createTimestamp || '-'}}</span>
-              </td>
-              <td data-label="Status">
-                <!-- <span>{{project.workflowState ? project.workflowState.code : '-'}}</span> -->
-                <span>{{project.workflowState ? project.workflowState : '-'}}</span>
-              </td>
-              <td data-label="Comment Status">
-                <span>Commenting &nbsp; Closed - {{ project.commentingClosedDate | date:'longDate' || 'Unknown'}}</span>
-              </td>
-              <td data-label="Comments" class="text-align">
-                <span>Not Implemented</span>
-              </td>
-            </tr>
-          </ng-container>
+            </td>
+            <td data-label="Region">
+              <span>{{project.district ? project.district.name : '-'}}</span>
+            </td>
+            <td data-label="Created">
+              <span>{{project.createTimestamp || '-'}}</span>
+            </td>
+            <td data-label="Status">
+              <span>{{project.workflowState ? project.workflowState.code : '-'}}</span>
+            </td>
+            <td data-label="Comment Status">
+              <span>Commenting &nbsp; Closed - {{ project.commentingClosedDate | date:'longDate' || 'Unknown'}}</span>
+            </td>
+            <td data-label="Comments" class="text-align">
+              <span>Not Implemented</span>
+            </td>
+          </tr>
+        </ng-container>
         </tbody>
       </table>
     </div>

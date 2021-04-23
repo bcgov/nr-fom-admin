@@ -7,10 +7,9 @@ import { StateService } from 'core/services/state.service';
         <div class="btn-container">
 
    <button
-   [disabled]="disabled"
+            [disabled]="disabled"
             class="btn btn-primary ml-1"
             type="button"
-            title="Submit new application"
           >
             <i class="spinner rotating" [hidden]="!stateSvc.loading"></i>
             <ng-content></ng-content>

@@ -1,7 +1,7 @@
 //
 // inspired by http://www.advancesharp.com/blog/1218/angular-4-upload-files-with-data-and-web-api-by-drag-drop
 //
-import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, HostListener } from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild} from '@angular/core';
 
 @Component({
   selector: 'app-file-upload',
@@ -20,7 +20,8 @@ export class FileUploadComponent {
   @ViewChild('file') fileInput: ElementRef;
   public errors: string[] = [];
 
-  constructor() {}
+  constructor() {
+  }
 
   @HostListener('dragover', ['$event']) onDragOver(event) {
     this.dragDropClass = 'droparea';
@@ -50,6 +51,9 @@ export class FileUploadComponent {
   }
 
   public onFileChange(event: any) {
+    console.log('🚀 -------------------------------------------------------------------------------------------------');
+    console.log('🚀 ~ file: file-upload.component.ts ~ line 53 ~ FileUploadComponent ~ onFileChange ~ event', event);
+    console.log('🚀 -------------------------------------------------------------------------------------------------');
     const files = event.target.files;
     this.addFiles(files);
 
@@ -65,6 +69,7 @@ export class FileUploadComponent {
       for (let i = 0; i < files.length; i++) {
         this.files.push(files[i]);
       }
+      console.log(files);
       this.filesChange.emit(this.files);
     }
   }

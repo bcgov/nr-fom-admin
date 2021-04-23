@@ -1,6 +1,6 @@
-import { StatusCodes, ReasonCodes, RegionCodes, LandUseTypeCodes } from './application';
-import { ICodeSet, ICodeGroup } from './interfaces';
-import { CommentCodes } from './comment';
+import {LandUseTypeCodes, ReasonCodes, RegionCodes, StatusCodes} from './application';
+import {ICodeGroup, ICodeSet} from './interfaces';
+import {CommentCodes} from './comment';
 
 /**
  * Enum of supported code sets.

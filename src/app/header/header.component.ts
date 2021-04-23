@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { trigger, state, style, animate, transition } from '@angular/animations';
-import { Router } from '@angular/router';
-import { KeycloakService } from 'core/services/keycloak.service';
+import {Component, OnInit} from '@angular/core';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {Router} from '@angular/router';
+import {KeycloakService} from 'core/services/keycloak.service';
 
 @Component({
   selector: 'app-header',
@@ -9,8 +9,8 @@ import { KeycloakService } from 'core/services/keycloak.service';
   styleUrls: ['./header.component.scss'],
   animations: [
     trigger('toggleNav', [
-      state('navClosed', style({ height: '0' })),
-      state('navOpen', style({ height: '*' })),
+      state('navClosed', style({height: '0'})),
+      state('navOpen', style({height: '*'})),
       transition('navOpen => navClosed', [animate('0.2s')]),
       transition('navClosed => navOpen', [animate('0.2s')])
     ])
@@ -21,7 +21,7 @@ export class HeaderComponent implements OnInit {
   welcomeMsg: string;
   // private _api: ApiService;
   public jwt: {
-    username: string ;
+    username: string;
     realm_access: {
       roles: string[];
     };

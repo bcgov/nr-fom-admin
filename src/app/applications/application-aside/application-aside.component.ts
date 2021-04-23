@@ -1,10 +1,9 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Subject} from 'rxjs';
 import * as L from 'leaflet';
 import * as _ from 'lodash';
 
-import { ProjectDto } from 'core/api';
+import {ProjectDto} from 'core/api';
 
 @Component({
   selector: 'app-application-aside',
@@ -18,17 +17,18 @@ export class ApplicationAsideComponent implements OnInit, OnDestroy {
   public fg: L.FeatureGroup;
   public map: L.Map;
   public layers: L.Layer[];
-  private maxZoom = { maxZoom: 17 };
+  private maxZoom = {maxZoom: 17};
   private mapBaseLayerName = 'World Topographic';
 
-  constructor() {}
+  constructor() {
+  }
 
   ngOnInit() {
     const World_Topo_Map = L.tileLayer(
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
       {
         attribution:
-          // tslint:disable-next-line:max-line-length
+        // tslint:disable-next-line:max-line-length
           'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community',
         maxZoom: 16,
         noWrap: true
@@ -38,7 +38,7 @@ export class ApplicationAsideComponent implements OnInit, OnDestroy {
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       {
         attribution:
-          // tslint:disable-next-line:max-line-length
+        // tslint:disable-next-line:max-line-length
           'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
         maxZoom: 17,
         noWrap: true
@@ -48,7 +48,7 @@ export class ApplicationAsideComponent implements OnInit, OnDestroy {
       'https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}',
       {
         attribution:
-          // tslint:disable-next-line:max-line-length
+        // tslint:disable-next-line:max-line-length
           'Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS, OSU, UNH, CSUMB, National Geographic, DeLorme, NAVTEQ, and Esri',
         maxZoom: 13,
         noWrap: true
@@ -58,7 +58,7 @@ export class ApplicationAsideComponent implements OnInit, OnDestroy {
       'https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
       {
         attribution:
-          // tslint:disable-next-line:max-line-length
+        // tslint:disable-next-line:max-line-length
           'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
         maxZoom: 16,
         noWrap: true
@@ -70,10 +70,10 @@ export class ApplicationAsideComponent implements OnInit, OnDestroy {
     });
 
     // add zoom control
-    L.control.zoom({ position: 'topright' }).addTo(this.map);
+    L.control.zoom({position: 'topright'}).addTo(this.map);
 
     // add scale control
-    L.control.scale({ position: 'bottomright' }).addTo(this.map);
+    L.control.scale({position: 'bottomright'}).addTo(this.map);
 
     // add base maps layers control
     const baseLayers = {
@@ -82,7 +82,7 @@ export class ApplicationAsideComponent implements OnInit, OnDestroy {
       'World Topographic': World_Topo_Map,
       'World Imagery': World_Imagery
     };
-    L.control.layers(baseLayers, null, { collapsed: true }).addTo(this.map);
+    L.control.layers(baseLayers, null, {collapsed: true}).addTo(this.map);
 
     // load base layer
     for (const key of Object.keys(baseLayers)) {
@@ -95,7 +95,7 @@ export class ApplicationAsideComponent implements OnInit, OnDestroy {
     // save any future base layer changes
     this.map.on(
       'baselayerchange',
-      function(e: L.LayersControlEvent) {
+      function (e: L.LayersControlEvent) {
         this.mapBaseLayerName = e.name;
       },
       this

@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
 import * as LinkifyIt from 'linkify-it';
 
 /**
@@ -8,7 +8,7 @@ import * as LinkifyIt from 'linkify-it';
  * @class LinkifyPipe
  * @implements {PipeTransform}
  */
-@Pipe({ name: 'linkify' })
+@Pipe({name: 'linkify'})
 export class LinkifyPipe implements PipeTransform {
   transform(str: string): string {
     if (!str) {

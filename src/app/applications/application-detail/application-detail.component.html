@@ -12,7 +12,7 @@
             Edit
           </button> -->
           <button class="btn btn-light" type="button" title="Edit FOM"
-            [routerLink]="['/a', project.id, 'edit']">
+                  [routerLink]="['/a', project.id, 'edit']">
             Edit
           </button>
           <span title="You cannot edit a finalized/expired project"></span>
@@ -51,13 +51,14 @@
           </i>
         </button> -->
         <button class="btn btn-icon" title="Refresh this FOM">
-          <i class="material-icons refresh-spinner" [ngClass]="{'rotating': isRefreshing}" [inlineSVG]="'assets/images/baseline-refresh-24px.svg'">
+          <i class="material-icons refresh-spinner" [ngClass]="{'rotating': isRefreshing}"
+             [inlineSVG]="'assets/images/baseline-refresh-24px.svg'">
           </i>
         </button>
         <span class="vert-pipe">&nbsp;</span>
         <button class="btn btn-icon" title="Remove this application from ACRFD"
-          (click)="deleteApplication()"
-          [disabled]="isDeleting">
+                (click)="deleteApplication()"
+                [disabled]="isDeleting">
           <i class="material-icons">
             delete
           </i>
@@ -102,23 +103,26 @@
               <ng-template ngbNavContent>
                 <section>
                   <h2>Name</h2>
-                  <p class="mb-0" [innerHTML]="project.name ? (project.name | titlecase) : '<em>No applicant on this file</em>'"></p>
+                  <p class="mb-0"
+                     [innerHTML]="project.name ? (project.name | titlecase) : '<em>No applicant on this file</em>'"></p>
                 </section>
                 <section>
                   <h2>Description</h2>
-                  <p class="mb-0" [innerHTML]="(project.description | newlines | linkify) || '<em>No project description available</em>'"></p>
+                  <p class="mb-0"
+                     [innerHTML]="(project.description | newlines | linkify) || '<em>No project description available</em>'"></p>
                 </section>
                 <section>
                   <h2>Details</h2>
                   <ul class="nv-list">
                     <li>
                       <span class="name">Licensee:</span>
-                      <!-- <span class="value">{{project.forestClient ? project.forestClient.name : 'No applicant on this file'}}</span> -->
-                      <span class="value">{{project.forestClient ? project.forestClient : 'No applicant on this file'}}</span>
+                      <span
+                        class="value">{{project.forestClient ? project.forestClient.name : 'No applicant on this file'}}</span>
                     </li>
                     <li>
                       <span class="name">District:</span>
-                      <span class="value">{{project.district ? project.district : 'A district has not been specified'}}</span>
+                      <span
+                        class="value">{{project.district ? project.district.name : 'A district has not been specified'}}</span>
                     </li>
                     <li>
                       <span class="name">Blocks:</span>
@@ -222,8 +226,8 @@
         <div class="aside-card">
           <h3 class="title">Application Status</h3>
           <div class="body">
-            <!-- <div class="app-status">{{project.workflowState && project.workflowState.description ? project.workflowState.description : '-'}}</div> -->
-            <div class="app-status">{{project.workflowState && project.workflowState ? project.workflowState : '-'}}</div>
+            <div
+              class="app-status">{{project.workflowState && project.workflowState.description ? project.workflowState.description : '-'}}</div>
             <!-- <div class="app-status__date text-muted" *ngIf="application.statusHistoryEffectiveDate"> -->
             <div class="app-status__date text-muted" *ngIf="project.updateTimestamp">
               Last updated on {{project.updateTimestamp | date:'longDate'}}
@@ -241,8 +245,7 @@
             <ul class="nv-list">
               <li>
                 <span class="name">Status:</span>
-                <!-- <span class="value">{{project.workflowState && project.workflowState.description}}</span> -->
-                <span class="value">{{project.workflowState && project.workflowState}}</span>
+                <span class="value">{{project.workflowState && project.workflowState.description}}</span>
               </li>
               <li>
                 <span class="name">Start Date:</span>
@@ -263,7 +266,7 @@
             </ul>
             <div class="btn-container" *ngIf="project">
               <button class="cta-btn btn btn-sm btn-outline-primary" type="button" title="Review comments"
-                [routerLink]="['/comments', project.id]">
+                      [routerLink]="['/comments', project.id]">
                 Review Comments<span>&nbsp;({{numberComments}})</span>
               </button>
             </div>
@@ -302,8 +305,8 @@
             </div>
             <div class="btn-container">
               <button class="cta-btn btn btn-sm btn-outline-primary" type="button" title="Edit fom documents"
-                [routerLink]="['/a', project.id, 'edit']"
-                fragment="appDecision">
+                      [routerLink]="['/a', project.id, 'edit']"
+                      fragment="appDecision">
                 Edit FOM Attachments
               </button>
               <span title="You cannot edit the decision of a retired application"></span>

@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Document } from './document';
+import {Document} from './document';
 
 class Internal {
   email: string;
