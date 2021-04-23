@@ -42,3 +42,17 @@
 // Third-party Components
 // Required for Angular Material styling: (ref: https://material.angular.io/guide/theming)
 @import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
+
+
+.snackbar {
+  background-color: $gold;
+  color: $black;
+  .mat-button-wrapper {color: $black}
+}
+.invalid {
+  position: relative;
+  font-weight: 600;
+  color: #dc3545;
+
+
+}

@@ -3,12 +3,12 @@
     <a class="navbar-brand" title="Forest Operations Map - FOM" routerLink="/home">
       <span class="navbar-brand__title">Forest Operations Map </span>
     </a>
-    <span class="navbar-environment" *ngIf="api.env !== 'prod'">{{api.env}}</span>
+    <!--<span class="navbar-environment" *ngIf="api.env !== 'prod'">{{api.env}}</span>-->
     <button class="navbar-toggler" type="button" title="Toggle Main Navigation"
-      aria-controls="navbarText"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-      (click)="toggleNav()">
+            aria-controls="navbarText"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+            (click)="toggleNav()">
       <i class="material-icons">menu</i>
       <span>MENU</span>
     </button>
@@ -21,7 +21,7 @@
         </li>
         <li *ngIf="jwt" class="nav-item">
           <a class="nav-link" routerLink="/list" title="List FOM applications" tabindex="0">
-            <span>List Fom</span>
+            <span>FOM Applications</span>
           </a>
         </li>
         <!-- LOGGED IN -->

@@ -1,9 +1,9 @@
 
 FROM image-registry.openshift-image-registry.svc:5000/a4b31c-tools/node:14-slim AS ui-admin
-WORKDIR /usr/src/app/
-COPY . ./nr-fom-admin/
 WORKDIR /usr/src/app/nr-fom-admin
-RUN npm cache clean --force && npm install @angular/cli && npm install && npm run build
+# Filtered by .dockerignore
+COPY . .
+RUN npm ci && npm run build
 
 FROM image-registry.openshift-image-registry.svc:5000/a4b31c-tools/node:14-slim AS server-build
 RUN mkdir "/.npm"

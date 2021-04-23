@@ -1,21 +1,16 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MatSnackBarRef, SimpleSnackBar, MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, Router } from '@angular/router';
-import { DialogService } from 'ng2-bootstrap-modal';
-import { Subject, of, throwError } from 'rxjs';
-import { takeUntil, concat, mergeMap } from 'rxjs/operators';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {MatSnackBar, MatSnackBarRef, SimpleSnackBar} from '@angular/material/snack-bar';
+import {ActivatedRoute, Router} from '@angular/router';
+// @ts-ignore
+import {of, Subject, throwError} from 'rxjs';
+// @ts-ignore
+import {concat, mergeMap, takeUntil} from 'rxjs/operators';
 
-import { ConfirmComponent } from 'app/confirm/confirm.component';
-import { Application } from 'app/models/application';
-import { ApiService } from 'app/services/api';
-import { ApplicationService } from 'app/services/application.service';
-import { CommentPeriodService } from 'app/services/commentperiod.service';
-import { DecisionService } from 'app/services/decision.service';
-import { DocumentService } from 'app/services/document.service';
-import { FeatureService } from 'app/services/feature.service';
-import { Project } from 'app/models/project';
-import { PublicCommentService } from 'app/services/publiccomments.service';
-import { PublicComment} from 'app/models/publiccomment';
+import {ConfirmComponent} from 'app/confirm/confirm.component';
+import {Application} from 'core/models/application';
+import {PublicComment} from 'core/models/publiccomment';
+
+import {ProjectDto, ProjectService} from 'core/api';
 
 
 @Component({
@@ -28,11 +23,11 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
   public isUnpublishing = false;
   public isDeleting = false;
   public isRefreshing = false;
-  public application: Application = null;
+  public application: ProjectDto = null;
   public publicComment: PublicComment = null;
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
-  public project: Project = null;
+  public project: ProjectDto = null;
   public isProjectActive = false;
   public numberComments = null;
 
@@ -40,26 +35,21 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     public snackBar: MatSnackBar,
-    public api: ApiService, // also used in template
-    private dialogService: DialogService,
-    public applicationService: ApplicationService, // also used in template
-    public searchPublicCommentService: PublicCommentService,
-    public commentPeriodService: CommentPeriodService,
-    public decisionService: DecisionService,
-    public documentService: DocumentService,
-    public featureService: FeatureService
-  ) {}
+    // private dialogService: DialogService,
+    public projectService: ProjectService // also used in template
+  ) {
+  }
 
   ngOnInit() {
     // get data from route resolver
-    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: Project }) => {
+    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: ProjectDto }) => {
       if (data.application) {
         this.project = data.application;
-        if (this.project.workflowState.code === 'INITIAL') {
+        if (this.project.workflowState['code'] === 'INITIAL') {
           this.isProjectActive = true;
         }
         this.fetchingAllPublicComments();
-        console.log('fom detail: ' + this.project.workflowState.code);
+        console.log('fom detail: ' + this.project.workflowStateCode['code']);
       } else {
         alert("Uh-oh, couldn't load fom");
         // application not found --> navigate back to search
@@ -79,7 +69,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
   }
 
   public deleteApplication() {
-    if (this.application.meta.numComments > 0) {
+    /* if (this.application.meta.numComments > 0) {
       this.dialogService
         .addDialog(
           ConfirmComponent,
@@ -111,26 +101,26 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
         )
         .pipe(takeUntil(this.ngUnsubscribe));
       return;
-    }
+    } */
 
-    this.dialogService
-      .addDialog(
-        ConfirmComponent,
-        {
-          title: 'Confirm Deletion',
-          message: 'Do you really want to delete this application?',
-          okOnly: false
-        },
-        {
-          backdropColor: 'rgba(0, 0, 0, 0.5)'
-        }
-      )
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(isConfirmed => {
-        if (isConfirmed) {
-          this.internalDeleteApplication();
-        }
-      });
+    // this.dialogService
+    //   .addDialog(
+    //     ConfirmComponent,
+    //     {
+    //       title: 'Confirm Deletion',
+    //       message: 'Do you really want to delete this application?',
+    //       okOnly: false
+    //     },
+    //     {
+    //       backdropColor: 'rgba(0, 0, 0, 0.5)'
+    //     }
+    //   )
+    //   .pipe(takeUntil(this.ngUnsubscribe))
+    //   .subscribe(isConfirmed => {
+    //     if (isConfirmed) {
+    //       this.internalDeleteApplication();
+    //     }
+    //   });
   }
 
   private internalDeleteApplication() {
@@ -138,6 +128,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
 
     let observables = of(null);
 
+    /*
     // delete comment period
     if (this.application.meta.currentPeriod) {
       observables = observables.pipe(concat(this.commentPeriodService.delete(this.application.meta.currentPeriod)));
@@ -167,7 +158,8 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
 
     // delete application
     // do this last in case of prior failures
-    observables = observables.pipe(concat(this.applicationService.delete(this.application)));
+    observables = observables.pipe(concat(this.projectService.delete(this.application)));
+    */
 
     observables.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
       () => {
@@ -196,7 +188,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
    */
   public refreshApplication() {
     this.isRefreshing = true;
-    this.api
+    /* this.api
       .refreshApplication(this.application)
       .pipe(
         // Now that the application is refreshed, fetch it with all of its new data and features.
@@ -204,7 +196,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
         // the current this.application.
         mergeMap(updatedApplicationAndFeatures => {
           if (updatedApplicationAndFeatures) {
-            return this.applicationService.getById(updatedApplicationAndFeatures.application._id, {
+            return this.projectService.getById(updatedApplicationAndFeatures.application._id, {
               getFeatures: true,
               getDocuments: true,
               getCurrentPeriod: true,
@@ -232,45 +224,47 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
           this.isRefreshing = false;
           this.snackBarRef = this.snackBar.open('Application refreshed...', null, { duration: 2000 });
         }
-      );
+      ); */
   }
 
   public publishApplication() {
     if (!this.application.description) {
-      this.dialogService
-        .addDialog(
-          ConfirmComponent,
-          {
-            title: 'Cannot Publish Application',
-            message: 'A description for this application is required to publish.',
-            okOnly: true
-          },
-          {
-            backdropColor: 'rgba(0, 0, 0, 0.5)'
-          }
-        )
-        .pipe(takeUntil(this.ngUnsubscribe));
-      return;
+      // this.dialogService
+      //   .addDialog(
+      //     ConfirmComponent,
+      //     {
+      //       title: 'Cannot Publish Application',
+      //       message: 'A description for this application is required to publish.',
+      //       okOnly: true
+      //     },
+      //     {
+      //       backdropColor: 'rgba(0, 0, 0, 0.5)'
+      //     }
+      //   )
+      //   .pipe(takeUntil(this.ngUnsubscribe));
+      // return;
     }
 
-    this.dialogService
-      .addDialog(
-        ConfirmComponent,
-        {
-          title: 'Confirm Publish',
-          message: 'Publishing this application will make it visible to the public. Are you sure you want to proceed?',
-          okOnly: false
-        },
-        {
-          backdropColor: 'rgba(0, 0, 0, 0.5)'
-        }
-      )
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(isConfirmed => {
-        if (isConfirmed) {
-          this.internalPublishApplication();
-        }
-      });
+    // this.dialogService
+    //   .addDialog(
+    //     ConfirmComponent,
+    //     {
+    //       title: 'Confirm Publish',
+    //       message: 'Publishing this application will make it visible to the public. Are you sure you want to proceed?',
+    //       okOnly: false
+    //     },
+    //     {
+    //       backdropColor: 'rgba(0, 0, 0, 0.5)'
+    //     }
+    //   )
+    //   .pipe(takeUntil(this.ngUnsubscribe))
+    //   .subscribe(isConfirmed => {
+    //     if (isConfirmed) {
+    //       this.internalPublishApplication();
+    //     }
+    //   });
+
+    return; // TODO - Marcelo
   }
 
   private internalPublishApplication() {
@@ -279,7 +273,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
     let observables = of(null);
 
     // publish comment period
-    if (this.application.meta.currentPeriod && !this.application.meta.currentPeriod.meta.isPublished) {
+    /* if (this.application.meta.currentPeriod && !this.application.meta.currentPeriod.meta.isPublished) {
       observables = observables.pipe(concat(this.commentPeriodService.publish(this.application.meta.currentPeriod)));
     }
 
@@ -309,14 +303,14 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
     // publish application
     // do this last in case of prior failures
     if (!this.application.meta.isPublished) {
-      observables = observables.pipe(concat(this.applicationService.publish(this.application)));
+      observables = observables.pipe(concat(this.projectService.publish(this.application)));
     }
 
     // finally, save publish date (first time only)
     if (!this.application.publishDate) {
       this.application.publishDate = new Date(); // now
-      observables = observables.pipe(concat(this.applicationService.save(this.application)));
-    }
+      observables = observables.pipe(concat(this.projectService.save(this.application)));
+    } */
 
     observables.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
       () => {
@@ -331,10 +325,10 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
       },
       () => {
         // onCompleted
-        this.snackBarRef = this.snackBar.open('Application published...', null, { duration: 2000 });
+        this.snackBarRef = this.snackBar.open('Application published...', null, {duration: 2000});
         // reload all data
-        this.applicationService
-          .getById(this.application._id, {
+        /* this.projectService
+          .getById(this.application.id, {
             getFeatures: true,
             getDocuments: true,
             getCurrentPeriod: true,
@@ -342,7 +336,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
           })
           .pipe(takeUntil(this.ngUnsubscribe))
           .subscribe(
-            (application: Application) => {
+            (application: ProjectDto) => {
               this.isPublishing = false;
               this.application = application;
             },
@@ -351,7 +345,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
               console.log('error =', error);
               alert("Uh-oh, couldn't reload application");
             }
-          );
+          ); */
       }
     );
   }
@@ -361,6 +355,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
 
     let observables = of(null);
 
+    /*
     // unpublish comment period
     if (this.application.meta.currentPeriod && this.application.meta.currentPeriod.meta.isPublished) {
       observables = observables.pipe(concat(this.commentPeriodService.unPublish(this.application.meta.currentPeriod)));
@@ -377,7 +372,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
 
     // unpublish decision
     if (this.application.meta.decision && this.application.meta.decision.meta.isPublished) {
-      observables = observables.pipe(concat(this.decisionService.unPublish(this.application.meta.decision)));
+      observables = observables.pipe(concat(this.decisionService.0unPublish(this.application.meta.decision)));
     }
 
     // unpublish application documents
@@ -392,8 +387,9 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
     // unpublish application
     // do this last in case of prior failures
     if (this.application.meta.isPublished) {
-      observables = observables.pipe(concat(this.applicationService.unPublish(this.application)));
+      observables = observables.pipe(concat(this.projectService.unPublish(this.application)));
     }
+    */
 
     observables.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
       () => {
@@ -408,20 +404,16 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
       },
       () => {
         // onCompleted
-        this.snackBarRef = this.snackBar.open('Application unpublished...', null, { duration: 2000 });
+        this.snackBarRef = this.snackBar.open('Application unpublished...', null, {duration: 2000});
         // reload all data
-        this.applicationService
-          .getById(this.application._id, {
-            getFeatures: true,
-            getDocuments: true,
-            getCurrentPeriod: true,
-            getDecision: true
-          })
+        this.projectService
+          .projectControllerFindOne(this.application.id)
           .pipe(takeUntil(this.ngUnsubscribe))
           .subscribe(
+            // @ts-ignore
             (application: Application) => {
               this.isUnpublishing = false;
-              this.application = application;
+              // this.application = application;
             },
             error => {
               this.isUnpublishing = false;
@@ -434,7 +426,7 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
   }
 
   public fetchingAllPublicComments() {
-    this.searchPublicCommentService.getPublicCommentsByProjectId( this.project.id)
+    /* this.searchPublicCommentService.getPublicCommentsByProjectId(this.project.id)
     .subscribe(
       publicComments => {
         publicComments.forEach(publicComment => {
@@ -445,6 +437,6 @@ export class ApplicationDetailComponent implements OnInit, OnDestroy {
       },
       error => {
         console.log('error =', error);
-      });
+      }); */
   }
 }

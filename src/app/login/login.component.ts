@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { ApiService } from '../services/api';
-import { KeycloakService } from 'app/services/keycloak.service';
+import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
+import {KeycloakService} from 'core/services/keycloak.service';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +13,8 @@ export class LoginComponent implements OnInit {
   loading = false;
   error = '';
 
-  constructor(private router: Router, private api: ApiService, private keycloakService: KeycloakService) {}
+  constructor(private router: Router, private keycloakService: KeycloakService) {
+  }
 
   ngOnInit() {
     // Redir to the main index page if they try to get here.
@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
   login() {
     this.loading = true;
 
-    this.api.login(this.model.username, this.model.password).subscribe(
+    /* this.api.login(this.model.username, this.model.password).subscribe(
       result => {
         if (result === true) {
           // login successful
@@ -38,6 +38,6 @@ export class LoginComponent implements OnInit {
         this.error = 'Username or password is incorrect';
         this.loading = false;
       }
-    );
+    ); */
   }
 }

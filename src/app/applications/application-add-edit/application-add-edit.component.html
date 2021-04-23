@@ -1,191 +1,247 @@
-<div class="top-container" *ngIf="application">
+<div class="top-container" *ngIf="fg">
   <div class="container">
     <div class="title-container">
       <div class="title-container__title">
-        <h1><span class="text-muted">FSP ID:<input type=text class="form-control col-1"> </span>
-        </h1>
+        <h1 class="text-muted">{{isCreate ? 'Create' : 'Edit'}} FOM</h1>
       </div>
       <div class="title-container__actions">
-        <button class="btn btn-light" type="button" title="Cancel changes" (click)="cancelChanges()">
+        <button
+          class="btn btn-light"
+          type="button"
+          title="Cancel changes"
+          (click)="cancelChanges()"
+        >
           Cancel
         </button>
-        <div class="btn-container">
-          <!-- <button class="btn btn-primary ml-1" type="button" title="Submit new application"
-            *ngIf="!application._id"
-            (click)="addApplication()"
-            [disabled]="isSubmitting || application.meta.isRetired">
-            <i class="spinner rotating" [hidden]="!isSubmitting"></i>
-            <span>{{isSubmitting ? 'Saving' : 'Save'}}</span>
-          </button> -->
-          <button class="btn btn-primary ml-1" type="button" title="Submit new application">
-            <i class="spinner rotating" [hidden]="!isSubmitting"></i>
-            <span>{{isSubmitting ? 'Saving' : 'Save'}}</span>
-          </button>
-          <span title="You cannot save a retired application"></span>
-        </div>
-        <div class="btn-container">
-          <button class="btn btn-primary ml-1" type="button" title="Save application"
-            *ngIf="application._id && application.meta.isPublished === false"
-            (click)="saveApplication()"
-            [disabled]="isSaving || application.meta.isRetired">
-            <i class="spinner rotating" [hidden]="!isSaving"></i>
-            <span>{{isSaving ? 'Saving' : 'Save'}}</span>
-          </button>
-          <span title="You cannot save a retired application"></span>
-        </div>
-        <div class="btn-container">
-          <button class="publish-btn btn btn-primary ml-1" type="button" title="Publish changes"
-            *ngIf="application._id && application.meta.isPublished === true"
-            (click)="saveApplication()"
-            [disabled]="isSaving || application.meta.isRetired">
-            <i class="spinner rotating" [hidden]="!isSaving"></i>
-            <span>{{isSaving ? 'Publishing' : 'Publish Changes'}}</span>
-          </button>
-          <span title="You cannot publish changes to a retired application"></span>
-        </div>
+        <app-button *ngIf="isCreate; else saveButton" title="You cannot save a retired application" (click)="submit()"
+                    [disabled]="!fg.isModified">{{ isLoading ? "Submitting" : "Submit" }}</app-button>
+
       </div>
     </div>
   </div>
 </div>
 
-<div class="bottom-container" *ngIf="application">
+<div class="bottom-container" *ngIf="fg">
+
   <div class="container">
-    <form class="mb-3" #applicationForm="ngForm">
+
+    <form class="mb-3" [formGroup]="fg">
+      <div class="row">
+        <legend>Application Details</legend>
+      </div>
       <fieldset>
-        <legend>Comment Period</legend>
-        <div class="review-dates">
-          <div class="form-group mb-0">
-            <label>Start Date</label>
-            <div class="input-group" [ngClass]="{'is-invalid': isSubmitSaveClicked && !isValidDate(startDate)}">
-              <input class="form-control" placeholder="yyyy-mm-dd" name="date1" ngbDatepicker #date1="ngbDatepicker"
-                [firstDayOfWeek]="7" navigation="arrows" 
-                (click)="date1.close(); date2.close();" required aria-required="true">
-                <!-- <input class="form-control" placeholder="yyyy-mm-dd" name="date1" ngbDatepicker #date1="ngbDatepicker"
-                [firstDayOfWeek]="7" navigation="arrows" [(ngModel)]="startDate" (ngModelChange)="onStartDateChg($event)"
-                (click)="date1.close(); date2.close();" required aria-required="true"> -->
-              <div class="input-group-append">
-                <button class="btn btn-icon" (click)="date1.toggle()" type="button" tabindex="-1">
-                  <i class="material-icons">date_range</i>
-                </button>
-              </div>
-            </div>
-            <div class="invalid-feedback bg-danger" *ngIf="isSubmitSaveClicked && !isValidDate(startDate)">
-              Enter a valid Start Date
-            </div>
+        <div class="form-row" *ngIf="!this.isCreate">
+          <div class="form-group col-md-2">
+            <label>ID</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              name="name"
+              disabled
+              [value]="originalApplication.id"
+            />
           </div>
-          <span class="spacer">+</span>
-          <div class="form-group mb-0">
-            <label>Days</label>
-            <input class="form-control" type="number" min="1" max="365" name="delta" [ngModel]="delta" (ngModelChange)="onDeltaChg($event)" />
+          <div class="form-group col-md">
+            <label>Commenting Open Date</label>
+            <input
+              type="text"
+              class="form-control"
+              id="commentingOpenDate"
+              name="commentingOpenDate"
+              disabled
+              value="{{ originalApplication.commentingOpenDate | date: 'longDate' }}"
+            />
           </div>
-          <span class="spacer">=</span>
-          <div class="form-group mb-0">
-            <label>End Date</label>
-            <div class="input-group" [ngClass]="{'is-invalid': isSubmitSaveClicked && !isValidDate(endDate)}">
-              <input class="form-control" placeholder="yyyy-mm-dd" name="date2" ngbDatepicker #date2="ngbDatepicker"
-                [firstDayOfWeek]="7" navigation="arrows" 
-                (click)="date1.close(); date2.close();" required aria-required="true">
-                <!-- <input class="form-control" placeholder="yyyy-mm-dd" name="date2" ngbDatepicker #date2="ngbDatepicker"
-                [firstDayOfWeek]="7" navigation="arrows" [(ngModel)]="endDate" (ngModelChange)="onEndDateChg($event)"
-                (click)="date1.close(); date2.close();" required aria-required="true"> -->
-              <div class="input-group-append" tabindex="-1">
-                <button class="btn btn-icon" (click)="date2.toggle()" type="button" tabindex="-1">
-                  <i class="material-icons">date_range</i>
-                </button>
-              </div>
-            </div>
-            <div class="invalid-feedback bg-danger" *ngIf="isSubmitSaveClicked && !isValidDate(endDate)">
-              Enter a valid End Date
-            </div>
+          <div class="form-group col-md">
+            <label>Commenting Closed Date</label>
+            <input
+              type="text"
+              class="form-control"
+              id="commentingClosedDate"
+              name="commentingClosedDate"
+              disabled
+              value="{{ originalApplication.commentingOpenDate | date: 'longDate' }}"
+            />
           </div>
         </div>
-      </fieldset>
 
-      <fieldset>
-        <div class="row">
-          <div class="col-md-6">
-            <legend>Application Details</legend>
+        <div class="form-row">
+
+          <div class="col-md-2">
+            <label for="fsp-id" style="white-space: nowrap;"
+
+
+            >FSP ID</label>
+            <input
+              type="number"
+              class="form-control"
+              id="fsp-id"
+              name="fsp-id"
+              formControlName="fspId"
+              [appFormControl]="fg.get('fspId')"
+
+            />
           </div>
-          <div class="col-md-6">
-            <select class="sort-comments form-control" id="district-list">
-              <option value="56">100 Mile House Natural Resource District</option>
-              <option value="43">Campbell River Natural Resource District</option>
-                  <option value="1826">Cariboo-Chilcotin Natural Resource District</option>
-                  <option value="1828">Cascades Natural Resource District</option>
-                  <option value="15">Chilliwack Natural Resource District</option>
-                  <option value="32">Coast Mountains Natural Resource District</option>
-                  <option value="46">Fort Nelson Natural Resource District</option>
-                      <option value="48">Haida Gwaii Natural Resource District</option>
+          <div class="col-md-2  ml-1">
+            <label for="fsp-id" style="white-space: nowrap;">District ID</label>
+            <input
+              type="number"
+              class="form-control"
+              id="fsp-id"
+              name="fsp-id"
+              formControlName="districtId"
+              [appFormControl]="fg.get('districtId')"
+
+            />
+          </div>
+          <div class="col"
+
+          >
+            <label for="fsp-id" style="white-space: nowrap;">District</label>
+            <select class="sort-comments form-control" id="district-list"
+
+            >
+              <option [value]="district.id" *ngFor="let district of districts" [innerHTML]=" district.name"></option>
+
             </select>
           </div>
-      </div>
+        </div>
         <!-- <legend>Application Details</legend> -->
-        <div class="form-group">
-          <label>Licensee Number</label>
-          <!-- <div class="applicant-display">
-            {{application.meta.applicants || 'Pretty Bird Operations'}}
-          </div> -->
-          <input type="text" class="form-control" rows="1" id="fomname" name="fomname">
-        </div>
-        <div class="form-group">
-          <label>FOM Name</label>
-          <input type="text" class="form-control" rows="1" id="fomname" name="fomname">
-        </div>
+        <div class="form-row">
+          <div class="form-group col">
+            <label>FOM Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              name="name"
+              formControlName="name"
+              [appFormControl]="fg.get('name')"
+            />
+          </div>
+          <div class="form-group col">
+            <label>Licensee</label>
+            <!-- <div class="applicant-display">
+              {{application.meta.applicants || 'Pretty Bird Operations'}}
+            </div> -->
+            <input
+              type="text"
+              class="form-control"
+              id="client"
+              name="client"
+              formControlName="forestClientNumber"
+              [appFormControl]="fg.get('forestClientNumber')"
 
+            />
+          </div>
+
+        </div>
         <div class="form-group">
           <label>Description</label>
-          <textarea class="form-control" rows="3" id="description" name="description"
-            #description="ngModel"
-            [(ngModel)]="application.description">
+          <textarea
+            class="form-control"
+            rows="3"
+            id="description"
+            name="description"
+            formControlName="description"
+            [appFormControl]="fg.get('description')"
+
+          >
           </textarea>
         </div>
         <div class="form-group mb-0">
           <legend>FOM Supporting Documents</legend>
-          <ul class="doc-list mb-3" *ngIf="application.meta.documents?.length > 0">
-              <li *ngFor="let doc of application.meta.documents">
-                <span class="cell icon">
-                  <i class="material-icons">insert_drive_file</i>
-                </span>
-                <span class="cell name" [title]="doc.displayName || ''">
-                  <span class="cell__txt-content">{{doc.documentFileName}}</span>
-                </span>
-                <span class="cell actions">
-                  <button class="btn btn-icon" type="button" title="Delete this document" (click)="deleteDocument(doc, application.meta.documents)">
-                    <i class="material-icons">delete</i>
-                  </button>
-                </span>
-              </li>
-          </ul>
-          <app-file-upload [fileExt]="['jpg', 'jpeg', 'png', 'pdf', 'tiff']" [maxFiles]="0" [maxSize]="10" [showList]="false" [files]="applicationFiles"
-            (filesChange)="addDocuments($event, application.meta.documents); applicationFiles = []"></app-file-upload>
+
+          <app-upload-box [multipleFiles]="true" [files]="applicationFiles"></app-upload-box>
         </div>
+        <!-- <div class="form-group mb-0">
+          <legend>FOM Supporting Documents</legend>
+          <ul
+            class="doc-list mb-3"
+          >
+            <li *ngFor="let doc of (originalApplication?.attachments || [])">
+              <span class="cell icon">
+                <i class="material-icons">insert_drive_file</i>
+              </span>
+              <span class="cell name" [title]="doc.displayName || ''">
+                <span class="cell__txt-content">{{
+                  doc.documentFileName
+                }}</span>
+              </span>
+              <span class="cell actions">
+                <button
+                  class="btn btn-icon"
+                  type="button"
+                  title="Delete this document"
+
+                >
+                  <i class="material-icons">delete</i>
+                </button>
+              </span>
+            </li>
+          </ul> -->
+        <!-- <app-file-upload
+          *ngIf=" (application['attachments'] || [])"
+          [fileExt]="['jpg', 'jpeg', 'png', 'pdf', 'tiff']"
+          [maxFiles]="0"
+          [maxSize]="10"
+          [showList]="false"
+          [files]="applicationFiles"
+          (filesChange)="
+            addDocuments($event,  (application['attachments'] || []));
+            applicationFiles = []
+          "
+        ></app-file-upload> -->
+        <!-- </div> -->
       </fieldset>
 
       <fieldset name="decisionForm" id="appDecision">
         <!-- <legend class="mb-3">Initial Public Notice</legend> -->
         <legend>Initial Public Notice</legend>
         <!-- <div class="mb-4" *ngIf="application.meta.decision"> -->
-        <div class="mb-4" *ngIf="application.meta.decision">
+        <div class="mb-4">
           <div class="form-group">
-            <ul class="doc-list mb-3" *ngIf="application.meta.decision.meta.documents?.length > 0">
-              <li *ngFor="let doc of application.meta.decision.meta.documents">
+            <ul
+              class="doc-list mb-3"
+            >
+              <!-- <li *ngFor="let doc of (application['attachments'] || [])">
                 <span class="cell icon">
                   <i class="material-icons">insert_drive_file</i>
                 </span>
                 <span class="cell name" [title]="doc.displayName || ''">
                   <span class="cell__txt-content">
-                    {{doc.documentFileName}}
+                    {{ doc.documentFileName }}
                   </span>
                 </span>
                 <span class="cell actions">
-                  <button class="btn btn-icon" type="button" title="Delete this document" (click)="deleteDocument(doc, application.meta.decision.meta.documents)">
+                  <button
+                    class="btn btn-icon"
+                    type="button"
+                    title="Delete this document"
+                    (click)="
+                      deleteDocument(
+                        doc,
+                        (application['attachments'] || [])
+                      )
+                    "
+                  >
                     <i class="material-icons">delete</i>
                   </button>
                 </span>
-              </li>
+              </li> -->
             </ul>
-            <app-file-upload [fileExt]="['jpg', 'jpeg', 'png', 'pdf', 'tiff']" [maxFiles]="0" [maxSize]="10" [showList]="false" [files]="decisionFiles"
-              (filesChange)="addDocuments($event, application.meta.decision.meta.documents); decisionFiles = []"></app-file-upload>
+            <!-- <app-file-upload
+              [fileExt]="['jpg', 'jpeg', 'png', 'pdf', 'tiff']"
+              [maxFiles]="0"
+              [maxSize]="10"
+              [showList]="false"
+              [files]="decisionFiles"
+              (filesChange)="
+                addDocuments($event, (application['attachments'] || []));
+                decisionFiles = []
+              "
+            ></app-file-upload> -->
           </div>
         </div>
         <!-- <button class="btn content-btn-alt" type="button" title="Add decision documents"
@@ -201,7 +257,14 @@
           Remove Decision Documents
         </button> -->
       </fieldset>
-
     </form>
   </div>
 </div>
+
+<ng-template #saveButton>
+
+
+  <app-button
+    title="You cannot save a retired application"
+    (click)="saveApplication()">{{ isLoading ? "Saving" : "Save" }}</app-button>
+</ng-template>

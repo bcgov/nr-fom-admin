@@ -1,16 +1,28 @@
-import { Component, Input } from '@angular/core';
-// import { Comment } from 'app/models/comment';
-import { PublicComment } from 'app/models/publiccomment';
-import { ApiService } from 'app/services/api';
+import {Component, Input} from '@angular/core';
+import {FormGroup} from '@angular/forms';
+import {RxFormBuilder} from '@rxweb/reactive-form-validators';
+import {ResponseCodeDto} from 'core/api';
+import {PublicComment} from 'core/models/publiccomment';
+import {CommentDetailForm} from './comment-detail.form';
+
 @Component({
   selector: 'app-comment-detail',
   templateUrl: './comment-detail.component.html',
-  styleUrls: ['./comment-detail.component.scss']
+  styleUrls: ['./comment-detail.component.scss'],
+  exportAs: 'commentForm'
 })
 export class CommentDetailComponent {
-  @Input() comment: PublicComment;
+  commentFormGroup: FormGroup;
+  comment: PublicComment;
+  @Input() responseCodes: ResponseCodeDto[]
 
-  constructor(
-    public api: ApiService // used in template
-  ) {}
+  @Input() set selectedComment(comment: PublicComment) {
+    console.log(comment)
+    const commentFormGroup = new CommentDetailForm(comment)
+    this.commentFormGroup = this.formBuilder.group(commentFormGroup)
+    this.comment = comment;
+  };
+
+  constructor(private formBuilder: RxFormBuilder) {
+  }
 }

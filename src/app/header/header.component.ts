@@ -1,9 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { trigger, state, style, animate, transition } from '@angular/animations';
-import { Router } from '@angular/router';
-import { ApiService } from 'app/services/api';
-// import { JwtUtil } from 'app/jwt-util';
-import { KeycloakService } from 'app/services/keycloak.service';
+import {Component, OnInit} from '@angular/core';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {Router} from '@angular/router';
+import {KeycloakService} from 'core/services/keycloak.service';
 
 @Component({
   selector: 'app-header',
@@ -11,8 +9,8 @@ import { KeycloakService } from 'app/services/keycloak.service';
   styleUrls: ['./header.component.scss'],
   animations: [
     trigger('toggleNav', [
-      state('navClosed', style({ height: '0' })),
-      state('navOpen', style({ height: '*' })),
+      state('navClosed', style({height: '0'})),
+      state('navOpen', style({height: '*'})),
       transition('navOpen => navClosed', [animate('0.2s')]),
       transition('navClosed => navOpen', [animate('0.2s')])
     ])
@@ -23,21 +21,21 @@ export class HeaderComponent implements OnInit {
   welcomeMsg: string;
   // private _api: ApiService;
   public jwt: {
-    username: string ;
+    username: string;
     realm_access: {
       roles: string[];
     };
     scopes: string[];
   };
 
-  constructor(public api: ApiService, private keycloakService: KeycloakService, public router: Router) {
+  constructor(private keycloakService: KeycloakService, public router: Router) {
     // this._api = api;
     router.events.subscribe(() => {
       const token = this.keycloakService.getToken();
       // let jwt = new JwtUtil().decodeToken(token);
       let jwt = {
-        username: 'Marcelo',
-        displayName: 'Marcelo',
+        username: 'sample-user',
+        displayName: 'Sample User',
         realm_access: {
           roles: ['sysadmin']
         },
@@ -54,8 +52,8 @@ export class HeaderComponent implements OnInit {
         // this.welcomeMsg = 'Login';
         // TODO: Marcelo addded this
         jwt = {
-          username: 'Marcelo',
-          displayName: 'Marcelo',
+          username: 'sample-user',
+          displayName: 'Sample User',
           realm_access: {
             roles: ['sysadmin']
           },
@@ -90,12 +88,13 @@ export class HeaderComponent implements OnInit {
         this.jwt.username === 'admin'
       );
     }
-    return null; //Marcelo - TODO remove
+
+    return null;
   }
 
   navigateToLogout() {
     // reset login status
-    this.api.logout();
+    // this.api.logout();
     window.location.href = this.keycloakService.getLogoutURL();
   }
 
