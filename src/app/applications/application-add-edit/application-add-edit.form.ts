@@ -1,4 +1,4 @@
-import {minLength, prop, required} from "@rxweb/reactive-form-validators"
+import {minLength, prop, required} from '@rxweb/reactive-form-validators';
 import {ProjectDto} from 'core/api';
 import * as R from 'remeda';
 

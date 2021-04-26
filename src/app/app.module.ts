@@ -33,7 +33,7 @@ import {NotAuthorizedComponent} from './not-authorized/not-authorized.component'
 import {ApiModule, Configuration} from 'core/api';
 import {ErrorInterceptor} from 'core/interceptors/http-error.interceptor';
 
-import {FormsModule, ReactiveFormsModule} from '@angular/forms'
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RxReactiveFormsModule} from '@rxweb/reactive-form-validators';
 import {LeafletModule} from '@asymmetrik/ngx-leaflet';
 import {throwError} from 'rxjs';

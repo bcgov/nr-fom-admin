@@ -8,7 +8,7 @@ import {Observable, of, Subject} from 'rxjs';
 import {switchMap, takeUntil, tap} from 'rxjs/operators';
 import * as _ from 'lodash';
 
-import {ConfirmComponent} from 'app/confirm/confirm.component';
+// import {ConfirmComponent} from 'app/confirm/confirm.component';
 import {Document} from 'core/models/document';
 import {Decision} from 'core/models/decision';
 import {DistrictDto, ProjectDto, ProjectService} from 'core/api';
@@ -32,29 +32,29 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
   originalApplication: ProjectDto;
 
   get isCreate() {
-    return this.state === 'create'
+    return this.state === 'create';
   }
-
-  private scrollToFragment: string = null;
-
-  districts: DistrictDto[] = this.stateSvc.getCodeTable('district')
-
+  districts: DistrictDto[] = this.stateSvc.getCodeTable('district');
   public project: ProjectDto = null;
   public startDate: NgbDateStruct = null;
   public endDate: NgbDateStruct = null;
   public delta: number; // # days (including today)
+  public applicationFiles: File[] = [];
+  public decisionFiles: File[] = [];
+  private scrollToFragment: string = null;
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
   private docsToDelete: Document[] = [];
   private decisionToDelete: Decision = null;
-  public applicationFiles: File[] = [];
-  public decisionFiles: File[] = [];
+
 
   get isLoading() {
     return this.stateSvc.loading;
   }
 
-  // Access to XMLHttpRequest at 'localhost:3333/api/project' from origin 'http://localhost:4200' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, chrome-untrusted, https.
+  // Access to XMLHttpRequest at 'localhost:3333/api/project' from origin 'http://localhost:4200' has been blocked by
+  // CORS policy: Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension,
+  // chrome-untrusted, https.
 
   constructor(
     private route: ActivatedRoute,
