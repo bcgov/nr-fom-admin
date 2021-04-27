@@ -30,9 +30,7 @@ export class HeaderComponent implements OnInit {
 
   constructor(private keycloakService: KeycloakService, public router: Router) {
     // this._api = api;
-    // router.events.subscribe(() => {
       const token = this.keycloakService.getToken();
-      // let jwt = new JwtUtil().decodeToken(token);
       let jwt = {
         username: 'sample-user',
         displayName: 'Sample User',
@@ -67,7 +65,6 @@ export class HeaderComponent implements OnInit {
         // this.jwt.realm_access.roles['sysadmin'];
       }
       // console.log('val:', val instanceof NavigationEnd);
-    // });
   }
 
   ngOnInit() {

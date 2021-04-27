@@ -36,7 +36,7 @@
             <input
               type="text"
               class="form-control"
-              id="name"
+              id="id"
               name="name"
               disabled
               [value]="originalApplication.id"
@@ -88,7 +88,7 @@
             <input
               type="number"
               class="form-control"
-              id="fsp-id"
+              id="district-id"
               name="fsp-id"
               formControlName="districtId"
               [appFormControl]="fg.get('districtId')"
@@ -99,9 +99,7 @@
 
           >
             <label for="fsp-id" style="white-space: nowrap;">District</label>
-            <select class="sort-comments form-control" id="district-list"
-
-            >
+            <select class="sort-comments form-control" id="district-list">
               <option [value]="district.id" *ngFor="let district of districts" [innerHTML]=" district.name"></option>
 
             </select>
@@ -121,7 +119,7 @@
             />
           </div>
           <div class="form-group col">
-            <label>Licensee</label>
+            <label>Fom Holder</label>
             <!-- <div class="applicant-display">
               {{application.meta.applicants || 'Pretty Bird Operations'}}
             </div> -->

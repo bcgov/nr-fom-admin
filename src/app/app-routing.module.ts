@@ -17,6 +17,11 @@ const routes: Routes = [
     component: NotAuthorizedComponent
   },
   {
+    // default route
+    path: 'admin',
+    component: SearchComponent
+  },
+  {
     path: 'list',
     component: ListComponent
   },
