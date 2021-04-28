@@ -42,7 +42,7 @@
           </select> -->
 
           <input class="form-control filter-input" (change)="setApplicantFilter($event.target['value'])"
-                 [value]="applicantFilter" [disabled]="searching || exporting" placeholder="Filter by Licensee"
+                 [value]="applicantFilter" [disabled]="searching || exporting" placeholder="Filter by FOM Holder"
                  title="Filter by Applicant">
           <!-- <select class="form-control filter-select" (change)="setCommentFilter($event.target.value)"
             [disabled]="searching || exporting" title="Filter by comment period">
@@ -160,7 +160,7 @@
               <span>{{project.district ? project.district.name : '-'}}</span>
             </td>
             <td data-label="Created">
-              <span>{{project.createTimestamp || '-'}}</span>
+              <span>{{project.createTimestamp | date: 'longDate' || '-'}}</span>
             </td>
             <td data-label="Status">
               <!-- <span>{{project.workflowState ? project.workflowState.code : '-'}}</span> -->

@@ -1,4 +1,4 @@
-import {minLength, prop, required} from "@rxweb/reactive-form-validators"
+import {minLength, prop, required} from '@rxweb/reactive-form-validators';
 import {ProjectDto} from 'core/api';
 import * as R from 'remeda';
 
@@ -52,7 +52,7 @@ export class ApplicationAddEditForm implements Pick<ProjectDto,
   @required()
 
   @minLength({value: 1})
-  forestClientNumber: string = '1011';
+  forestClientNumber: string;
 
   @prop()
   @required()

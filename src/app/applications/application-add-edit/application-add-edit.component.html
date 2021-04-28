@@ -36,7 +36,7 @@
             <input
               type="text"
               class="form-control"
-              id="name"
+              id="id"
               name="name"
               disabled
               [value]="originalApplication.id"
@@ -83,28 +83,12 @@
 
             />
           </div>
-          <div class="col-md-2  ml-1">
-            <label for="fsp-id" style="white-space: nowrap;">District ID</label>
-            <input
-              type="number"
-              class="form-control"
-              id="fsp-id"
-              name="fsp-id"
-              formControlName="districtId"
-              [appFormControl]="fg.get('districtId')"
-
-            />
-          </div>
-          <div class="col"
-
-          >
+          <div class="col">
             <label for="fsp-id" style="white-space: nowrap;">District</label>
-            <select class="sort-comments form-control" id="district-list"
-
-            >
-              <option [value]="district.id" *ngFor="let district of districts" [innerHTML]=" district.name"></option>
-
-            </select>
+            <select class="sort-comments form-control" (change)="changeDistrictId($event)" id="district-list">
+<!--              <option  [value]="district.id" *ngFor="let district of districts" [selected]="district.id === districtIdSelect"> {{district.name}}</option>-->
+              <option  [value]="district.id" *ngFor="let district of districts" [selected]="district.id === districtIdSelect" [innerHTML]=" district.name"> </option>
+               </select>
           </div>
         </div>
         <!-- <legend>Application Details</legend> -->
@@ -121,19 +105,10 @@
             />
           </div>
           <div class="form-group col">
-            <label>Licensee</label>
-            <!-- <div class="applicant-display">
-              {{application.meta.applicants || 'Pretty Bird Operations'}}
-            </div> -->
-            <input
-              type="text"
-              class="form-control"
-              id="client"
-              name="client"
-              formControlName="forestClientNumber"
-              [appFormControl]="fg.get('forestClientNumber')"
-
-            />
+            <label>FOM Holder</label>
+            <select class="sort-comments form-control"  (change)="changeForestClientId($event)" id="forestClient-list">
+              <option  [value]="client.id" *ngFor="let client of forestClients" [selected]="client.id === districtIdSelect" [innerHTML]=" client.name"> </option>
+            </select>
           </div>
 
         </div>

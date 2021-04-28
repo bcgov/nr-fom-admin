@@ -1,5 +1,6 @@
-import {AfterViewInit, Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {NgForm} from '@angular/forms';
+// import {AfterViewInit, Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
+// import {NgForm} from '@angular/forms';
 // import { Location } from '@angular/common';
 import {MatSnackBar, MatSnackBarRef, SimpleSnackBar} from '@angular/material/snack-bar';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -8,10 +9,9 @@ import {Observable, of, Subject} from 'rxjs';
 import {switchMap, takeUntil, tap} from 'rxjs/operators';
 import * as _ from 'lodash';
 
-import {ConfirmComponent} from 'app/confirm/confirm.component';
+// import {ConfirmComponent} from 'app/confirm/confirm.component';
 import {Document} from 'core/models/document';
-import {Decision} from 'core/models/decision';
-import {DistrictDto, ProjectDto, ProjectService} from 'core/api';
+import {DistrictDto, ProjectDto, ProjectService, ForestClientDto} from 'core/api';
 import {RxFormBuilder, RxFormGroup} from '@rxweb/reactive-form-validators';
 import {ApplicationAddEditForm} from './application-add-edit.form';
 import {StateService} from 'core/services/state.service';
@@ -25,36 +25,33 @@ export type ApplicationPageType = 'create' | 'edit';
   styleUrls: ['./application-add-edit.component.scss']
 })
 export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('applicationForm') applicationForm: NgForm;
   fg: RxFormGroup;
 // test = this.fg.get('')
   state: ApplicationPageType;
   originalApplication: ProjectDto;
 
   get isCreate() {
-    return this.state === 'create'
+    return this.state === 'create';
   }
-
-  private scrollToFragment: string = null;
-
-  districts: DistrictDto[] = this.stateSvc.getCodeTable('district')
-
+  districts: DistrictDto[] = this.stateSvc.getCodeTable('district');
+  forestClients: ForestClientDto[] = [];
   public project: ProjectDto = null;
   public startDate: NgbDateStruct = null;
   public endDate: NgbDateStruct = null;
-  public delta: number; // # days (including today)
+  public applicationFiles: File[] = [];
+  private scrollToFragment: string = null;
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
-  private docsToDelete: Document[] = [];
-  private decisionToDelete: Decision = null;
-  public applicationFiles: File[] = [];
-  public decisionFiles: File[] = [];
+  public districtIdSelect: any = null;
+  public forestClientSelect: any = null;
 
   get isLoading() {
     return this.stateSvc.loading;
   }
 
-  // Access to XMLHttpRequest at 'localhost:3333/api/project' from origin 'http://localhost:4200' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, chrome-untrusted, https.
+  // Access to XMLHttpRequest at 'localhost:3333/api/project' from origin 'http://localhost:4200' has been blocked by
+  // CORS policy: Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension,
+  // chrome-untrusted, https.
 
   constructor(
     private route: ActivatedRoute,
@@ -66,28 +63,60 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     private stateSvc: StateService,
     private modalSvc: ModalService
   ) {
-    // if we have an URL fragment, save it for future scrolling
-
-    /* What's trying to be accomplished here? This is a really bad subscription */
-    // router.events.subscribe(event => {
-    //   if (event instanceof NavigationEnd) {
-    //     const url = router.parseUrl(router.url);
-    //     this.scrollToFragment = (url && url.fragment) || null;
-    //   }
-    // });
-  }
-
-  // check for unsaved changes before closing (or reloading) current tab/window
-  @HostListener('window:beforeunload', ['$event'])
-  public handleBeforeUnload(event) {
-    if (!this.applicationForm) {
-      event.returnValue = true; // no form means page error -- allow unload
+      const atco: ForestClientDto = {
+      id: 1065,
+      revisionCount: 1,
+      createTimestamp: '2021-04-28',
+      createUser: 'postgres',
+      updateTimestamp: '2021-04-28',
+      updateUser: 'postgres',
+      name: 'ATCO LUMBER LTD.'
     }
 
-    // display browser alert if needed
-    if (this.applicationForm.dirty || this.anyUnsavedItems()) {
-      event.returnValue = true;
+    const canadianForest: ForestClientDto = {
+      id: 1271,
+      revisionCount: 1,
+      createTimestamp: '2021-04-28',
+      createUser: 'postgres',
+      updateTimestamp: '2021-04-28',
+      updateUser: 'postgres',
+      name: 'CANADIAN FOREST PRODUCTS LTD.'
     }
+
+    const interfor: ForestClientDto = {
+      id: 2176,
+      revisionCount: 1,
+      createTimestamp: '2021-04-28',
+      createUser: 'postgres',
+      updateTimestamp: '2021-04-28',
+      updateUser: 'postgres',
+      name: 'INTERFOR CORPORATION'
+    }
+
+    const tolko: ForestClientDto = {
+      id: 147603,
+      revisionCount: 1,
+      createTimestamp: '2021-04-28',
+      createUser: 'postgres',
+      updateTimestamp: '2021-04-28',
+      updateUser: 'postgres',
+      name: 'TOLKO INDUSTRIES LTD.'
+    }
+
+    const westFraser: ForestClientDto = {
+      id: 142662,
+      revisionCount: 1,
+      createTimestamp: '2021-04-28',
+      createUser: 'postgres',
+      updateTimestamp: '2021-04-28',
+      updateUser: 'postgres',
+      name: 'WEST FRASER MILLS LTD'
+    }
+      this.forestClients.push(atco);
+      this.forestClients.push(canadianForest);
+      this.forestClients.push(interfor);
+      this.forestClients.push(tolko);
+      this.forestClients.push(westFraser);
   }
 
   // check for unsaved changes before navigating away from current route (ie, this page)
@@ -101,60 +130,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
       return true;
     }
 
-    // otherwise prompt the user with observable (asynchronous) dialog
-    // return this.dialogService
-    //   .addDialog(
-    //     ConfirmComponent,
-    //     {
-    //       title: 'Unsaved Changes',
-    //       message: 'Click OK to discard your changes or Cancel to return to the application.',
-    //       okOnly: true // TODO - added this to remove compilation errors but I don't really know what it means
-    //     },
-    //     {
-    //       backdropColor: 'rgba(0, 0, 0, 0.5)'
-    //     }
-    //   )
-    //   .pipe(takeUntil(this.ngUnsubscribe));
-
-    return true; // TODO - Marcelo
-  }
-
-  // this is needed because we don't have a form control that is marked as dirty
-  private anyUnsavedItems(): boolean {
-    // look for application documents not yet uploaded to db
-    // TODO: Make sure application.meta exists!
-    /*
-    if (!this.application.meta) return false;
-
-    if (this.application.meta.documents) {
-      for (const doc of this.application.meta.documents) {
-        if (!doc._id) {
-          return true;
-        }
-      }
-    }
-
-    // look for decision documents not yet uploaded to db
-    if (this.application.meta.decision && this.application.meta.decision.meta.documents) {
-      for (const doc of this.application.meta.decision.meta.documents) {
-        if (!doc._id) {
-          return true;
-        }
-      }
-    }
-    */
-
-    // look for application or decision documents not yet removed from db
-    if (this.docsToDelete && this.docsToDelete.length > 0) {
-      return true;
-    }
-
-    // look for decision not yet removed from db
-    if (this.decisionToDelete) {
-      return true;
-    }
-
-    return false; // no unsaved items
+    return false;
   }
 
   public cancelChanges() {
@@ -169,14 +145,14 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
 
     this.route.url.pipe(takeUntil(this.ngUnsubscribe), switchMap(url => {
         this.state = url[1].path === 'create' ? 'create' : 'edit'
-
         return this.isCreate ? of(new ApplicationAddEditForm()) : this.projectSvc.projectControllerFindOne(this.route.snapshot.params.appId);
       }
     )).subscribe((data: ProjectDto) => {
       if (!this.isCreate) this.originalApplication = data as ProjectDto;
-      const form = new ApplicationAddEditForm(data)
-      this.fg = <RxFormGroup>this.formBuilder.formGroup(form)
-
+      const form = new ApplicationAddEditForm(data);
+      this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
+      this.districtIdSelect = this.originalApplication.districtId;
+      this.forestClientSelect = this.originalApplication.forestClientNumber;
     });
   }
 
@@ -216,64 +192,6 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     return date && !isNaN(date.year) && !isNaN(date.month) && !isNaN(date.day);
   }
 
-  public onStartDateChg(startDate: NgbDateStruct) {
-    if (startDate !== null) {
-      // this.application.meta.currentPeriod.startDate = this.ngbDateToDate(startDate);
-      // to set dates, we also need delta
-      if (this.delta) {
-        this.setDates(true, false, false);
-      }
-    }
-  }
-
-  public onDeltaChg(delta: number) {
-    if (delta !== null) {
-      this.delta = delta;
-      // to set dates, we also need start date
-      /* if (this.application.meta.currentPeriod.startDate) {
-        this.setDates(false, true, false);
-      } */
-    }
-  }
-
-  public onEndDateChg(endDate: NgbDateStruct) {
-    if (endDate !== null) {
-      // this.application.meta.currentPeriod.endDate = this.ngbDateToDate(endDate);
-      // to set dates, we also need start date
-      // if (this.application.meta.currentPeriod.startDate) {
-      this.setDates(false, false, true);
-      // }
-    }
-  }
-
-  private setDates(start?: boolean, delta?: boolean, end?: boolean) {
-    if (start) {
-      // when start changes, adjust end accordingly
-      /* this.application.meta.currentPeriod.endDate = new Date(this.application.meta.currentPeriod.startDate);
-      this.application.meta.currentPeriod.endDate.setDate(
-        this.application.meta.currentPeriod.startDate.getDate() + this.delta - 1
-      );
-      this.endDate = this.dateToNgbDate(this.application.meta.currentPeriod.endDate); */
-    } else if (delta) {
-      // when delta changes, adjust end accordingly
-      /* this.application.meta.currentPeriod.endDate = new Date(this.application.meta.currentPeriod.startDate);
-      this.application.meta.currentPeriod.endDate.setDate(
-        this.application.meta.currentPeriod.startDate.getDate() + this.delta - 1
-      );
-      this.endDate = this.dateToNgbDate(this.application.meta.currentPeriod.endDate);
-      */
-    } else if (end) {
-      // when end changes, adjust delta accordingly
-      // use moment to handle Daylight Saving Time changes
-      /* this.delta =
-        moment(this.application.meta.currentPeriod.endDate).diff(
-          moment(this.application.meta.currentPeriod.startDate),
-          'days'
-        ) + 1; */
-    }
-  }
-
-
   // add application or decision documents
   public addDocuments(files: FileList, documents: Document[]) {
     if (files && documents) {
@@ -301,21 +219,6 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
       }
     }
   }
-
-  // delete application or decision document
-  public deleteDocument(doc: Document, documents: Document[]) {
-    if (doc && documents) {
-      // safety check
-      // remove doc from current list
-      _.remove(documents, item => item.documentFileName === doc.documentFileName);
-
-      if (doc._id) {
-        // save document for removal from db when application is saved
-        this.docsToDelete.push(doc);
-      }
-    }
-  }
-
 
   // this is part 1 of saving an application and all its objects
   // (multi-part due to dependencies)
@@ -382,4 +285,11 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
 
   }
 
+  changeDistrictId(e) {
+    this.fg.get('districtId').setValue(e.target.value);
+  }
+
+  changeForestClientId(e) {
+    this.fg.get('forestClientNumber').setValue(e.target.value);
+  }
 }

@@ -11,6 +11,5 @@ function CreateAdminFrontEnd {
     oc process -f fom-admin-deploy.yml -p ENV=$Env -p TAG=$Suffix -p HOSTNAME="nr-fom-admin-$Suffix-$Env" -p IMAGE_STREAM_VERSION=$ApiVersion | oc create -n a4b31c-$Env -f -
 }
 
-CreateAdminFrontEnd -Suffix "demo" -Env "dev" -ApiVersion "demo" 
 CreateAdminFrontEnd -Suffix "main" -Env "dev" -ApiVersion "main" 
 CreateAdminFrontEnd -Suffix "working" -Env "dev" -ApiVersion "dev" 
