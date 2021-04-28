@@ -52,7 +52,7 @@ export class ApplicationAddEditForm implements Pick<ProjectDto,
   @required()
 
   @minLength({value: 1})
-  forestClientNumber: string = '1011';
+  forestClientNumber: string;
 
   @prop()
   @required()

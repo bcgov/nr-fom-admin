@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 
 // import {ConfirmComponent} from 'app/confirm/confirm.component';
 import {Document} from 'core/models/document';
-import {DistrictDto, ProjectDto, ProjectService} from 'core/api';
+import {DistrictDto, ProjectDto, ProjectService, ForestClientDto} from 'core/api';
 import {RxFormBuilder, RxFormGroup} from '@rxweb/reactive-form-validators';
 import {ApplicationAddEditForm} from './application-add-edit.form';
 import {StateService} from 'core/services/state.service';
@@ -34,6 +34,7 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     return this.state === 'create';
   }
   districts: DistrictDto[] = this.stateSvc.getCodeTable('district');
+  forestClients: ForestClientDto[] = [];
   public project: ProjectDto = null;
   public startDate: NgbDateStruct = null;
   public endDate: NgbDateStruct = null;
@@ -41,6 +42,8 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
   private scrollToFragment: string = null;
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
+  public districtIdSelect: any = null;
+  public forestClientSelect: any = null;
 
   get isLoading() {
     return this.stateSvc.loading;
@@ -59,7 +62,62 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     private formBuilder: RxFormBuilder,
     private stateSvc: StateService,
     private modalSvc: ModalService
-  ) { }
+  ) {
+      const atco: ForestClientDto = {
+      id: 1065,
+      revisionCount: 1,
+      createTimestamp: '2021-04-28',
+      createUser: 'postgres',
+      updateTimestamp: '2021-04-28',
+      updateUser: 'postgres',
+      name: 'ATCO LUMBER LTD.'
+    }
+
+    const canadianForest: ForestClientDto = {
+      id: 1271,
+      revisionCount: 1,
+      createTimestamp: '2021-04-28',
+      createUser: 'postgres',
+      updateTimestamp: '2021-04-28',
+      updateUser: 'postgres',
+      name: 'CANADIAN FOREST PRODUCTS LTD.'
+    }
+
+    const interfor: ForestClientDto = {
+      id: 2176,
+      revisionCount: 1,
+      createTimestamp: '2021-04-28',
+      createUser: 'postgres',
+      updateTimestamp: '2021-04-28',
+      updateUser: 'postgres',
+      name: 'INTERFOR CORPORATION'
+    }
+
+    const tolko: ForestClientDto = {
+      id: 147603,
+      revisionCount: 1,
+      createTimestamp: '2021-04-28',
+      createUser: 'postgres',
+      updateTimestamp: '2021-04-28',
+      updateUser: 'postgres',
+      name: 'TOLKO INDUSTRIES LTD.'
+    }
+
+    const westFraser: ForestClientDto = {
+      id: 142662,
+      revisionCount: 1,
+      createTimestamp: '2021-04-28',
+      createUser: 'postgres',
+      updateTimestamp: '2021-04-28',
+      updateUser: 'postgres',
+      name: 'WEST FRASER MILLS LTD'
+    }
+      this.forestClients.push(atco);
+      this.forestClients.push(canadianForest);
+      this.forestClients.push(interfor);
+      this.forestClients.push(tolko);
+      this.forestClients.push(westFraser);
+  }
 
   // check for unsaved changes before navigating away from current route (ie, this page)
   public canDeactivate(): Observable<boolean> | boolean {
@@ -91,9 +149,10 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
       }
     )).subscribe((data: ProjectDto) => {
       if (!this.isCreate) this.originalApplication = data as ProjectDto;
-      const form = new ApplicationAddEditForm(data)
-      this.fg = <RxFormGroup>this.formBuilder.formGroup(form)
-
+      const form = new ApplicationAddEditForm(data);
+      this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
+      this.districtIdSelect = this.originalApplication.districtId;
+      this.forestClientSelect = this.originalApplication.forestClientNumber;
     });
   }
 
@@ -226,4 +285,11 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
 
   }
 
+  changeDistrictId(e) {
+    this.fg.get('districtId').setValue(e.target.value);
+  }
+
+  changeForestClientId(e) {
+    this.fg.get('forestClientNumber').setValue(e.target.value);
+  }
 }
