@@ -49,9 +49,11 @@
               class="form-control"
               id="commentingOpenDate"
               name="commentingOpenDate"
-              disabled
-              value="{{ originalApplication.commentingOpenDate | date: 'longDate' }}"
+              formControlName="commentingOpenDate"
+              [appFormControl]="fg.get('commentingOpenDate')"
             />
+<!--              value="{{ originalApplication.commentingOpenDate | date: 'longDate' }}"-->
+
           </div>
           <div class="form-group col-md">
             <label>Commenting Closed Date</label>
@@ -60,8 +62,8 @@
               class="form-control"
               id="commentingClosedDate"
               name="commentingClosedDate"
-              disabled
-              value="{{ originalApplication.commentingOpenDate | date: 'longDate' }}"
+              formControlName="commentingClosedDate"
+              [appFormControl]="fg.get('commentingClosedDate')"
             />
           </div>
         </div>

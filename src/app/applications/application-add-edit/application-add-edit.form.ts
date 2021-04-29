@@ -28,12 +28,9 @@ export class ApplicationAddEditForm implements Pick<ProjectDto,
   description: string;
 
   @prop()
-
-
   commentingOpenDate: string = new Date().toISOString();
 
   @prop({})
-
   commentingClosedDate: string = new Date().toISOString();
 
   @prop()
