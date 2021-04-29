@@ -5,13 +5,13 @@ import {CommonModule} from '@angular/common';
 import {SharedModule} from 'app/shared.module';
 import {NgxPaginationModule} from 'ngx-pagination';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import {ApplicationsRoutingModule} from './applications-routing.module';
+import {FomRoutingModule} from './fom-routing.module';
 import {InlineSVGModule} from 'ng-inline-svg';
 
 // components
-import {ApplicationDetailComponent} from './application-detail/application-detail.component';
-import {ApplicationAsideComponent} from './application-aside/application-aside.component';
-import {ApplicationAddEditComponent} from './application-add-edit/application-add-edit.component';
+import {FomDetailComponent} from './fom-detail/fom-detail.component';
+import {FomAsideComponent} from './fom-aside/fom-aside.component';
+import {FomAddEditComponent} from './fom-add-edit/fom-add-edit.component';
 import {ReviewCommentsComponent} from './review-comments/review-comments.component';
 import {CommentDetailComponent} from './review-comments/comment-detail/comment-detail.component';
 import {LeafletModule} from '@asymmetrik/ngx-leaflet';
@@ -28,23 +28,23 @@ import {LeafletModule} from '@asymmetrik/ngx-leaflet';
     NgxPaginationModule,
     NgbModule,
     InlineSVGModule.forRoot(),
-    ApplicationsRoutingModule,
+    FomRoutingModule,
     LeafletModule
   ],
   declarations: [
-    ApplicationDetailComponent,
-    ApplicationAsideComponent,
-    ApplicationAddEditComponent,
+    FomDetailComponent,
+    FomAsideComponent,
+    FomAddEditComponent,
     ReviewCommentsComponent,
     CommentDetailComponent
   ],
   exports: [
-    ApplicationDetailComponent,
-    ApplicationAsideComponent,
-    ApplicationAddEditComponent,
+    FomDetailComponent,
+    FomAsideComponent,
+    FomAddEditComponent,
     ReviewCommentsComponent,
     CommentDetailComponent
   ]
 })
-export class ApplicationsModule {
+export class FomModule {
 }

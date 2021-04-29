@@ -13,7 +13,7 @@ const updateFields = [
   'workflowStateCode'
 ] as const;
 
-export class ApplicationAddEditForm implements Pick<ProjectDto,
+export class FomAddEditForm implements Pick<ProjectDto,
   typeof updateFields[number]> {
 
   @prop()

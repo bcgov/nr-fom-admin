@@ -1,26 +1,26 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
-import {ApplicationDetailComponent} from './application-detail/application-detail.component';
-import {ApplicationAddEditComponent} from './application-add-edit/application-add-edit.component';
-import {ApplicationDetailResolver} from './application-resolver.service';
+import {FomDetailComponent} from './fom-detail/fom-detail.component';
+import {FomAddEditComponent} from './fom-add-edit/fom-add-edit.component';
+import {ApplicationDetailResolver} from './fom-resolver.service';
 import {ReviewCommentsComponent} from './review-comments/review-comments.component';
 
 const routes: Routes = [
   {
     path: 'a/create',
-    component: ApplicationAddEditComponent
+    component: FomAddEditComponent
   },
   {
     path: 'a/:appId',
-    component: ApplicationDetailComponent,
+    component: FomDetailComponent,
     resolve: {
       application: ApplicationDetailResolver
     }
   },
   {
     path: 'a/:appId/edit',
-    component: ApplicationAddEditComponent
+    component: FomAddEditComponent
 
   },
 
@@ -38,5 +38,5 @@ const routes: Routes = [
   exports: [RouterModule],
   providers: [ApplicationDetailResolver]
 })
-export class ApplicationsRoutingModule {
+export class FomRoutingModule {
 }

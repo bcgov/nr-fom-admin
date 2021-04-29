@@ -15,10 +15,10 @@ import {ProjectDto, ProjectService} from 'core/api';
 
 @Component({
   selector: 'app-application-detail',
-  templateUrl: './application-detail.component.html',
-  styleUrls: ['./application-detail.component.scss']
+  templateUrl: './fom-detail.component.html',
+  styleUrls: ['./fom-detail.component.scss']
 })
-export class ApplicationDetailComponent implements OnInit, OnDestroy {
+export class FomDetailComponent implements OnInit, OnDestroy {
   public isPublishing = false;
   public isUnpublishing = false;
   public isDeleting = false;
