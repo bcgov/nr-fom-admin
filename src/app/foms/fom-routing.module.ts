@@ -5,6 +5,7 @@ import {FomDetailComponent} from './fom-detail/fom-detail.component';
 import {FomAddEditComponent} from './fom-add-edit/fom-add-edit.component';
 import {ApplicationDetailResolver} from './fom-resolver.service';
 import {ReviewCommentsComponent} from './review-comments/review-comments.component';
+import {FomSubmissionComponent} from "./fom-submission/fom-submission.component";
 
 const routes: Routes = [
   {
@@ -23,11 +24,15 @@ const routes: Routes = [
     component: FomAddEditComponent
 
   },
-
-
   {
     path: 'comments/:appId',
     component: ReviewCommentsComponent
+
+
+  },
+  {
+    path: 'a/:appId/upload',
+    component: FomSubmissionComponent
 
 
   }

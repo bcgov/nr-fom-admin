@@ -15,6 +15,7 @@ import {FomAddEditComponent} from './fom-add-edit/fom-add-edit.component';
 import {ReviewCommentsComponent} from './review-comments/review-comments.component';
 import {CommentDetailComponent} from './review-comments/comment-detail/comment-detail.component';
 import {LeafletModule} from '@asymmetrik/ngx-leaflet';
+import { FomSubmissionComponent } from './fom-submission/fom-submission.component';
 
 // services
 // import { ExportService } from 'core/services/export.service';
@@ -36,14 +37,16 @@ import {LeafletModule} from '@asymmetrik/ngx-leaflet';
     FomAsideComponent,
     FomAddEditComponent,
     ReviewCommentsComponent,
-    CommentDetailComponent
+    CommentDetailComponent,
+    FomSubmissionComponent
   ],
   exports: [
     FomDetailComponent,
     FomAsideComponent,
     FomAddEditComponent,
     ReviewCommentsComponent,
-    CommentDetailComponent
+    CommentDetailComponent,
+    FomSubmissionComponent
   ]
 })
 export class FomModule {
