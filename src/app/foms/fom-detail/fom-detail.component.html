@@ -70,24 +70,6 @@
 
 <div class="bottom-container">
   <div class="container">
-    <ngb-alert type="primary" [dismissible]="true">
-      <div class="alert-contents">
-        <i class="material-icons">warning</i>
-        <div class="alert-msg">
-          <!-- This FOM will be visible on the public website until {{application.meta.retireDate | date:'longDate'}}. -->
-          This FOM will be visible on the public website until some date in the future TBD.
-        </div>
-      </div>
-    </ngb-alert>
-    <!--<ngb-alert type="warning" [dismissible]="true">
-      <div class="alert-contents">
-        <i class="material-icons">warning</i>
-        <div class="alert-msg">
-          This FOM was removed from the public website on where does this date come from TBD.
-        </div>
-      </div>
-    </ngb-alert>-->
-
     <div class="row">
       <div class="col-md-8">
         <section class="main-card">
@@ -313,7 +295,24 @@
             </div>
           </div>
         </div>
-      </div>
+        <div class="aside-card">
+          <h3 class="title">FOM Spatial Upload</h3>
+          <div class="body">
+            <!-- <div *ngIf="!application.meta.decision">
+              <p class="mb-0">No decision documents have been added to this application.</p>
+            </div> -->
+           <div class="btn-container">
+              <button class="cta-btn btn btn-sm btn-outline-primary" type="button" title="Edit fom documents"
+                      [routerLink]="['/a', project.id, 'upload']"
+                      fragment="appDecision">
+                Upload FOM Spatial File
+              </button>
+              <span title="You cannot edit the decision of a retired application"></span>
+            </div>
+          </div>
+
+        </div>
     </div>
   </div>
+</div>
 </div>

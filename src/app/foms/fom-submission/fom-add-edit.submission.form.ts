@@ -13,7 +13,7 @@ const updateFields = [
   'workflowStateCode'
 ] as const;
 
-export class ApplicationAddEditForm implements Pick<ProjectDto,
+export class FomAddEditSubmissionForm implements Pick<ProjectDto,
   typeof updateFields[number]> {
 
   @prop()
@@ -28,12 +28,9 @@ export class ApplicationAddEditForm implements Pick<ProjectDto,
   description: string;
 
   @prop()
-
-
   commentingOpenDate: string = new Date().toISOString();
 
   @prop({})
-
   commentingClosedDate: string = new Date().toISOString();
 
   @prop()

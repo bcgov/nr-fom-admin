@@ -7,10 +7,10 @@ import {ProjectDto} from 'core/api';
 
 @Component({
   selector: 'app-application-aside',
-  templateUrl: './application-aside.component.html',
-  styleUrls: ['./application-aside.component.scss']
+  templateUrl: './fom-aside.component.html',
+  styleUrls: ['./fom-aside.component.scss']
 })
-export class ApplicationAsideComponent implements OnInit, OnDestroy {
+export class FomAsideComponent implements OnInit, OnDestroy {
   @Input() project: ProjectDto = null;
 
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();

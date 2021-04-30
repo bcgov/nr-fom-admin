@@ -13,7 +13,8 @@ import * as _ from 'lodash';
 import {Document} from 'core/models/document';
 import {DistrictDto, ProjectDto, ProjectService, ForestClientDto} from 'core/api';
 import {RxFormBuilder, RxFormGroup} from '@rxweb/reactive-form-validators';
-import {ApplicationAddEditForm} from './application-add-edit.form';
+import { DatePipe } from '@angular/common';
+import {FomAddEditForm} from './fom-add-edit.form';
 import {StateService} from 'core/services/state.service';
 import {ModalService} from 'core/services/modal.service';
 
@@ -21,10 +22,11 @@ export type ApplicationPageType = 'create' | 'edit';
 
 @Component({
   selector: 'app-application-add-edit',
-  templateUrl: './application-add-edit.component.html',
-  styleUrls: ['./application-add-edit.component.scss']
+  templateUrl: './fom-add-edit.component.html',
+  styleUrls: ['./fom-add-edit.component.scss'],
+  providers: [DatePipe]
 })
-export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
+export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   fg: RxFormGroup;
 // test = this.fg.get('')
   state: ApplicationPageType;
@@ -61,7 +63,8 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
     private projectSvc: ProjectService,
     private formBuilder: RxFormBuilder,
     private stateSvc: StateService,
-    private modalSvc: ModalService
+    private modalSvc: ModalService,
+    private datePipe: DatePipe
   ) {
       const atco: ForestClientDto = {
       id: 1065,
@@ -145,14 +148,21 @@ export class ApplicationAddEditComponent implements OnInit, AfterViewInit, OnDes
 
     this.route.url.pipe(takeUntil(this.ngUnsubscribe), switchMap(url => {
         this.state = url[1].path === 'create' ? 'create' : 'edit'
-        return this.isCreate ? of(new ApplicationAddEditForm()) : this.projectSvc.projectControllerFindOne(this.route.snapshot.params.appId);
+        return this.isCreate ? of(new FomAddEditForm()) : this.projectSvc.projectControllerFindOne(this.route.snapshot.params.appId);
       }
     )).subscribe((data: ProjectDto) => {
       if (!this.isCreate) this.originalApplication = data as ProjectDto;
-      const form = new ApplicationAddEditForm(data);
+      const form = new FomAddEditForm(data);
       this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
       this.districtIdSelect = this.originalApplication.districtId;
       this.forestClientSelect = this.originalApplication.forestClientNumber;
+
+      // Converting commentingOpenDate date to 'yyyy-MM-dd'
+      let datePipe = this.datePipe.transform(this.fg.value.commentingOpenDate,'yyyy-MM-dd');
+      this.fg.get('commentingOpenDate').setValue(datePipe);
+      // Converting commentingClosedDate date to 'yyyy-MM-dd'
+      datePipe = this.datePipe.transform(this.fg.value.commentingClosedDate,'yyyy-MM-dd');
+      this.fg.get('commentingClosedDate').setValue(datePipe);
     });
   }
 

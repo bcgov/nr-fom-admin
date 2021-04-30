@@ -8,7 +8,7 @@ import {NgxPaginationModule} from 'ngx-pagination';
 
 // modules
 import {SharedModule} from 'app/shared.module';
-import {ApplicationsModule} from 'app/applications/applications.module';
+import {FomModule} from 'app/foms/fom.module';
 import {AppRoutingModule} from 'app/app-routing.module';
 
 // components
@@ -88,7 +88,7 @@ const apiConfig = new Configuration({
     FormsModule,
     HttpClientModule,
     SharedModule,
-    ApplicationsModule,
+    FomModule,
     ReactiveFormsModule,
     NgbModule,
     ApiModule.forRoot(() => apiConfig),
