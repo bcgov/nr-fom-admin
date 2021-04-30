@@ -301,12 +301,11 @@
             <!-- <div *ngIf="!application.meta.decision">
               <p class="mb-0">No decision documents have been added to this application.</p>
             </div> -->
-            <div>Attachment FOM files go here</div>
-            <div class="btn-container">
+           <div class="btn-container">
               <button class="cta-btn btn btn-sm btn-outline-primary" type="button" title="Edit fom documents"
                       [routerLink]="['/a', project.id, 'upload']"
                       fragment="appDecision">
-                Upload FOM GeoJSON
+                Upload FOM Spatial File
               </button>
               <span title="You cannot edit the decision of a retired application"></span>
             </div>
