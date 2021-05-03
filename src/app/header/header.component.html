@@ -1,7 +1,7 @@
 <header class="app-header app-header--solid" id="header">
   <nav class="navbar navbar-expand-md justify-content-between">
     <a class="navbar-brand" title="Forest Operations Map - FOM" routerLink="/home">
-      <span class="navbar-brand__title">Forest Operations Map </span>
+      <span class="navbar-brand__title">Forest Operations Map - Admin </span>
     </a>
     <!--<span class="navbar-environment" *ngIf="api.env !== 'prod'">{{api.env}}</span>-->
     <button class="navbar-toggler" type="button" title="Toggle Main Navigation"
@@ -15,7 +15,7 @@
     <div class="navbar-collapse" [@toggleNav]="isNavMenuOpen ? 'navOpen' : 'navClosed'" id="mainNav">
       <ul class="navbar-nav">
         <li *ngIf="jwt" class="nav-item">
-          <a class="nav-link" routerLink="/search" title="Find or add new FOM" tabindex="0">
+          <a class="nav-link" routerLink="/a/create" title="Find or add new FOM" tabindex="0">
             <span>Add New FOM</span>
           </a>
         </li>
