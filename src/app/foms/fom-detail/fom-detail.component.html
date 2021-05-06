@@ -100,15 +100,16 @@
                       <span class="name">FOM Holder:</span>
                       <span
                         class="value">
-                        {{forestClient.name}}
+<!--                        class="value">{{project.forestClient ? project.forestClient.name : 'No applicant on this file'}}-->
+                        {{project.forestClient.name}}
                       </span>
                     </li>
                     <li>
                       <span class="name">District:</span>
                       <span
                         class="value">
-<!--                        {{project.district ? project.district?.name : 'A district has not been specified'}}-->
-                        {{district ? district.name : ' - '}}
+                        {{project.district ? project.district?.name : 'A district has not been specified'}}
+<!--                        {{district ? district.name : ' - '}}-->
                       </span>
                     </li>
                     <li>

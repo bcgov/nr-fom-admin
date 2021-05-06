@@ -63,8 +63,6 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   private doSearch() {
     this.searching = true;
-    console.log('doSearch: ' + this.keywords);
-
     this.projects = [];
     this.count = 0;
 
@@ -175,7 +173,6 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   public setInitialQueryParameters() {
     this.keywords = this.paramMap.get('keywords') || '';
-    console.log('setInitialParam: ' + this.keywords);
   }
 
   public getQueryParameters() {
@@ -198,9 +195,6 @@ export class SearchComponent implements OnInit, OnDestroy {
     }
 
     this.saveQueryParameters();
-
-    console.log('pressed find');
-
     this.doSearch();
   }
 

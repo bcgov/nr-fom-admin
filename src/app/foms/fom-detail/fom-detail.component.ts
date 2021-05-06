@@ -28,8 +28,8 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
   public project: ProjectDto = null;
-  public forestClient: any = null;
-  public district: any = null;
+  // public forestClient: any = null;
+  // public district: any = null;
   // public forestClient: ForestClientDto = null;
   public isProjectActive = false;
   public numberComments = null;
@@ -50,8 +50,8 @@ export class FomDetailComponent implements OnInit, OnDestroy {
         this.project = data.application;
         // console.log('projectDTO: '+ JSON.stringify(data.application));
         // console.log('projecForestClien: '+ JSON.stringify(data.application.district));
-        this.forestClient = data.application.forestClient;
-        this.district = data.application.district;
+        // this.forestClient = data.application.forestClient;
+        // this.district = data.application.district;
         if (this.project.workflowState['code'] === 'INITIAL') {
           this.isProjectActive = true;
         }

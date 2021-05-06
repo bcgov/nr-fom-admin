@@ -58,7 +58,6 @@ export class ListComponent implements OnInit, OnDestroy {
 
   // need to reset pagination when a filter is changed, as we can't be sure how many pages of results will exist.
   public filterChanged = false;
-  public district: any = null;
 
   // pagination values
   public pagination = {
@@ -119,7 +118,7 @@ export class ListComponent implements OnInit, OnDestroy {
         projects => {
           projects.forEach(project => {
             this.projects.push(project as ProjectDto);
-            this.district = project.district;
+            console.log('project.district: ' + JSON.stringify(project.district));
           });
 
         },

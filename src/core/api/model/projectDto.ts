@@ -9,6 +9,9 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { WorkflowStateCode } from './workflowStateCode';
+import { ForestClient } from './forestClient';
+import { District } from './district';
 
 
 export interface ProjectDto { 
@@ -25,10 +28,10 @@ export interface ProjectDto {
     geojson: object;
     fspId: number;
     districtId: number;
-    district: object;
+    district: District;
     forestClientNumber: string;
-    forestClient: object;
+    forestClient: ForestClient;
     workflowStateCode: string;
-    workflowState: object;
+    workflowState: WorkflowStateCode;
 }
 

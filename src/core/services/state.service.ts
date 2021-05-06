@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DistrictService, ResponseCodeDto, ResponseCodeService, WorkflowStateCodeService } from 'core/api';
+import { DistrictService, ResponseCode, ResponseCodeService, WorkflowStateCodeService } from 'core/api';
 import { CodeTables } from 'core/models/code-tables';
 import { BehaviorSubject, forkJoin } from 'rxjs';
 

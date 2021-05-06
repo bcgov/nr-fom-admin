@@ -67,7 +67,7 @@
             {{project.createTimestamp| date:'mediumDate'}}
           </td>
           <td>
-            {{project.workflowState && project.workflowStateCode? project?.workflowStateCode : 'Unknown'}}
+            {{project.workflowState && project.workflowStateCode ? project.workflowState.description : 'Unknown'}}
           </td>
           <td>
             {{project.commentingOpenDate | date:'mediumDate'}}

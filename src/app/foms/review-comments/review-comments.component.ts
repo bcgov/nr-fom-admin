@@ -11,7 +11,6 @@ import {
   ProjectDto,
   ProjectService,
   PublicCommentService,
-  PublicCommentsService,
   UpdatePublicCommentDto
 } from 'core/api';
 import {FormControl} from '@angular/forms';
@@ -90,7 +89,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private projectSvc: ProjectService,
-    private commentsSvc: PublicCommentsService,
+    // private commentsSvc: PublicCommentsService,
     private modalSvc: ModalService,
     private commentSvc: PublicCommentService,
     private stateSvc: StateService
@@ -103,20 +102,20 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     }
     const {appId} = this.route.snapshot.params;
 
-    this.data$ = forkJoin(this.projectSvc.projectControllerFindOne(appId), this.commentsSvc.publicCommentsControllerFindByProjectId(appId)).pipe(takeUntil(this.ngUnsubscribe), map(result => {
-
-      const [project, comments] = result;
-
-      this.comments = comments;
-
-      if (!project) {
-        const ref = this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Home', title: ''}});
-
-        ref.afterClosed().subscribe(() => this.router.navigate(['admin/search']))
-      }
-
-      return {project, comments}
-    }))
+    // this.data$ = forkJoin(this.projectSvc.projectControllerFindOne(appId), this.commentsSvc.publicCommentsControllerFindByProjectId(appId)).pipe(takeUntil(this.ngUnsubscribe), map(result => {
+    //
+    //   const [project, comments] = result;
+    //
+    //   this.comments = comments;
+    //
+    //   if (!project) {
+    //     const ref = this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Home', title: ''}});
+    //
+    //     ref.afterClosed().subscribe(() => this.router.navigate(['admin/search']))
+    //   }
+    //
+    //   return {project, comments}
+    // }))
   }
 
   ngOnDestroy() {
@@ -133,7 +132,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
       console.log(result)
       if (result) {
         this.modalSvc.openSnackBar({message: 'Comment saved', button: 'OK'})
-        this.comments = await this.commentsSvc.publicCommentsControllerFindAll().toPromise();
+        // this.comments = await this.commentsSvc.publicCommentsControllerFindAll().toPromise();
         this.sortControl.setValue(this.sortControl.value)
       } else {
         this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Failed to update', title: ''}})

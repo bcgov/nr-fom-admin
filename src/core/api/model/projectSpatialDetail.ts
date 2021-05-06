@@ -9,18 +9,19 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { SubmissionTypeCode } from './submissionTypeCode';
 
 
 export interface ProjectSpatialDetail { 
-    object_id: number;
-    source_table: string;
+    objectId: number;
+    sourceTable: string;
     name: string;
     geometry: object;
-    planned_development_date: string;
-    planned_area_ha: number;
-    planned_length_km: number;
-    submission_type_code: string;
-    submission_type: object;
-    project_id: number;
+    plannedDevelopmentDate: string;
+    plannedAreaHa: number;
+    plannedLengthKm: number;
+    submissionTypeCode: string;
+    submissionType: SubmissionTypeCode;
+    projectId: number;
 }
 
