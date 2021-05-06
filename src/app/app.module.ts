@@ -22,8 +22,6 @@ import {HeaderComponent} from 'app/header/header.component';
 import {FooterComponent} from 'app/footer/footer.component';
 
 // services
-import {SearchService} from 'core/services/search.service';
-import {SearchProjectService} from 'core/services/search-project.service';
 import {AuthenticationService} from 'core/services/authentication.service';
 import {CanDeactivateGuard} from 'core/services/can-deactivate-guard.service';
 import {KeycloakService} from 'core/services/keycloak.service';
@@ -116,9 +114,6 @@ const apiConfig = new Configuration({
       useClass: ErrorInterceptor,
       multi: true
     },
-    SearchService,
-    SearchProjectService,
-
     AuthenticationService,
     CanDeactivateGuard
   ],

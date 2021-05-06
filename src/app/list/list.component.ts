@@ -1,11 +1,11 @@
 import {Location} from '@angular/common';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, ParamMap, Params, Router} from '@angular/router';
-import {Application} from 'core/models/application';
+// import {Application} from 'core/models/application';
 // import { IApplicationQueryParamSet, QueryParamModifier } from 'core/services/api';
 import {ReasonCodes, RegionCodes, StatusCodes} from 'core/utils/constants/application';
 import {CodeType, ConstantUtils} from 'core/utils/constants/constantUtils';
-import {SearchProjectService} from 'core/services/search-project.service';
+// import {SearchProjectService} from 'core/services/search-project.service';
 
 import {ProjectDto, ProjectsService} from 'core/api';
 
@@ -79,7 +79,7 @@ export class ListComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private projectService: ProjectsService,
-    private searchProjectService: SearchProjectService
+    private searchProjectService: ProjectsService
     // private exportService: ExportService
   ) {
   }
@@ -113,12 +113,12 @@ export class ListComponent implements OnInit, OnDestroy {
       this.resetPagination();
     }
 
-    this.searchProjectService.getProjects()
+    this.searchProjectService.projectsControllerFindAll()
       .subscribe(
         projects => {
           projects.forEach(project => {
             this.projects.push(project as ProjectDto);
-            console.log('project.district: ' + JSON.stringify(project.district));
+            console.log('project.district: ' + JSON.stringify(project));
           });
 
         },

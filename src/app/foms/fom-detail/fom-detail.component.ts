@@ -7,7 +7,7 @@ import {of, Subject, throwError} from 'rxjs';
 import {concat, mergeMap, takeUntil} from 'rxjs/operators';
 
 import {ConfirmComponent} from 'app/confirm/confirm.component';
-import {Application} from 'core/models/application';
+// import {Application} from 'core/models/application';
 import {PublicComment} from 'core/models/publiccomment';
 
 import {ProjectDto, ProjectService} from 'core/api';
