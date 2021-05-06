@@ -7,9 +7,7 @@ import {takeUntil} from 'rxjs/operators';
 import * as _ from 'lodash';
 
 import {ProjectService} from "core/api";
-// import {Application} from 'core/models/application';
-import {CodeType, ConstantUtils} from 'core/utils/constants/constantUtils';
-import {ReasonCodes, StatusCodes} from 'core/utils/constants/application';
+
 // Testing fetching Districts
 import {ProjectDto} from 'core/api';
 
@@ -35,7 +33,6 @@ export class SearchComponent implements OnInit, OnDestroy {
     private location: Location,
     public snackBar: MatSnackBar,
     public searchProjectService: ProjectService,
-    // public searchPublicCommentService: PublicCommentService,
     private router: Router,
     private route: ActivatedRoute
   ) {

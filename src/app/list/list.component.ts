@@ -1,20 +1,14 @@
 import {Location} from '@angular/common';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, ParamMap, Params, Router} from '@angular/router';
-// import {Application} from 'core/models/application';
-// import { IApplicationQueryParamSet, QueryParamModifier } from 'core/services/api';
 import {ReasonCodes, RegionCodes, StatusCodes} from 'core/utils/constants/application';
 import {CodeType, ConstantUtils} from 'core/utils/constants/constantUtils';
-// import {SearchProjectService} from 'core/services/search-project.service';
-
-import {ProjectDto, ProjectsService} from 'core/api';
+import {ProjectDto, ProjectService} from 'core/api';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
-
-// import { ExportService } from 'core/services/export.service';
 
 interface IPaginationParameters {
   totalItems?: number;
@@ -78,8 +72,8 @@ export class ListComponent implements OnInit, OnDestroy {
     private location: Location,
     private router: Router,
     private route: ActivatedRoute,
-    private projectService: ProjectsService,
-    private searchProjectService: ProjectsService
+    private projectService: ProjectService,
+    private searchProjectService: ProjectService
     // private exportService: ExportService
   ) {
   }
@@ -113,7 +107,7 @@ export class ListComponent implements OnInit, OnDestroy {
       this.resetPagination();
     }
 
-    this.searchProjectService.projectsControllerFindAll()
+    this.searchProjectService.projectControllerFindAll()
       .subscribe(
         projects => {
           projects.forEach(project => {
@@ -173,8 +167,7 @@ export class ListComponent implements OnInit, OnDestroy {
       delete element.pageSize;
     }); */
 
-    this.projectService
-      .projectsControllerFindAll()
+    this.projectService.projectControllerFindAll()
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         applications => {

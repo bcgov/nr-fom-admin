@@ -28,9 +28,6 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
   public project: ProjectDto = null;
-  // public forestClient: any = null;
-  // public district: any = null;
-  // public forestClient: ForestClientDto = null;
   public isProjectActive = false;
   public numberComments = null;
 
