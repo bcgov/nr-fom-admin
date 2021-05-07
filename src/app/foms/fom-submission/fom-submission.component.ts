@@ -29,10 +29,8 @@ export type ApplicationPageType = 'create' | 'edit';
 export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy {
   fg: RxFormGroup;
 // test = this.fg.get('')
-  originalApplication: ProjectDto;
+  originalProject: ProjectDto;
 
-  districts: DistrictDto[] = this.stateSvc.getCodeTable('district');
-  forestClients: ForestClientDto[] = [];
   public project: ProjectDto = null;
   public startDate: NgbDateStruct = null;
   public endDate: NgbDateStruct = null;
@@ -40,8 +38,6 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
   private scrollToFragment: string = null;
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
-  public districtIdSelect: any = null;
-  public forestClientSelect: any = null;
 
   get isLoading() {
     return this.stateSvc.loading;
@@ -61,62 +57,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
     private stateSvc: StateService,
     private modalSvc: ModalService,
     private datePipe: DatePipe
-  ) {
-    const atco: ForestClientDto = {
-      id: 1065,
-      revisionCount: 1,
-      createTimestamp: '2021-04-28',
-      createUser: 'postgres',
-      updateTimestamp: '2021-04-28',
-      updateUser: 'postgres',
-      name: 'ATCO LUMBER LTD.'
-    }
-
-    const canadianForest: ForestClientDto = {
-      id: 1271,
-      revisionCount: 1,
-      createTimestamp: '2021-04-28',
-      createUser: 'postgres',
-      updateTimestamp: '2021-04-28',
-      updateUser: 'postgres',
-      name: 'CANADIAN FOREST PRODUCTS LTD.'
-    }
-
-    const interfor: ForestClientDto = {
-      id: 2176,
-      revisionCount: 1,
-      createTimestamp: '2021-04-28',
-      createUser: 'postgres',
-      updateTimestamp: '2021-04-28',
-      updateUser: 'postgres',
-      name: 'INTERFOR CORPORATION'
-    }
-
-    const tolko: ForestClientDto = {
-      id: 147603,
-      revisionCount: 1,
-      createTimestamp: '2021-04-28',
-      createUser: 'postgres',
-      updateTimestamp: '2021-04-28',
-      updateUser: 'postgres',
-      name: 'TOLKO INDUSTRIES LTD.'
-    }
-
-    const westFraser: ForestClientDto = {
-      id: 142662,
-      revisionCount: 1,
-      createTimestamp: '2021-04-28',
-      createUser: 'postgres',
-      updateTimestamp: '2021-04-28',
-      updateUser: 'postgres',
-      name: 'WEST FRASER MILLS LTD'
-    }
-    this.forestClients.push(atco);
-    this.forestClients.push(canadianForest);
-    this.forestClients.push(interfor);
-    this.forestClients.push(tolko);
-    this.forestClients.push(westFraser);
-  }
+  ) {  }
 
   // check for unsaved changes before navigating away from current route (ie, this page)
   public canDeactivate(): Observable<boolean> | boolean {
@@ -134,7 +75,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
 
   public cancelChanges() {
     // this.location.back(); // FAILS WHEN CANCEL IS CANCELLED (DUE TO DIRTY FORM OR UNSAVED DOCUMENTS) MULTIPLE TIMES
-    const routerFragment = ['/a', this.originalApplication.id]
+    const routerFragment = ['/a', this.originalProject.id]
 
     this.router.navigate(routerFragment);
 
@@ -147,11 +88,9 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
         return this.projectSvc.projectControllerFindOne(this.route.snapshot.params.appId);
       }
     )).subscribe((data: ProjectDto) => {
-      this.originalApplication = data as ProjectDto;
+      this.originalProject = data as ProjectDto;
       const form = new FomAddEditSubmissionForm(data);
       this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
-      this.districtIdSelect = this.originalApplication.districtId;
-      this.forestClientSelect = this.originalApplication.forestClientNumber;
 
       // Converting commentingOpenDate date to 'yyyy-MM-dd'
       let datePipe = this.datePipe.transform(this.fg.value.commentingOpenDate,'yyyy-MM-dd');
@@ -265,7 +204,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
 
 
   async saveApplication() {
-    const {id, district, forestClient, workflowState, ...rest} = this.originalApplication;
+    const {id, district, forestClient, workflowState, ...rest} = this.originalProject;
 
     const updateDto = {...rest, ...this.fg.value}
     try {

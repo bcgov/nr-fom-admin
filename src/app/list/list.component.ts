@@ -73,7 +73,7 @@ export class ListComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private projectService: ProjectService,
-    private searchProjectService: ProjectService
+    // private searchProjectService: ProjectService
     // private exportService: ExportService
   ) {
   }
@@ -107,12 +107,11 @@ export class ListComponent implements OnInit, OnDestroy {
       this.resetPagination();
     }
 
-    this.searchProjectService.projectControllerFindAll()
+    this.projectService.projectControllerFind()
       .subscribe(
         projects => {
           projects.forEach(project => {
             this.projects.push(project as ProjectDto);
-            console.log('project.district: ' + JSON.stringify(project));
           });
 
         },
