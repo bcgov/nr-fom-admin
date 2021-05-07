@@ -56,7 +56,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.projects = [];
     this.count = 0;
 
-    this.searchProjectService.projectControllerFindByFspId(parseInt(this.keywords))
+    this.searchProjectService.projectControllerFind( parseInt(this.keywords))
       .subscribe(
         projects => {
           projects.forEach(project => {

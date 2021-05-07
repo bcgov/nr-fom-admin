@@ -166,7 +166,7 @@ export class ListComponent implements OnInit, OnDestroy {
       delete element.pageSize;
     }); */
 
-    this.projectService.projectControllerFindAll()
+    this.projectService.projectControllerFind()
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         applications => {

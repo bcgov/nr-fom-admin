@@ -18,7 +18,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // although we aren't currently using numApplications,
     // this verifies our login token and redirects in case of error
-    this.projectService.projectControllerFindAll()
+    this.projectService.projectControllerFind()
       .pipe(count(), takeUntil(this.ngUnsubscribe))
       .subscribe(
         () => {
