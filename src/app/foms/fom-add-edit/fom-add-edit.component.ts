@@ -67,52 +67,27 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     private datePipe: DatePipe
   ) {
       const atco: ForestClientDto = {
-      id: 1065,
-      revisionCount: 1,
-      createTimestamp: '2021-04-28',
-      createUser: 'postgres',
-      updateTimestamp: '2021-04-28',
-      updateUser: 'postgres',
+      id: '1065',
       name: 'ATCO LUMBER LTD.'
     }
 
     const canadianForest: ForestClientDto = {
-      id: 1271,
-      revisionCount: 1,
-      createTimestamp: '2021-04-28',
-      createUser: 'postgres',
-      updateTimestamp: '2021-04-28',
-      updateUser: 'postgres',
+      id: '1271',
       name: 'CANADIAN FOREST PRODUCTS LTD.'
     }
 
     const interfor: ForestClientDto = {
-      id: 2176,
-      revisionCount: 1,
-      createTimestamp: '2021-04-28',
-      createUser: 'postgres',
-      updateTimestamp: '2021-04-28',
-      updateUser: 'postgres',
+      id: '2176',
       name: 'INTERFOR CORPORATION'
     }
 
     const tolko: ForestClientDto = {
-      id: 147603,
-      revisionCount: 1,
-      createTimestamp: '2021-04-28',
-      createUser: 'postgres',
-      updateTimestamp: '2021-04-28',
-      updateUser: 'postgres',
+      id: '147603',
       name: 'TOLKO INDUSTRIES LTD.'
     }
 
     const westFraser: ForestClientDto = {
-      id: 142662,
-      revisionCount: 1,
-      createTimestamp: '2021-04-28',
-      createUser: 'postgres',
-      updateTimestamp: '2021-04-28',
-      updateUser: 'postgres',
+      id: '142662',
       name: 'WEST FRASER MILLS LTD'
     }
       this.forestClients.push(atco);
