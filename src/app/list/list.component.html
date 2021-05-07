@@ -136,7 +136,7 @@
                aria-hidden="true" title="Sort by created date"></i>
           </th>
           <th>Status</th>
-          <th>Commenting</th>
+          <th>Commenting Open Date</th>
           <th>Comments</th>
         </tr>
         </thead>
@@ -163,10 +163,12 @@
               <span>{{project.createTimestamp | date: 'longDate' || '-'}}</span>
             </td>
             <td data-label="Status">
-              <!-- <span>{{project.workflowState ? project.workflowState.code : '-'}}</span> -->
+               <span>{{project.workflowState ? project.workflowState.description : '-'}}</span>
             </td>
             <td data-label="Comment Status">
-              <span>Commenting &nbsp; Closed - {{ project.commentingClosedDate | date:'longDate' || 'Unknown'}}</span>
+<!--              <span>{{ project.workflowState.code === 'COMMENT_CLOSED'  ? project.commentingClosedDate | date:'longDate' : '-'}}</span>-->
+<!--              <span>{{ project.workflowState.code === 'COMMENT_CLOSED'  ? ( project.commentingClosedDate | date:'longDate') : '-'}}</span>-->
+              <span>{{ project.workflowState ? ( project.commentingOpenDate | date:'longDate') : '-'}}</span>
             </td>
             <td data-label="Comments" class="text-align">
               <span>Not Implemented</span>

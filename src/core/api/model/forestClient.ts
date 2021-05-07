@@ -11,8 +11,8 @@
  */
 
 
-export interface ResponseCodeDto { 
-    code: string;
-    description: string;
+export interface ForestClient { 
+    id: string;
+    name: string;
 }
 

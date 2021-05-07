@@ -6,18 +6,10 @@ import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import * as _ from 'lodash';
 
-import {SearchService} from 'core/services/search.service';
-import {SearchProjectService} from 'core/services/search-project.service';
-import {Application} from 'core/models/application';
-import {CodeType, ConstantUtils} from 'core/utils/constants/constantUtils';
-import {ReasonCodes, StatusCodes} from 'core/utils/constants/application';
-import {Project} from 'core/models/project';
+import {ProjectService} from "core/api";
 
 // Testing fetching Districts
 import {ProjectDto} from 'core/api';
-
-// import { PublicCommentService } from 'core/services/public-comments.service';
-
 
 @Component({
   selector: 'app-search',
@@ -40,9 +32,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   constructor(
     private location: Location,
     public snackBar: MatSnackBar,
-    public searchService: SearchService, // used in template
-    public searchProjectService: SearchProjectService,
-    // public searchPublicCommentService: PublicCommentService,
+    public searchProjectService: ProjectService,
     private router: Router,
     private route: ActivatedRoute
   ) {
@@ -63,12 +53,10 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   private doSearch() {
     this.searching = true;
-    console.log('doSearch: ' + this.keywords);
-
     this.projects = [];
     this.count = 0;
 
-    this.searchProjectService.getProjectsByFspId(this.keywords)
+    this.searchProjectService.projectControllerFindByFspId(parseInt(this.keywords))
       .subscribe(
         projects => {
           projects.forEach(project => {
@@ -175,7 +163,6 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   public setInitialQueryParameters() {
     this.keywords = this.paramMap.get('keywords') || '';
-    console.log('setInitialParam: ' + this.keywords);
   }
 
   public getQueryParameters() {
@@ -198,9 +185,6 @@ export class SearchComponent implements OnInit, OnDestroy {
     }
 
     this.saveQueryParameters();
-
-    console.log('pressed find');
-
     this.doSearch();
   }
 
@@ -248,14 +232,14 @@ export class SearchComponent implements OnInit, OnDestroy {
    * @returns {boolean} true if the application has an abandoned status AND an amendment reason, false otherwise.
    * @memberof SearchComponent
    */
-  isAmendment(application: Application): boolean {
-    return (
-      application &&
-      ConstantUtils.getCode(CodeType.STATUS, application.status) === StatusCodes.ABANDONED.code &&
-      (ConstantUtils.getCode(CodeType.REASON, application.reason) === ReasonCodes.AMENDMENT_APPROVED.code ||
-        ConstantUtils.getCode(CodeType.REASON, application.reason) === ReasonCodes.AMENDMENT_NOT_APPROVED.code)
-    );
-  }
+  // isAmendment(application: Application): boolean {
+  //   return (
+  //     application &&
+  //     ConstantUtils.getCode(CodeType.STATUS, application.status) === StatusCodes.ABANDONED.code &&
+  //     (ConstantUtils.getCode(CodeType.REASON, application.reason) === ReasonCodes.AMENDMENT_APPROVED.code ||
+  //       ConstantUtils.getCode(CodeType.REASON, application.reason) === ReasonCodes.AMENDMENT_NOT_APPROVED.code)
+  //   );
+  // }
 
   /**
    * Given an application, returns a long user-friendly status string.
@@ -264,22 +248,22 @@ export class SearchComponent implements OnInit, OnDestroy {
    * @returns {string}
    * @memberof SearchComponent
    */
-  getStatusStringLong(application: Application): string {
-    if (!application) {
-      return StatusCodes.UNKNOWN.text.long;
-    }
+  // getStatusStringLong(application: Application): string {
+  //   if (!application) {
+  //     return StatusCodes.UNKNOWN.text.long;
+  //   }
 
     // If the application was abandoned, but the reason is due to an amendment, then return an amendment string instead
-    if (this.isAmendment(application)) {
-      console.log('isAmmendment: ' + application.reason);
-      return ConstantUtils.getTextLong(CodeType.REASON, application.reason);
-    }
-
-    console.log('status: ' + application.status);
-    return (
-      (application && ConstantUtils.getTextLong(CodeType.STATUS, application.status)) || StatusCodes.UNKNOWN.text.long
-    );
-  }
+    // if (this.isAmendment(application)) {
+    //   console.log('isAmmendment: ' + application.reason);
+    //   return ConstantUtils.getTextLong(CodeType.REASON, application.reason);
+    // }
+    //
+    // console.log('status: ' + application.status);
+    // return (
+    //   (application && ConstantUtils.getTextLong(CodeType.STATUS, application.status)) || StatusCodes.UNKNOWN.text.long
+    // );
+  // }
 
   ngOnDestroy() {
     if (this.snackBarRef) {

@@ -11,7 +11,7 @@
  */
 
 
-export interface ResponseCodeDto { 
+export interface AttachmentTypeCode { 
     code: string;
     description: string;
 }

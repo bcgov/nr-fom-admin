@@ -9,19 +9,19 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { SubmissionTypeCode } from './submissionTypeCode';
 
 
-export interface RoadSectionDto { 
-    id: number;
-    revisionCount: number;
-    createTimestamp: string;
-    createUser: string;
-    updateTimestamp: string;
-    updateUser: string;
+export interface ProjectSpatialDetail { 
+    objectId: number;
+    sourceTable: string;
+    name: string;
     geometry: object;
     plannedDevelopmentDate: string;
-    name: string;
+    plannedAreaHa: number;
     plannedLengthKm: number;
-    submissionId: number;
+    submissionTypeCode: string;
+    submissionType: SubmissionTypeCode;
+    projectId: number;
 }
 

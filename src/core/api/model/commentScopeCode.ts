@@ -11,7 +11,7 @@
  */
 
 
-export interface ResponseCodeDto { 
+export interface CommentScopeCode { 
     code: string;
     description: string;
 }

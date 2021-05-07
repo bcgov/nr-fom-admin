@@ -11,7 +11,7 @@
  */
 
 
-export interface ResponseCodeDto { 
+export interface SubmissionTypeCode { 
     code: string;
     description: string;
 }

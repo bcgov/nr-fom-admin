@@ -1,8 +1,8 @@
 import {Component, Input} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {RxFormBuilder} from '@rxweb/reactive-form-validators';
-import {ResponseCodeDto} from 'core/api';
-import {PublicComment} from 'core/models/publiccomment';
+import {ResponseCode} from 'core/api';
+import {PublicCommentDto} from "core/api";
 import {CommentDetailForm} from './comment-detail.form';
 
 @Component({
@@ -13,10 +13,10 @@ import {CommentDetailForm} from './comment-detail.form';
 })
 export class CommentDetailComponent {
   commentFormGroup: FormGroup;
-  comment: PublicComment;
-  @Input() responseCodes: ResponseCodeDto[]
+  comment: PublicCommentDto;
+  @Input() responseCodes: ResponseCode[]
 
-  @Input() set selectedComment(comment: PublicComment) {
+  @Input() set selectedComment(comment: PublicCommentDto) {
     console.log(comment)
     const commentFormGroup = new CommentDetailForm(comment)
     this.commentFormGroup = this.formBuilder.group(commentFormGroup)

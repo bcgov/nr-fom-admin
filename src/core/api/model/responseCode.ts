@@ -11,7 +11,7 @@
  */
 
 
-export interface ResponseCodeDto { 
+export interface ResponseCode { 
     code: string;
     description: string;
 }

@@ -7,7 +7,7 @@ import {of, Subject, throwError} from 'rxjs';
 import {concat, mergeMap, takeUntil} from 'rxjs/operators';
 
 import {ConfirmComponent} from 'app/confirm/confirm.component';
-import {Application} from 'core/models/application';
+// import {Application} from 'core/models/application';
 import {PublicComment} from 'core/models/publiccomment';
 
 import {ProjectDto, ProjectService} from 'core/api';
@@ -45,6 +45,10 @@ export class FomDetailComponent implements OnInit, OnDestroy {
     this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: ProjectDto }) => {
       if (data.application) {
         this.project = data.application;
+        // console.log('projectDTO: '+ JSON.stringify(data.application));
+        // console.log('projecForestClien: '+ JSON.stringify(data.application.district));
+        // this.forestClient = data.application.forestClient;
+        // this.district = data.application.district;
         if (this.project.workflowState['code'] === 'INITIAL') {
           this.isProjectActive = true;
         }

@@ -11,7 +11,7 @@
  */
 
 
-export interface ResponseCodeDto { 
+export interface WorkflowStateCode { 
     code: string;
     description: string;
 }
