@@ -1,3 +1,5 @@
 . ./create-admin-function.ps1
 
-CreateAdminFrontEnd -Suffix "main" -Env "dev" -ApiVersion "main" 
+#DeleteAdminFrontEnd -Suffix "-main-dev" -Env "dev"
+
+CreateAdminFrontEnd -Suffix "-main-dev" -Env "dev" -ApiVersion "main" 
