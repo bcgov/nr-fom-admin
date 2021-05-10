@@ -11,12 +11,19 @@ import * as _ from 'lodash';
 
 // import {ConfirmComponent} from 'app/confirm/confirm.component';
 import {Document} from 'core/models/document';
-import {DistrictDto, ProjectDto, ProjectService, ForestClientDto} from 'core/api';
+import {
+  ProjectDto,
+  ProjectService,
+  SpatialObjectCodeEnum,
+  SubmissionDto,
+  SubmissionTypeCodeEnum
+} from 'core/api';
 import {RxFormBuilder, RxFormGroup} from '@rxweb/reactive-form-validators';
 import { DatePipe } from '@angular/common';
-import {FomAddEditSubmissionForm} from './fom-add-edit.submission.form';
+import {FomSubmissionForm} from './fom-submission.form';
 import {StateService} from 'core/services/state.service';
 import {ModalService} from 'core/services/modal.service';
+// import {UploadBoxComponent} from "../../../core/components/file-upload-box/file-upload-box.component";
 
 export type ApplicationPageType = 'create' | 'edit';
 
@@ -29,11 +36,9 @@ export type ApplicationPageType = 'create' | 'edit';
 export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy {
   fg: RxFormGroup;
 // test = this.fg.get('')
-  originalProject: ProjectDto;
+  project: ProjectDto;
 
-  public project: ProjectDto = null;
-  public startDate: NgbDateStruct = null;
-  public endDate: NgbDateStruct = null;
+  public submissionDto:  SubmissionDto;
   public applicationFiles: File[] = [];
   private scrollToFragment: string = null;
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
@@ -56,7 +61,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
     private formBuilder: RxFormBuilder,
     private stateSvc: StateService,
     private modalSvc: ModalService,
-    private datePipe: DatePipe
+    // private uploadBox: UploadBoxComponent
   ) {  }
 
   // check for unsaved changes before navigating away from current route (ie, this page)
@@ -75,7 +80,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
 
   public cancelChanges() {
     // this.location.back(); // FAILS WHEN CANCEL IS CANCELLED (DUE TO DIRTY FORM OR UNSAVED DOCUMENTS) MULTIPLE TIMES
-    const routerFragment = ['/a', this.originalProject.id]
+    const routerFragment = ['/a', this.project.id]
 
     this.router.navigate(routerFragment);
 
@@ -88,16 +93,16 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
         return this.projectSvc.projectControllerFindOne(this.route.snapshot.params.appId);
       }
     )).subscribe((data: ProjectDto) => {
-      this.originalProject = data as ProjectDto;
-      const form = new FomAddEditSubmissionForm(data);
+      this.project = data as ProjectDto;
+      this.submissionDto = <SubmissionDto> {
+        projectId: data.id,
+        submissionTypeCode: SubmissionTypeCodeEnum.Proposed,
+        spatialObjectCode: SpatialObjectCodeEnum.CutBlock,
+        jsonSpatialSubmission: Object
+      }
+      const form = new FomSubmissionForm(this.submissionDto);
       this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
-
-      // Converting commentingOpenDate date to 'yyyy-MM-dd'
-      let datePipe = this.datePipe.transform(this.fg.value.commentingOpenDate,'yyyy-MM-dd');
-      this.fg.get('commentingOpenDate').setValue(datePipe);
-      // Converting commentingClosedDate date to 'yyyy-MM-dd'
-      datePipe = this.datePipe.transform(this.fg.value.commentingClosedDate,'yyyy-MM-dd');
-      this.fg.get('commentingClosedDate').setValue(datePipe);
+      console.log('submissionDto: ' + this.fg.get('projectId').value);
     });
   }
 
@@ -204,7 +209,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
 
 
   async saveApplication() {
-    const {id, district, forestClient, workflowState, ...rest} = this.originalProject;
+    const {id, district, forestClient, workflowState, ...rest} = this.project;
 
     const updateDto = {...rest, ...this.fg.value}
     try {
