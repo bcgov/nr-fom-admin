@@ -129,6 +129,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
       if (!this.isCreate) this.originalApplication = data as ProjectDto;
       const form = new FomAddEditForm(data);
       this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
+
       this.districtIdSelect = this.originalApplication.districtId;
       this.forestClientSelect = this.originalApplication.forestClientNumber;
 
