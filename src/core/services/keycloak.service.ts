@@ -15,21 +15,21 @@ export class KeycloakService {
 
   constructor() {
     this.keycloakRealm = 'ichqx89w'
-
+    console.log(`window.location.origin = ${window.location.origin}`);
     switch (window.location.origin) {
       case 'http://localhost:4200':
         this.keycloakEnabled = false;
         this.keycloakUrl = 'https://dev.oidc.gov.bc.ca/auth'
         break;
       // TODO: Inject keycloak URL based on environment.
-      case 'https://nr-fom-admin-working-dev.apps.silver.devops.gov.bc.ca/':
-      case 'https://nr-fom-admin-main-dev.apps.silver.devops.gov.bc.ca/':
+      case 'https://nr-fom-admin-working-dev.apps.silver.devops.gov.bc.ca':
+      case 'https://nr-fom-admin-main-dev.apps.silver.devops.gov.bc.ca':
         // Dev
         this.keycloakEnabled = true;
         this.keycloakUrl = 'https://dev.oidc.gov.bc.ca/auth';
         break;
 
-      case 'https://nr-fom-admin-test.apps.silver.devops.gov.bc.ca/':
+      case 'https://nr-fom-admin-test.apps.silver.devops.gov.bc.ca':
         // Test
         this.keycloakEnabled = false;
         this.keycloakUrl = 'https://test.oidc.gov.bc.ca/auth';
