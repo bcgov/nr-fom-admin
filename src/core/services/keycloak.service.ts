@@ -14,29 +14,31 @@ export class KeycloakService {
   private loggedOut: string;
 
   constructor() {
+    this.keycloakRealm = 'ichqx89w'
+
     switch (window.location.origin) {
       case 'http://localhost:4200':
-      case 'https://nr-fom-dev.pathfinder.gov.bc.ca':
-      case 'https://nr-fom-master.pathfinder.gov.bc.ca':
-        // Local, Dev, Master
         this.keycloakEnabled = false;
-        this.keycloakUrl = 'https://sso-dev.pathfinder.gov.bc.ca/auth';
-        this.keycloakRealm = 'prc';
+        this.keycloakUrl = 'https://dev.oidc.gov.bc.ca/auth'
+        break;
+      // TODO: Inject keycloak URL based on environment.
+      case 'https://nr-fom-admin-working-dev.apps.silver.devops.gov.bc.ca/':
+      case 'https://nr-fom-admin-main-dev.apps.silver.devops.gov.bc.ca/':
+        // Dev
+        this.keycloakEnabled = true;
+        this.keycloakUrl = 'https://dev.oidc.gov.bc.ca/auth';
         break;
 
-      case 'https://nr-fom-test.pathfinder.gov.bc.ca':
+      case 'https://nr-fom-admin-test.apps.silver.devops.gov.bc.ca/':
         // Test
         this.keycloakEnabled = false;
-        this.keycloakUrl = 'https://sso-test.pathfinder.gov.bc.ca/auth';
-        this.keycloakRealm = 'acrfd';
+        this.keycloakUrl = 'https://test.oidc.gov.bc.ca/auth';
         break;
 
       default:
         // Prod
-        // TODO - Marcelo this.keycloakEnabled = true;
         this.keycloakEnabled = false;
-        this.keycloakUrl = 'https://sso.pathfinder.gov.bc.ca/auth';
-        this.keycloakRealm = 'acrfd';
+        this.keycloakUrl = 'https://oidc.gov.bc.ca/auth';
     }
   }
 
@@ -68,7 +70,7 @@ export class KeycloakService {
         const config = {
           url: this.keycloakUrl,
           realm: this.keycloakRealm,
-          clientId: 'prc-admin-console'
+          clientId: 'fom'
         };
 
         // console.log('KC Auth init.');
@@ -118,7 +120,8 @@ export class KeycloakService {
                 // Don't do anything, they wanted to remain logged out.
                 // resolve(); TODO - commented to rid comp errors
               } else {
-                this.keycloakAuth.login({ idpHint: 'idir' });
+                // this.keycloakAuth.login({ idpHint: 'idir' }); // Might not be only IDIR.
+                this.keycloakAuth.login();
               }
             } else {
               // resolve();
