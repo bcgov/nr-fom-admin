@@ -5,6 +5,11 @@ import * as _ from 'lodash';
 
 declare var Keycloak: any;
 
+export class User {
+  userId: string;
+  displayName: string;
+}
+
 @Injectable()
 export class KeycloakService {
   private keycloakAuth: any;
@@ -14,11 +19,11 @@ export class KeycloakService {
   private loggedOut: string;
 
   constructor() {
-    this.keycloakRealm = 'ichqx89w'
-    console.log(`window.location.origin = ${window.location.origin}`);
+    this.keycloakRealm = 'ichqx89w';
+
     switch (window.location.origin) {
       case 'http://localhost:4200':
-        this.keycloakEnabled = false;
+        this.keycloakEnabled = true;
         this.keycloakUrl = 'https://dev.oidc.gov.bc.ca/auth'
         break;
       // TODO: Inject keycloak URL based on environment.
@@ -73,12 +78,10 @@ export class KeycloakService {
           clientId: 'fom'
         };
 
-        // console.log('KC Auth init.');
-
         this.keycloakAuth = new Keycloak(config);
 
         this.keycloakAuth.onAuthSuccess = () => {
-          // console.log('onAuthSuccess');
+          console.log('onAuthSuccess');
         };
 
         this.keycloakAuth.onAuthError = () => {
@@ -86,7 +89,7 @@ export class KeycloakService {
         };
 
         this.keycloakAuth.onAuthRefreshSuccess = () => {
-          // console.log('onAuthRefreshSuccess');
+          console.log('onAuthRefreshSuccess');
         };
 
         this.keycloakAuth.onAuthRefreshError = () => {
@@ -94,55 +97,95 @@ export class KeycloakService {
         };
 
         this.keycloakAuth.onAuthLogout = () => {
-          // console.log('onAuthLogout');
+          console.log('onAuthLogout');
         };
 
         // Try to get refresh tokens in the background
         this.keycloakAuth.onTokenExpired = () => {
           this.keycloakAuth
             .updateToken()
-            .success(refreshed => {
+            .then(refreshed => {
               console.log('KC refreshed token?:', refreshed);
             })
-            .error(err => {
+            .catch(err => {
               console.log('KC refresh error:', err);
             });
         };
 
-        // Initialize.
+        // Initialize
         this.keycloakAuth
           .init({})
-          .success(auth => {
-            // console.log('KC Refresh Success?:', this.keycloakAuth.authServerUrl);
-            console.log('KC Success:', auth);
+          .then(auth => {
             if (!auth) {
               if (this.loggedOut === 'true') {
                 // Don't do anything, they wanted to remain logged out.
-                // resolve(); TODO - commented to rid comp errors
+                resolve(null); 
               } else {
-                // this.keycloakAuth.login({ idpHint: 'idir' }); // Might not be only IDIR.
                 this.keycloakAuth.login();
               }
             } else {
-              // resolve();
+              resolve(null);
             }
           })
-          .error(err => {
+          .catch(err => {
             console.log('KC error:', err);
             reject();
           });
       });
     }
 
-    return null; //Marcelo - TODO - delete this.
+    return null; 
   }
 
+
+
+  getUser(): User {
+    const user = new User();
+    if (!this.keycloakEnabled) {
+      user.userId = 'fakeUser';
+      user.displayName = 'Fake User';
+    } else {
+      const token = this.getToken();
+      if (!token) {
+        return null;
+      }
+      const jwt = new JwtUtil().decodeToken(token);
+      user.userId = jwt['preferred_username'];
+      user.displayName = jwt['name'];
+    }
+    return user;
+  }
+
+  // TODO: Probably remvoe this method
+  getJwt() {
+    if (!this.keycloakEnabled) {
+      return null;
+    }
+    var token = this.getToken();
+    if (!token) {
+      return null;
+    }
+    const jwt = new JwtUtil().decodeToken(token);
+    console.log('jwt = '+JSON.stringify(jwt)); // TODO: REMOVE
+    // Structure:
+    // realm_access.roles []
+    // resource_access.account.roles []
+    // name
+    // preferred_username
+    // email
+    // typ = Bearer
+    // azp = fom
+    // iss = https://dev.oidc.gov.bc.ca/auth/realms/ichqx89w
+
+    return jwt;
+  }
+
+  // TODO: Need to revise this.
   isValidForSite() {
     if (!this.getToken()) {
       return false;
     }
     const jwt = new JwtUtil().decodeToken(this.getToken());
-
     if (jwt && jwt.realm_access && jwt.realm_access.roles) {
       return _.includes(jwt.realm_access.roles, 'sysadmin');
     } else {
