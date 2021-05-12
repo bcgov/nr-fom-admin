@@ -4,7 +4,6 @@
       <span class="navbar-brand__title">Forest Operations Map - Admin </span>
     </a>
     <span class="navbar-environment" *ngIf="environmentDisplay">{{environmentDisplay}}</span>
-    <!-- TODO: REMOVE old code + toggleNav logic in header.component.ts
     <button class="navbar-toggler" type="button" title="Toggle Main Navigation"
             aria-controls="navbarText"
             aria-expanded="false"
@@ -13,9 +12,8 @@
       <i class="material-icons">menu</i>
       <span>MENU</span>
     </button>
-    -->
-<!--    <div class="navbar-collapse" [@toggleNav]="isNavMenuOpen ? 'navOpen' : 'navClosed'" id="mainNav"> -->
-    <div>
+
+    <div class="navbar-collapse" [@toggleNav]="isNavMenuOpen ? 'navOpen' : 'navClosed'" id="mainNav">
       <ul class="navbar-nav">
         <li *ngIf="user" class="nav-item">
           <a class="nav-link" routerLink="/a/create" title="Add a new FOM" tabindex="0">
