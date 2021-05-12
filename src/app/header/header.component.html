@@ -3,7 +3,8 @@
     <a class="navbar-brand" title="Forest Operations Map - FOM" routerLink="/home">
       <span class="navbar-brand__title">Forest Operations Map - Admin </span>
     </a>
-    <!--<span class="navbar-environment" *ngIf="api.env !== 'prod'">{{api.env}}</span>-->
+    <span class="navbar-environment" *ngIf="environmentDisplay">{{environmentDisplay}}</span>
+    <!-- TODO: REMOVE old code + toggleNav logic in header.component.ts
     <button class="navbar-toggler" type="button" title="Toggle Main Navigation"
             aria-controls="navbarText"
             aria-expanded="false"
@@ -12,28 +13,30 @@
       <i class="material-icons">menu</i>
       <span>MENU</span>
     </button>
-    <div class="navbar-collapse" [@toggleNav]="isNavMenuOpen ? 'navOpen' : 'navClosed'" id="mainNav">
+    -->
+<!--    <div class="navbar-collapse" [@toggleNav]="isNavMenuOpen ? 'navOpen' : 'navClosed'" id="mainNav"> -->
+    <div>
       <ul class="navbar-nav">
-        <li *ngIf="jwt" class="nav-item">
-          <a class="nav-link" routerLink="/a/create" title="Find or add new FOM" tabindex="0">
+        <li *ngIf="user" class="nav-item">
+          <a class="nav-link" routerLink="/a/create" title="Add a new FOM" tabindex="0">
             <span>Add New FOM</span>
           </a>
         </li>
-        <li *ngIf="jwt" class="nav-item">
-          <a class="nav-link" routerLink="/list" title="List FOM applications" tabindex="0">
+        <li *ngIf="user" class="nav-item">
+          <a class="nav-link" routerLink="/list" title="Search for FOMs" tabindex="1">
             <span>Search FOMs</span>
           </a>
         </li>
-        <!-- LOGGED IN -->
-        <li *ngIf="jwt; else loggedOut" class="nav-item" placement="bottom-right">
-          <a class="nav-link" id="welcome" tabindex="0">
+        <li *ngIf="user" class="nav-item" placement="bottom-right">
+          <a class="nav-link" id="welcome" routerLink="/home">
             <span>{{welcomeMsg}}</span>
           </a>
         </li>
-        <!-- LOGGED OUT -->
-        <ng-template #loggedOut>
-          <!-- Placeholder? -->
-        </ng-template>
+        <li *ngIf="user" class="nav-item" placement="bottom-right">
+          <a class="nav-link" routerLink="/logout" title="Log out" tabindex="0">
+            <span>Logout</span>
+          </a>
+        </li>
       </ul>
     </div>
   </nav>

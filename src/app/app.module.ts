@@ -26,6 +26,7 @@ import {AuthenticationService} from 'core/services/authentication.service';
 import {CanDeactivateGuard} from 'core/services/can-deactivate-guard.service';
 import {KeycloakService} from 'core/services/keycloak.service';
 
+import {ConfigService} from 'core/services/config.service';
 import {TokenInterceptor} from 'core/utils/token-interceptor';
 import {NotAuthorizedComponent} from './not-authorized/not-authorized.component';
 import {ApiModule, Configuration} from 'core/api';
@@ -40,19 +41,14 @@ export function kcFactory(keycloakService: KeycloakService) {
   return () => keycloakService.init();
 }
 
-// this.jwtHelper = new JwtHelperService();
-const currentUser = JSON.parse(window.localStorage.getItem('currentUser'));
-const token = currentUser && currentUser.token;
-const isMS = !!window.navigator.msSaveOrOpenBlob;
-
 // In index.html we load a javascript file with environment-specific settings,
 // populated from mounted ConfigMap in OpenShift. This file sets window.localStorage settings
 // Locally, this will be empty and local defaults will be used.
 
 const envName = window.localStorage.getItem('fom_environment_name');
 const env = (envName == undefined || envName.length == 0) ? 'local' : envName;
-let apiBasePath;
 
+let apiBasePath;
 const { hostname } = window.location;
 if (hostname == 'localhost') {
   apiBasePath = 'http://localhost:3333';
@@ -115,6 +111,7 @@ const apiConfig = new Configuration({
       multi: true
     },
     AuthenticationService,
+    ConfigService,
     CanDeactivateGuard
   ],
   entryComponents: [ConfirmComponent],

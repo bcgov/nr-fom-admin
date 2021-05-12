@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
-import { LoggingService } from 'core/services/logging.service';
 import { ModalService } from '../services/modal.service';
 import { StateService } from 'core/services/state.service';
 
@@ -12,7 +11,6 @@ import { StateService } from 'core/services/state.service';
 export class ErrorInterceptor implements HttpInterceptor {
   constructor(
     private modalSvc: ModalService,
-    private logSvc: LoggingService,
     private stateSvc: StateService
   ) {}
 
@@ -23,7 +21,7 @@ export class ErrorInterceptor implements HttpInterceptor {
       catchError((err) => {
 
         const error = err?.error?.message || err.statusText;
-        this.logSvc.logError({
+        console.log({
           lvl: 'ERROR',
           mssg: `${request.urlWithParams} failed with error: ${error}`,
         });

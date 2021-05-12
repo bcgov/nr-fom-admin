@@ -36,7 +36,6 @@
     "hammerjs": "^2.0.8",
     "jquery": "^3.6.0",
     "json2csv": "^5.0.6",
-    "keycloak-angular": "^8.1.0",
     "keycloak-js": "^12.0.4",
     "leaflet": "^1.5.1",
     "linkify-it": "^3.0.2",

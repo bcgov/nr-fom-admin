@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {Router} from '@angular/router';
-import {KeycloakService} from 'core/services/keycloak.service';
+import {KeycloakService, User} from 'core/services/keycloak.service';
+import { ConfigService } from 'core/services/config.service';
 
 @Component({
   selector: 'app-header',
@@ -17,9 +18,12 @@ import {KeycloakService} from 'core/services/keycloak.service';
   ]
 })
 export class HeaderComponent implements OnInit {
-  isNavMenuOpen = true;
+  isNavMenuOpen = true; // TODO: Is this used?
+  environmentDisplay: string;
   welcomeMsg: string;
-  // private _api: ApiService;
+  user: User;
+
+  /* TODO: Add roles usage.
   public jwt: {
     username: string;
     realm_access: {
@@ -27,53 +31,24 @@ export class HeaderComponent implements OnInit {
     };
     scopes: string[];
   };
+  */
 
-  constructor(private keycloakService: KeycloakService, public router: Router) {
-    // this._api = api;
-      const token = this.keycloakService.getToken();
-      let jwt = {
-        username: 'sample-user',
-        displayName: 'Sample User',
-        realm_access: {
-          roles: ['sysadmin']
-        },
-        scopes: ['test', 'dev']
-      };
-      // TODO: Change this to observe the change in the _api.token
-      if (token) {
-        // console.log("token:", token);
-        // console.log('jwt:', jwt);
-        this.welcomeMsg = jwt ? 'Hello ' + jwt.displayName : 'Login';
-        // console.log("this:", this.welcomeMsg);
-        this.jwt = jwt;
-      } else {
-        // this.welcomeMsg = 'Login';
-        // TODO: Marcelo addded this
-        jwt = {
-          username: 'sample-user',
-          displayName: 'Sample User',
-          realm_access: {
-            roles: ['sysadmin']
-          },
-          scopes: ['test', 'dev']
-        };
-        this.jwt = jwt;
-        // TODO Marcelo addded this
-        this.welcomeMsg = jwt ? 'Hello ' + jwt.displayName : 'Login';
-        // this.jwt = new JwtUtil().
-        // this.jwt.username = 'admin';
-        // this.jwt.realm_access.roles['sysadmin'];
-      }
-      // console.log('val:', val instanceof NavigationEnd);
+  constructor(private keycloakService: KeycloakService, private configService: ConfigService, public router: Router) {
+    this.environmentDisplay = configService.getEnvironmentDisplay();
+    this.user = this.keycloakService.getUser();
+    if (this.user) {
+      this.welcomeMsg = 'Hello ' + this.user.displayName;
+    }
   }
 
   ngOnInit() {
+    // TODO: enable this
     // Make sure they have the right role.
     // if (!this.keycloakService.isValidForSite()) {
     //   this.router.navigate(['/not-authorized']);
     // }
   }
-
+/* TODO: Use for searching for roles.
   renderMenu(route: string) {
     // Sysadmin's get administration.
     if (route === 'administration') {
@@ -88,9 +63,9 @@ export class HeaderComponent implements OnInit {
 
     return null;
   }
-
+*/
   navigateToLogout() {
-    // reset login status
+    // TODO: reset login status
     // this.api.logout();
     window.location.href = this.keycloakService.getLogoutURL();
   }
