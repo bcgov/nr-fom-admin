@@ -1,103 +1,50 @@
 import { Injectable } from '@angular/core';
 import { JwtUtil } from 'app/jwt-util';
 import { Observable } from 'rxjs';
+import { User } from './user';
 import * as _ from 'lodash';
 
 declare var Keycloak: any;
 
-export class User {
-  userId: string;
-  displayName: string;
-  isMinistry: boolean = false;
-  isForestClient: boolean = false;
-  clientIds: string[] = [];
-
-  isAuthorizedForAdminSite():boolean {
-    return this.isMinistry || this.isForestClient;
-  }
-  
-  isAuthorizedForClientId(clientId:string):boolean {
-    return (this.clientIds.findIndex(x => x == clientId) != -1);
-  }
-
-  static convertJwtToUser(jwt: any): User {
-    const user = new User();
-    user.userId = jwt['preferred_username'];
-    user.displayName = jwt['name'];
-    var roles: string[];
-    if (jwt['resource_access'] && jwt['resource_access']['fom']) {
-      roles = jwt['resource_access']['fom']['roles'];
-    }
-    roles = []; // TODO: REMOVE
-    roles.push('fom_ministry'); // TODO: REMOVE
-    // roles.push('fom_forest_client_1012'); // TODO: REMOVE
-    roles.forEach(role => {
-      if (role == 'fom_ministry') {
-        user.isMinistry = true;
-      }
-      if (role.startsWith('fom_forest_client')) {
-        user.isForestClient = true;
-        const clientStartIndex = 'fom_forest_client_'.length;
-        if (role.length > clientStartIndex) {
-          const clientId = role.substr(clientStartIndex);
-          user.clientIds.push(clientId);
-        }
-      }
-    })
-    console.log('user ' + JSON.stringify(user)); // TODO:REMOVE
-
-    // JWT Structure in development - TODO: Confirm whether same in prod
-    // realm_access.roles []
-    // resource_access.fom.roles = fom_ministry, fom_forest_client
-    // resource_access.account.roles []
-    // name
-    // preferred_username
-    // email
-    // typ = Bearer
-    // azp = fom
-    // iss = https://dev.oidc.gov.bc.ca/auth/realms/ichqx89w
-
-
-    return user;
-  }
-  
+class KeycloakConfig {
+  enabled: boolean = true;
+  url: string;
+  realm: string;
+  clientId: string = 'fom';
 }
 
 @Injectable()
 export class KeycloakService {
+  private config:KeycloakConfig = new KeycloakConfig();
   private keycloakAuth: any;
-  private keycloakEnabled: boolean;
-  private keycloakUrl: string;
-  private keycloakRealm: string;
   private loggedOut: string;
   private fakeUser: User;
 
   constructor() {
-    this.keycloakRealm = 'ichqx89w';
+    // TODO: Retrieve config from API
+    this.config.realm = 'ichqx89w';
+    this.config.enabled = true;
 
     switch (window.location.origin) {
       case 'http://localhost:4200':
-        this.keycloakEnabled = false;
-        this.keycloakUrl = 'https://dev.oidc.gov.bc.ca/auth'
+        this.config.enabled = false;
+        this.config.url = 'https://dev.oidc.gov.bc.ca/auth'
         break;
       // TODO: Inject keycloak URL based on environment.
       case 'https://nr-fom-admin-working-dev.apps.silver.devops.gov.bc.ca':
       case 'https://nr-fom-admin-main-dev.apps.silver.devops.gov.bc.ca':
         // Dev
-        this.keycloakEnabled = true;
-        this.keycloakUrl = 'https://dev.oidc.gov.bc.ca/auth';
+        this.config.url = 'https://dev.oidc.gov.bc.ca/auth';
         break;
 
       case 'https://nr-fom-admin-test.apps.silver.devops.gov.bc.ca':
         // Test
-        this.keycloakEnabled = false;
-        this.keycloakUrl = 'https://test.oidc.gov.bc.ca/auth';
+        this.config.url = 'https://test.oidc.gov.bc.ca/auth';
         break;
 
       default:
         // Prod
-        this.keycloakEnabled = false;
-        this.keycloakUrl = 'https://oidc.gov.bc.ca/auth';
+        this.config.url = 'https://oidc.gov.bc.ca/auth';
     }
   }
 
@@ -134,20 +81,15 @@ export class KeycloakService {
   init(): Promise<any> {
     this.loggedOut = this.getParameterByName('loggedout');
 
-    if (!this.keycloakEnabled) {
+    if (!this.config.enabled) {
       this.fakeUser = this.getFakeUser();
       return null;
     }
 
     // Bootup KC
     return new Promise((resolve, reject) => {
-      const config = {
-        url: this.keycloakUrl,
-        realm: this.keycloakRealm,
-        clientId: 'fom'
-      };
 
-      this.keycloakAuth = new Keycloak(config);
+      this.keycloakAuth = new Keycloak(this.config);
 
       this.keycloakAuth.onAuthSuccess = () => {
         console.log('onAuthSuccess');
@@ -246,7 +188,7 @@ export class KeycloakService {
   }
 
   public getUser(): User {
-    if (!this.keycloakEnabled) {
+    if (!this.config.enabled) {
        return this.fakeUser;
     } else {
       const token = this.getToken();
@@ -271,7 +213,7 @@ export class KeycloakService {
    * @memberof KeycloakService
    */
   public getToken(): string {
-    if (!this.keycloakEnabled) {
+    if (!this.config.enabled) {
       return JSON.stringify(this.fakeUser);
     }
 
@@ -304,7 +246,7 @@ export class KeycloakService {
   }
 
   logout() {
-    if (!this.keycloakEnabled) {
+    if (!this.config.enabled) {
       this.fakeUser = null;
     }
     // TODO: Update UserService?
@@ -313,11 +255,11 @@ export class KeycloakService {
   getLogoutURL(): string {
     const logoutUrl = window.location.origin + '/admin/not-authorized?loggedout=true';
 
-    if (!this.keycloakEnabled) {
+    if (!this.config.enabled) {
       return logoutUrl;
     } 
 
-    return this.keycloakAuth.authServerUrl + '/realms/' + this.keycloakRealm +
+    return this.keycloakAuth.authServerUrl + '/realms/' + this.config.realm +
       '/protocol/openid-connect/logout?redirect_uri=' + logoutUrl;
     
   }

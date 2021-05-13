@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {Router} from '@angular/router';
-import {KeycloakService, User} from 'core/services/keycloak.service';
+import {KeycloakService} from 'core/services/keycloak.service';
+import {User} from 'core/services/user';
 import { ConfigService } from 'core/services/config.service';
 
 @Component({
@@ -18,7 +19,7 @@ import { ConfigService } from 'core/services/config.service';
   ]
 })
 export class HeaderComponent implements OnInit {
-  isNavMenuOpen = true; // TODO: Is this used?
+  isNavMenuOpen = true; 
   environmentDisplay: string;
   welcomeMsg: string;
   user: User;
@@ -33,7 +34,10 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     if (!this.user || !this.user.isAuthorizedForAdminSite()) {
-      this.router.navigate(['/not-authorized']);
+      if (window.location.href.indexOf('/not-authorized') != -1 && 
+        window.location.href.indexOf("loggedout=true") == -1) {
+        this.router.navigate(['/not-authorized']);
+      }
     }
   }
 
