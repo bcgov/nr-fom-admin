@@ -16,7 +16,6 @@ import {AppComponent} from 'app/app.component';
 import {HomeComponent} from 'app/home/home.component';
 import {SearchComponent} from 'app/search/search.component';
 import {ListComponent} from 'app/list/list.component';
-import {LoginComponent} from 'app/login/login.component';
 import {ConfirmComponent} from 'app/confirm/confirm.component';
 import {HeaderComponent} from 'app/header/header.component';
 import {FooterComponent} from 'app/footer/footer.component';
@@ -41,13 +40,6 @@ export function kcFactory(keycloakService: KeycloakService) {
   return () => keycloakService.init();
 }
 
-// In index.html we load a javascript file with environment-specific settings,
-// populated from mounted ConfigMap in OpenShift. This file sets window.localStorage settings
-// Locally, this will be empty and local defaults will be used.
-
-const envName = window.localStorage.getItem('fom_environment_name');
-const env = (envName == undefined || envName.length == 0) ? 'local' : envName;
-
 let apiBasePath;
 const { hostname } = window.location;
 if (hostname == 'localhost') {
@@ -68,7 +60,6 @@ const apiConfig = new Configuration({
     AppComponent,
     HomeComponent,
     SearchComponent,
-    LoginComponent,
     ConfirmComponent,
     HeaderComponent,
     FooterComponent,

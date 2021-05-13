@@ -23,16 +23,6 @@ export class HeaderComponent implements OnInit {
   welcomeMsg: string;
   user: User;
 
-  /* TODO: Add roles usage.
-  public jwt: {
-    username: string;
-    realm_access: {
-      roles: string[];
-    };
-    scopes: string[];
-  };
-  */
-
   constructor(private keycloakService: KeycloakService, private configService: ConfigService, public router: Router) {
     this.environmentDisplay = configService.getEnvironmentDisplay();
     this.user = this.keycloakService.getUser();
@@ -42,31 +32,13 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-    // TODO: enable this
-    // Make sure they have the right role.
-    // if (!this.keycloakService.isValidForSite()) {
-    //   this.router.navigate(['/not-authorized']);
-    // }
-  }
-/* TODO: Use for searching for roles.
-  renderMenu(route: string) {
-    // Sysadmin's get administration.
-    if (route === 'administration') {
-      console.log('inside renderMenu');
-      return (
-        this.jwt &&
-        this.jwt.realm_access &&
-        this.jwt.realm_access.roles.find(x => x === 'sysadmin') &&
-        this.jwt.username === 'admin'
-      );
+    if (!this.user || !this.user.isAuthorizedForAdminSite()) {
+      this.router.navigate(['/not-authorized']);
     }
-
-    return null;
   }
-*/
+
   navigateToLogout() {
-    // TODO: reset login status
-    // this.api.logout();
+    this.keycloakService.logout();
     window.location.href = this.keycloakService.getLogoutURL();
   }
 

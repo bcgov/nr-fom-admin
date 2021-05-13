@@ -8,6 +8,59 @@ declare var Keycloak: any;
 export class User {
   userId: string;
   displayName: string;
+  isMinistry: boolean = false;
+  isForestClient: boolean = false;
+  clientIds: string[] = [];
+
+  isAuthorizedForAdminSite():boolean {
+    return this.isMinistry || this.isForestClient;
+  }
+  
+  isAuthorizedForClientId(clientId:string):boolean {
+    return (this.clientIds.findIndex(x => x == clientId) != -1);
+  }
+
+  static convertJwtToUser(jwt: any): User {
+    const user = new User();
+    user.userId = jwt['preferred_username'];
+    user.displayName = jwt['name'];
+    var roles: string[];
+    if (jwt['resource_access'] && jwt['resource_access']['fom']) {
+      roles = jwt['resource_access']['fom']['roles'];
+    }
+    roles = []; // TODO: REMOVE
+    roles.push('fom_ministry'); // TODO: REMOVE
+    // roles.push('fom_forest_client_1012'); // TODO: REMOVE
+    roles.forEach(role => {
+      if (role == 'fom_ministry') {
+        user.isMinistry = true;
+      }
+      if (role.startsWith('fom_forest_client')) {
+        user.isForestClient = true;
+        const clientStartIndex = 'fom_forest_client_'.length;
+        if (role.length > clientStartIndex) {
+          const clientId = role.substr(clientStartIndex);
+          user.clientIds.push(clientId);
+        }
+      }
+    })
+    console.log('user ' + JSON.stringify(user)); // TODO:REMOVE
+
+    // JWT Structure in development - TODO: Confirm whether same in prod
+    // realm_access.roles []
+    // resource_access.fom.roles = fom_ministry, fom_forest_client
+    // resource_access.account.roles []
+    // name
+    // preferred_username
+    // email
+    // typ = Bearer
+    // azp = fom
+    // iss = https://dev.oidc.gov.bc.ca/auth/realms/ichqx89w
+
+
+    return user;
+  }
+  
 }
 
 @Injectable()
@@ -17,13 +70,14 @@ export class KeycloakService {
   private keycloakUrl: string;
   private keycloakRealm: string;
   private loggedOut: string;
+  private fakeUser: User;
 
   constructor() {
     this.keycloakRealm = 'ichqx89w';
 
     switch (window.location.origin) {
       case 'http://localhost:4200':
-        this.keycloakEnabled = true;
+        this.keycloakEnabled = false;
         this.keycloakUrl = 'https://dev.oidc.gov.bc.ca/auth'
         break;
       // TODO: Inject keycloak URL based on environment.
@@ -47,8 +101,20 @@ export class KeycloakService {
     }
   }
 
-  isKeyCloakEnabled(): boolean {
-    return this.keycloakEnabled;
+  private getFakeUser():User {
+    const userType:string = 'AllAccess'; // NoAccess, ForestClient, Ministry, AllAccess
+    switch (userType) {
+      case 'NoAccess':
+        return this.getFakeNoAccessUser();
+      case 'ForestClient':
+        return this.getFakeForestClientUser();
+      case 'Ministry':
+        return this.getFakeMinistryUser();
+      case 'AllAccess':
+        return this.getFakeAllAccessUser();
+      default:
+        return null;
+    }
   }
 
   private getParameterByName(name) {
@@ -68,128 +134,133 @@ export class KeycloakService {
   init(): Promise<any> {
     this.loggedOut = this.getParameterByName('loggedout');
 
-    if (this.keycloakEnabled) {
-      // Bootup KC
-      this.keycloakEnabled = true;
-      return new Promise((resolve, reject) => {
-        const config = {
-          url: this.keycloakUrl,
-          realm: this.keycloakRealm,
-          clientId: 'fom'
-        };
-
-        this.keycloakAuth = new Keycloak(config);
-
-        this.keycloakAuth.onAuthSuccess = () => {
-          console.log('onAuthSuccess');
-        };
-
-        this.keycloakAuth.onAuthError = () => {
-          console.log('onAuthError');
-        };
-
-        this.keycloakAuth.onAuthRefreshSuccess = () => {
-          console.log('onAuthRefreshSuccess');
-        };
-
-        this.keycloakAuth.onAuthRefreshError = () => {
-          console.log('onAuthRefreshError');
-        };
-
-        this.keycloakAuth.onAuthLogout = () => {
-          console.log('onAuthLogout');
-        };
-
-        // Try to get refresh tokens in the background
-        this.keycloakAuth.onTokenExpired = () => {
-          this.keycloakAuth
-            .updateToken()
-            .then(refreshed => {
-              console.log('KC refreshed token?:', refreshed);
-            })
-            .catch(err => {
-              console.log('KC refresh error:', err);
-            });
-        };
-
-        // Initialize
-        this.keycloakAuth
-          .init({})
-          .then(auth => {
-            if (!auth) {
-              if (this.loggedOut === 'true') {
-                // Don't do anything, they wanted to remain logged out.
-                resolve(null); 
-              } else {
-                this.keycloakAuth.login();
-              }
-            } else {
-              resolve(null);
-            }
-          })
-          .catch(err => {
-            console.log('KC error:', err);
-            reject();
-          });
-      });
+    if (!this.keycloakEnabled) {
+      this.fakeUser = this.getFakeUser();
+      return null;
     }
 
-    return null; 
+    // Bootup KC
+    return new Promise((resolve, reject) => {
+      const config = {
+        url: this.keycloakUrl,
+        realm: this.keycloakRealm,
+        clientId: 'fom'
+      };
+
+      this.keycloakAuth = new Keycloak(config);
+
+      this.keycloakAuth.onAuthSuccess = () => {
+        console.log('onAuthSuccess');
+      };
+
+      this.keycloakAuth.onAuthError = () => {
+        console.log('onAuthError');
+      };
+
+      this.keycloakAuth.onAuthRefreshSuccess = () => {
+        console.log('onAuthRefreshSuccess');
+      };
+
+      this.keycloakAuth.onAuthRefreshError = () => {
+        console.log('onAuthRefreshError');
+      };
+
+      this.keycloakAuth.onAuthLogout = () => {
+        console.log('onAuthLogout');
+      };
+
+      // Try to get refresh tokens in the background
+      this.keycloakAuth.onTokenExpired = () => {
+        this.keycloakAuth
+          .updateToken()
+          .then(refreshed => {
+            console.log('KC refreshed token?:', refreshed);
+          })
+          .catch(err => {
+            console.log('KC refresh error:', err);
+          });
+      };
+
+      // Initialize
+      this.keycloakAuth
+        .init({})
+        .then(auth => {
+          if (!auth) {
+            if (this.loggedOut === 'true') {
+              // Don't do anything, they wanted to remain logged out.
+              resolve(null); 
+            } else {
+              this.keycloakAuth.login();
+              // If not authorized for FOM, the header-component will route the user to the not-authorized page.
+            }
+          } else {
+            resolve(null);
+          }
+        })
+        .catch(err => {
+          console.log('KC error:', err);
+          reject();
+        });
+    });
+
   }
 
-
-
-  getUser(): User {
+  private getFakeNoAccessUser(): User {
     const user = new User();
+    user.userId = 'fakeNoAccessUser';
+    user.displayName = 'No Access User';
+    user.isMinistry = false;
+    user.isForestClient = false;
+    return user;
+  }
+
+  private getFakeMinistryUser(): User {
+    const user = new User();
+    user.userId = 'fakeMinstryUser';
+    user.displayName = 'Ministry User';
+    user.isMinistry = true;
+    user.isForestClient = false;
+    return user;
+  }
+
+  private getFakeForestClientUser(): User {
+    const user = new User();
+    user.userId = 'fakeForestClientUser';
+    user.displayName = 'Forest Client User';
+    user.isMinistry = false;
+    user.isForestClient = true;
+    user.clientIds.push('1011')
+    user.clientIds.push('1012');
+    return user;
+  }
+
+  private getFakeAllAccessUser(): User {
+    const user = new User();
+    user.userId = 'fakeAllAccessUser';
+    user.displayName = 'All Access User';
+    user.isMinistry = true;
+    user.isForestClient = true;
+    user.clientIds.push('1011')
+    user.clientIds.push('1012');
+    return user;
+  }
+
+  public getUser(): User {
     if (!this.keycloakEnabled) {
-      user.userId = 'fakeUser';
-      user.displayName = 'Fake User';
+       return this.fakeUser;
     } else {
       const token = this.getToken();
       if (!token) {
         return null;
       }
       const jwt = new JwtUtil().decodeToken(token);
-      user.userId = jwt['preferred_username'];
-      user.displayName = jwt['name'];
-    }
-    return user;
-  }
+      if (!jwt) {
+        return null;
+      }
 
-  // TODO: Probably remvoe this method
-  getJwt() {
-    if (!this.keycloakEnabled) {
-      return null;
-    }
-    var token = this.getToken();
-    if (!token) {
-      return null;
-    }
-    const jwt = new JwtUtil().decodeToken(token);
-    console.log('jwt = '+JSON.stringify(jwt)); // TODO: REMOVE
-    // Structure:
-    // realm_access.roles []
-    // resource_access.account.roles []
-    // name
-    // preferred_username
-    // email
-    // typ = Bearer
-    // azp = fom
-    // iss = https://dev.oidc.gov.bc.ca/auth/realms/ichqx89w
+      console.log('jwt = ' + JSON.stringify(jwt)); // TODO: REMOVE
 
-    return jwt;
-  }
-
-  // TODO: Need to revise this.
-  isValidForSite() {
-    if (!this.getToken()) {
-      return false;
-    }
-    const jwt = new JwtUtil().decodeToken(this.getToken());
-    if (jwt && jwt.realm_access && jwt.realm_access.roles) {
-      return _.includes(jwt.realm_access.roles, 'sysadmin');
-    } else {
-      return false;
+      return User.convertJwtToUser(jwt);
     }
   }
 
@@ -199,11 +270,9 @@ export class KeycloakService {
    * @returns {string} keycloak auth token.
    * @memberof KeycloakService
    */
-  getToken(): string {
+  public getToken(): string {
     if (!this.keycloakEnabled) {
-      // return the local storage token
-      const currentUser = JSON.parse(window.localStorage.getItem('currentUser'));
-      return currentUser ? currentUser.token : null;
+      return JSON.stringify(this.fakeUser);
     }
 
     return this.keycloakAuth.token;
@@ -234,23 +303,22 @@ export class KeycloakService {
     });
   }
 
-  getLogoutURL(): string {
-    // TODO? need to do two stage logoff.
-    // logoff prc, as well as bcgov?
-    // https://logon.gov.bc.ca/clp-cgi/logoff.cgi?returl=http://localhost:4200/admin/
-    // https://logontest.gov.bc.ca/clp-cgi/logoff.cgi?returl=http://localhost:4200/admin/
-    if (this.keycloakEnabled) {
-      return (
-        this.keycloakAuth.authServerUrl +
-        '/realms/' +
-        this.keycloakRealm +
-        '/protocol/openid-connect/logout?redirect_uri=' +
-        window.location.origin +
-        '/admin/not-authorized?loggedout=true'
-      );
-    } else {
-      // go to the /login page
-      return window.location.origin + '/admin/login';
+  logout() {
+    if (!this.keycloakEnabled) {
+      this.fakeUser = null;
     }
+    // TODO: Update UserService?
+  }
+
+  getLogoutURL(): string {
+    const logoutUrl = window.location.origin + '/admin/not-authorized?loggedout=true';
+
+    if (!this.keycloakEnabled) {
+      return logoutUrl;
+    } 
+
+    return this.keycloakAuth.authServerUrl + '/realms/' + this.keycloakRealm +
+      '/protocol/openid-connect/logout?redirect_uri=' + logoutUrl;
+    
   }
 }
