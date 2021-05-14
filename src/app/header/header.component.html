@@ -26,13 +26,8 @@
           </a>
         </li>
         <li *ngIf="user" class="nav-item" placement="bottom-right">
-          <a class="nav-link" id="welcome" routerLink="/home">
-            <span>{{welcomeMsg}}</span>
-          </a>
-        </li>
-        <li *ngIf="user" class="nav-item" placement="bottom-right">
           <a class="nav-link" (click)="navigateToLogout()" title="Log out" tabindex="0">
-            <span>Logout</span>
+            <span>{{logoutMsg}}</span>
           </a>
         </li>
       </ul>

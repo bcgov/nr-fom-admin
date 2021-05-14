@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { JwtUtil } from 'app/jwt-util';
 import { Observable } from 'rxjs';
 import { User } from './user';
 import * as _ from 'lodash';
+import { AuthService } from 'core/api/api/auth.service';
+import { JwtHelperService } from "@auth0/angular-jwt";
 
 declare var Keycloak: any;
 
@@ -15,19 +16,33 @@ class KeycloakConfig {
 
 @Injectable()
 export class KeycloakService {
-  private config:KeycloakConfig = new KeycloakConfig();
+  private config: KeycloakConfig = new KeycloakConfig();
   private keycloakAuth: any;
   private loggedOut: string;
   private fakeUser: User;
 
-  constructor() {
+  constructor(private authService: AuthService) {
+    // TODO: Need to finish loading config - this won't work, circular dependency between loading keycloak for token intercept for HTTP calls, 
+    // and loading this config.
+    // this.authService.authControllerGetKeycloakConfig().pipe(take(1)).subscribe(
+    //   config => {
+    //     this.config = config;
+    //   },
+    //   error => {
+    //     console.log('error =', error);
+    //   }
+    // );
+    // console.log('CONFIG = ' + JSON.stringify(this.config));
+
+    // console.log(JSON.stringify(authService.authControllerGetKeycloakConfig()));
     // TODO: Retrieve config from API
+
     this.config.realm = 'ichqx89w';
     this.config.enabled = true;
 
     switch (window.location.origin) {
       case 'http://localhost:4200':
-        this.config.enabled = false;
+        this.config.enabled = true;
         this.config.url = 'https://dev.oidc.gov.bc.ca/auth'
         break;
       // TODO: Inject keycloak URL based on environment.
@@ -46,6 +61,7 @@ export class KeycloakService {
         // Prod
         this.config.url = 'https://oidc.gov.bc.ca/auth';
     }
+
   }
 
   private getFakeUser():User {
@@ -90,7 +106,7 @@ export class KeycloakService {
     return new Promise((resolve, reject) => {
 
       this.keycloakAuth = new Keycloak(this.config);
-
+/*
       this.keycloakAuth.onAuthSuccess = () => {
         console.log('onAuthSuccess');
       };
@@ -110,7 +126,7 @@ export class KeycloakService {
       this.keycloakAuth.onAuthLogout = () => {
         console.log('onAuthLogout');
       };
-
+*/
       // Try to get refresh tokens in the background
       this.keycloakAuth.onTokenExpired = () => {
         this.keycloakAuth
@@ -132,7 +148,7 @@ export class KeycloakService {
               // Don't do anything, they wanted to remain logged out.
               resolve(null); 
             } else {
-              this.keycloakAuth.login();
+              this.keycloakAuth.login({ kc_idp_hint: ['idir', 'bceid']}); // TODO: Unknown if this will work as specified.
               // If not authorized for FOM, the header-component will route the user to the not-authorized page.
             }
           } else {
@@ -149,7 +165,7 @@ export class KeycloakService {
 
   private getFakeNoAccessUser(): User {
     const user = new User();
-    user.userId = 'fakeNoAccessUser';
+    user.userName = 'fakeNoAccessUser';
     user.displayName = 'No Access User';
     user.isMinistry = false;
     user.isForestClient = false;
@@ -158,7 +174,7 @@ export class KeycloakService {
 
   private getFakeMinistryUser(): User {
     const user = new User();
-    user.userId = 'fakeMinstryUser';
+    user.userName = 'fakeMinstryUser';
     user.displayName = 'Ministry User';
     user.isMinistry = true;
     user.isForestClient = false;
@@ -167,7 +183,7 @@ export class KeycloakService {
 
   private getFakeForestClientUser(): User {
     const user = new User();
-    user.userId = 'fakeForestClientUser';
+    user.userName = 'fakeForestClientUser';
     user.displayName = 'Forest Client User';
     user.isMinistry = false;
     user.isForestClient = true;
@@ -178,7 +194,7 @@ export class KeycloakService {
 
   private getFakeAllAccessUser(): User {
     const user = new User();
-    user.userId = 'fakeAllAccessUser';
+    user.userName = 'fakeAllAccessUser';
     user.displayName = 'All Access User';
     user.isMinistry = true;
     user.isForestClient = true;
@@ -195,14 +211,21 @@ export class KeycloakService {
       if (!token) {
         return null;
       }
-      const jwt = new JwtUtil().decodeToken(token);
-      if (!jwt) {
+
+      const helper = new JwtHelperService();
+      const decodedToken = helper.decodeToken(token);
+      
+      // const decodedToken = jwt.decode(token, { complete: true });
+      // new JwtUtil().decodeToken(token); // TODO: REMOVE JwtUtil.
+      // const decodedToken = decode(token);
+
+      if (!decodedToken) {
         return null;
       }
 
-      console.log('jwt = ' + JSON.stringify(jwt)); // TODO: REMOVE
+      console.log('decoded token = ' + JSON.stringify(decodedToken)); // TODO: REMOVE
 
-      return User.convertJwtToUser(jwt);
+      return User.convertJwtToUser(decodedToken);
     }
   }
 
@@ -214,6 +237,7 @@ export class KeycloakService {
    */
   public getToken(): string {
     if (!this.config.enabled) {
+      // TODO: Change this to convert user to JWT format?
       return JSON.stringify(this.fakeUser);
     }
 

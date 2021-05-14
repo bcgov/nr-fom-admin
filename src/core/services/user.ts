@@ -1,8 +1,9 @@
 
-// TODO: Copy from API /apps/api/src/core/security
+// TODO: Cloned to Admin/src/core/services
+
 // Represents a user's information extracted from Keycloak JWT.
 export class User {
-  userId: string;
+  userName: string; 
   displayName: string;
   isMinistry: boolean = false;
   isForestClient: boolean = false;
@@ -18,15 +19,12 @@ export class User {
 
   static convertJwtToUser(jwt: any): User {
     const user = new User();
-    user.userId = jwt['preferred_username'];
-    user.displayName = jwt['name'];
+    user.userName = jwt['username'];
+    user.displayName = jwt['displayName'];
     var roles: string[];
     if (jwt['resource_access'] && jwt['resource_access']['fom']) {
       roles = jwt['resource_access']['fom']['roles'];
     }
-    roles = []; // TODO: REMOVE
-    roles.push('fom_ministry'); // TODO: REMOVE
-    // roles.push('fom_forest_client_1012'); // TODO: REMOVE
     roles.forEach(role => {
       if (role == 'fom_ministry') {
         user.isMinistry = true;
@@ -40,19 +38,19 @@ export class User {
         }
       }
     })
-    console.log('user ' + JSON.stringify(user)); // TODO:REMOVE
 
     // JWT Structure in development - TODO: Confirm whether same in prod
     // realm_access.roles []
     // resource_access.fom.roles = fom_ministry, fom_forest_client
     // resource_access.account.roles []
     // name
+    // displayName
+    // username
     // preferred_username
     // email
     // typ = Bearer
     // azp = fom
     // iss = https://dev.oidc.gov.bc.ca/auth/realms/ichqx89w
-
 
     return user;
   }

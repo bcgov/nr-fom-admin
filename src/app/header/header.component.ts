@@ -21,14 +21,14 @@ import { ConfigService } from 'core/services/config.service';
 export class HeaderComponent implements OnInit {
   isNavMenuOpen = true; 
   environmentDisplay: string;
-  welcomeMsg: string;
+  logoutMsg: string = "Logout";
   user: User;
 
   constructor(private keycloakService: KeycloakService, private configService: ConfigService, public router: Router) {
     this.environmentDisplay = configService.getEnvironmentDisplay();
     this.user = this.keycloakService.getUser();
     if (this.user) {
-      this.welcomeMsg = 'Hello ' + this.user.displayName;
+      this.logoutMsg += ' ' + this.user.displayName;
     }
   }
 
