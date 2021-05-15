@@ -26,26 +26,15 @@ export class ErrorInterceptor implements HttpInterceptor {
           mssg: `${request.urlWithParams} failed with error: ${error}`,
         });
 
-        /**
-         * Ex: request.url = http://localhost:8200/api/User
-         *
-         * get the unique part of url
-         * return url = '/User'
-         */
-        const url = request.url.split('api')[1];
-        // Not includes in array of urls then show pop up
-        if (!['/user', '/applicationsettings'].includes(url.toLowerCase())) {
-          this.modalSvc.openDialog({
-            data: {
-              message: `The request failed to process due to a network error. Please retry`,
-              title: `Error: ${err?.error?.message || err.statusText} - ${request.url}`,
-              buttons: { cancel: { text: 'Okay' } },
-            },
-          });
-        }
-        // this.modalSvc.openCustomDialog(dialogComponent, params);
+        this.modalSvc.openDialog({
+          data: {
+            message: `The request failed to process due to an error.`,
+            title: `Error: ${err?.error?.message || err.statusText} - ${request.url}`,
+            buttons: { cancel: { text: 'Okay' } },
+          },
+        });
+
         return throwError(error);
-        // return next.handle(request)
       })
     );
   }
