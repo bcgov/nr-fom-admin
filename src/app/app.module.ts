@@ -25,7 +25,7 @@ import {AuthenticationService} from 'core/services/authentication.service';
 import {CanDeactivateGuard} from 'core/services/can-deactivate-guard.service';
 import {KeycloakService} from 'core/services/keycloak.service';
 
-import {ConfigService} from 'core/services/config.service';
+import {ConfigService, retrieveApiBasePath} from 'core/services/config.service';
 import {TokenInterceptor} from 'core/utils/token-interceptor';
 import {NotAuthorizedComponent} from './not-authorized/not-authorized.component';
 import {ApiModule, Configuration} from 'core/api';
@@ -40,19 +40,8 @@ export function kcFactory(keycloakService: KeycloakService) {
   return () => keycloakService.init();
 }
 
-let apiBasePath;
-const { hostname } = window.location;
-if (hostname == 'localhost') {
-  apiBasePath = 'http://localhost:3333';
-} else if (hostname.includes('nr-fom-admin') && hostname.includes('devops.gov.bc.ca')) {
-  apiBasePath = 'https://' + hostname.replace('fom-admin', 'fom-api');
-} else {
-  // TODO: May need special case for production vanity URL, or implement solution for dynamically loading from a config map.
-  throwError('Unrecognized hostname ' + hostname + ' cannot infer API URL.');
-}
-
 const apiConfig = new Configuration({
-  basePath: apiBasePath
+  basePath: retrieveApiBasePath()
 })
 
 @NgModule({

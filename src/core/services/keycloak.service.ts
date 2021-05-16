@@ -2,8 +2,10 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from './user';
 import * as _ from 'lodash';
-import { AuthService } from 'core/api/api/auth.service';
 import { JwtHelperService } from "@auth0/angular-jwt";
+import { ConfigService } from './config.service';
+import { HttpClient } from "@angular/common/http";
+import { getFakeUser } from './mock-user';
 
 declare var Keycloak: any;
 
@@ -16,68 +18,13 @@ class KeycloakConfig {
 
 @Injectable()
 export class KeycloakService {
-  private config: KeycloakConfig = new KeycloakConfig();
+  private config: KeycloakConfig;
   private keycloakAuth: any;
   private loggedOut: string;
   private fakeUser: User;
+  public initialized: boolean = false;
 
-  constructor(private authService: AuthService) {
-    // TODO: Need to finish loading config - this won't work, circular dependency between loading keycloak for token intercept for HTTP calls, 
-    // and loading this config.
-    // this.authService.authControllerGetKeycloakConfig().pipe(take(1)).subscribe(
-    //   config => {
-    //     this.config = config;
-    //   },
-    //   error => {
-    //     console.log('error =', error);
-    //   }
-    // );
-    // console.log('CONFIG = ' + JSON.stringify(this.config));
-
-    // console.log(JSON.stringify(authService.authControllerGetKeycloakConfig()));
-    // TODO: Retrieve config from API
-
-    this.config.realm = 'ichqx89w';
-    this.config.enabled = true;
-
-    switch (window.location.origin) {
-      case 'http://localhost:4200':
-        this.config.enabled = true;
-        this.config.url = 'https://dev.oidc.gov.bc.ca/auth'
-        break;
-      // TODO: Inject keycloak URL based on environment.
-      case 'https://nr-fom-admin-working-dev.apps.silver.devops.gov.bc.ca':
-      case 'https://nr-fom-admin-main-dev.apps.silver.devops.gov.bc.ca':
-        // Dev
-        this.config.url = 'https://dev.oidc.gov.bc.ca/auth';
-        break;
-
-      case 'https://nr-fom-admin-test.apps.silver.devops.gov.bc.ca':
-        // Test
-        this.config.url = 'https://test.oidc.gov.bc.ca/auth';
-        break;
-
-      default:
-        // Prod
-        this.config.url = 'https://oidc.gov.bc.ca/auth';
-    }
-
-  }
-
-  private getFakeUser():User {
-    const userType:string = 'AllAccess'; // NoAccess, ForestClient, Ministry, AllAccess
-    switch (userType) {
-      case 'NoAccess':
-        return this.getFakeNoAccessUser();
-      case 'ForestClient':
-        return this.getFakeForestClientUser();
-      case 'Ministry':
-        return this.getFakeMinistryUser();
-      case 'AllAccess':
-        return this.getFakeAllAccessUser();
-      default:
-        return null;
-    }
+  constructor(private configService: ConfigService, private http: HttpClient) {
   }
 
   private getParameterByName(name) {
@@ -94,11 +41,21 @@ export class KeycloakService {
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
   }
 
-  init(): Promise<any> {
+  async init(): Promise<any> {
+
+    // Cannot call AuthService.authControllerGetKeycloakConfig because this introduces a circular dependency when autowired in the constructor because
+    // AuthSerivce needs tokenInterceptor, tokenInterceptor needs KeycloakService. Therefore we just use the HttpClient directly in this init method.
+    var url:string = this.configService.getApiBasePath()+"/api/keycloakConfig";
+    console.log("Loading keycloak config from URL " + url);
+    var data = await this.http.get(url, { observe: "body", responseType: "json"}).toPromise(); 
+    this.config = data as KeycloakConfig;
+
+    console.log('Using keycloak config = ' + JSON.stringify(this.config));
+
     this.loggedOut = this.getParameterByName('loggedout');
 
     if (!this.config.enabled) {
-      this.fakeUser = this.getFakeUser();
+      this.fakeUser = getFakeUser();
       return null;
     }
 
@@ -110,19 +67,15 @@ export class KeycloakService {
       this.keycloakAuth.onAuthSuccess = () => {
         console.log('onAuthSuccess');
       };
-
       this.keycloakAuth.onAuthError = () => {
         console.log('onAuthError');
       };
-
       this.keycloakAuth.onAuthRefreshSuccess = () => {
         console.log('onAuthRefreshSuccess');
       };
-
       this.keycloakAuth.onAuthRefreshError = () => {
         console.log('onAuthRefreshError');
       };
-
       this.keycloakAuth.onAuthLogout = () => {
         console.log('onAuthLogout');
       };
@@ -159,74 +112,29 @@ export class KeycloakService {
           console.log('KC error:', err);
           reject();
         });
+
+      this.initialized = true; // This enables TokenInterceptor
     });
-
-  }
-
-  private getFakeNoAccessUser(): User {
-    const user = new User();
-    user.userName = 'fakeNoAccessUser';
-    user.displayName = 'No Access User';
-    user.isMinistry = false;
-    user.isForestClient = false;
-    return user;
-  }
-
-  private getFakeMinistryUser(): User {
-    const user = new User();
-    user.userName = 'fakeMinstryUser';
-    user.displayName = 'Ministry User';
-    user.isMinistry = true;
-    user.isForestClient = false;
-    return user;
-  }
-
-  private getFakeForestClientUser(): User {
-    const user = new User();
-    user.userName = 'fakeForestClientUser';
-    user.displayName = 'Forest Client User';
-    user.isMinistry = false;
-    user.isForestClient = true;
-    user.clientIds.push('1011')
-    user.clientIds.push('1012');
-    return user;
-  }
-
-  private getFakeAllAccessUser(): User {
-    const user = new User();
-    user.userName = 'fakeAllAccessUser';
-    user.displayName = 'All Access User';
-    user.isMinistry = true;
-    user.isForestClient = true;
-    user.clientIds.push('1011')
-    user.clientIds.push('1012');
-    return user;
   }
 
   public getUser(): User {
     if (!this.config.enabled) {
        return this.fakeUser;
-    } else {
-      const token = this.getToken();
-      if (!token) {
-        return null;
-      }
-
-      const helper = new JwtHelperService();
-      const decodedToken = helper.decodeToken(token);
-      
-      // const decodedToken = jwt.decode(token, { complete: true });
-      // new JwtUtil().decodeToken(token); // TODO: REMOVE JwtUtil.
-      // const decodedToken = decode(token);
-
-      if (!decodedToken) {
-        return null;
-      }
-
-      console.log('decoded token = ' + JSON.stringify(decodedToken)); // TODO: REMOVE
-
-      return User.convertJwtToUser(decodedToken);
+    } 
+    const token = this.getToken();
+    if (!token) {
+      return null;
     }
+
+    const helper = new JwtHelperService();
+    const decodedToken = helper.decodeToken(token);
+    if (!decodedToken) {
+      return null;
+    }
+
+    console.log('decoded token = ' + JSON.stringify(decodedToken)); // TODO: REMOVE
+
+    return User.convertJwtToUser(decodedToken);
   }
 
   /**
