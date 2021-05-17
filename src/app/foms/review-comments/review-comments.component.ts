@@ -3,15 +3,11 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {forkJoin, Observable, Subject} from 'rxjs';
 import {map, startWith, takeUntil} from 'rxjs/operators';
 
-import {Application} from 'core/models/application';
-import {Comment} from 'core/models/comment';
-import {Project} from 'core/models/project';
-import {PublicComment} from 'core/models/publiccomment';
+import {PublicCommentDto} from 'core/api';
 import {
   ProjectDto,
   ProjectService,
   PublicCommentService,
-  PublicCommentsService,
   UpdatePublicCommentDto
 } from 'core/api';
 import {FormControl} from '@angular/forms';
@@ -19,7 +15,7 @@ import * as R from 'remeda'
 import {ModalService} from 'core/services/modal.service';
 import {StateService} from 'core/services/state.service';
 
-type SortKeysType = keyof Pick<PublicComment, 'createTimestamp' | 'name'>
+type SortKeysType = keyof Pick<PublicCommentDto, 'createTimestamp' | 'name'>
 type SortDirType = 'asc' | 'desc'
 
 class SortKey {
@@ -52,7 +48,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
   @ViewChild('commentListScrollContainer', {read: ElementRef})
   public commentListScrollContainer: ElementRef; // TODO: Something is up with this...
 
-  comment: PublicComment;
+  comment: PublicCommentDto;
 
   readonly sortKeys: SortKey[] = [
     {innerHTML: 'Oldest', value: 'createTimestamp', dir: 'desc'},
@@ -62,26 +58,25 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
   ];
   sortControl: FormControl = new FormControl(this.sortKeys[1]);
 
-  data$: Observable<{ project: ProjectDto, comments: PublicComment[]; }>
+  data$: Observable<{ project: ProjectDto, comments: PublicCommentDto[]; }>
 
   responseCodes = this.stateSvc.getCodeTable('responseCode')
 
-  commentsList: PublicComment[];
+  commentsList: PublicCommentDto[];
 
-  results$: Observable<PublicComment[]> = this.sortControl.valueChanges.pipe(startWith(this.sortKeys[1].value), map(dir => {
+  results$: Observable<PublicCommentDto[]> = this.sortControl.valueChanges.pipe(startWith(this.sortKeys[1].value), map(dir => {
 
     return dir.dir === 'asc' ? R.sortBy(this.comments, (item) => item[dir.value]) : R.reverse(R.sortBy(this.comments, (item) => item[dir.value]));
 
   }))
 
   public loading = false;
-  public application: Application = null;
-  public project: Project = null;
-  public comments: PublicComment[] = [];
-  public publicComments: PublicComment[] = [];
+  public project: ProjectDto = null;
+  public comments: PublicCommentDto[] = [];
+  public publicComments: PublicCommentDto[] = [];
   public alerts: string[] = [];
   public currentComment: Comment;
-  public currentPublicComment: PublicComment;
+  public currentPublicComment: PublicCommentDto;
 
 
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
@@ -90,7 +85,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private projectSvc: ProjectService,
-    private commentsSvc: PublicCommentsService,
+    // private commentsSvc: PublicCommentsService,
     private modalSvc: ModalService,
     private commentSvc: PublicCommentService,
     private stateSvc: StateService
@@ -103,7 +98,9 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     }
     const {appId} = this.route.snapshot.params;
 
-    this.data$ = forkJoin(this.projectSvc.projectControllerFindOne(appId), this.commentsSvc.publicCommentsControllerFindByProjectId(appId)).pipe(takeUntil(this.ngUnsubscribe), map(result => {
+    this.data$ = forkJoin(this.projectSvc.projectControllerFindOne(appId),
+      this.commentSvc.publicCommentControllerFindByProjectId(appId))
+      .pipe(takeUntil(this.ngUnsubscribe), map(result => {
 
       const [project, comments] = result;
 
@@ -124,7 +121,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  async saveComment(update: UpdatePublicCommentDto, selectedComment: PublicComment) {
+  async saveComment(update: UpdatePublicCommentDto, selectedComment: PublicCommentDto) {
 
     const {id} = selectedComment;
 
@@ -133,7 +130,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
       console.log(result)
       if (result) {
         this.modalSvc.openSnackBar({message: 'Comment saved', button: 'OK'})
-        this.comments = await this.commentsSvc.publicCommentsControllerFindAll().toPromise();
+        // this.comments = await this.commentsSvc.publicCommentsControllerFindAll().toPromise();
         this.sortControl.setValue(this.sortControl.value)
       } else {
         this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Failed to update', title: ''}})

@@ -22,6 +22,6 @@ export class NotAuthorizedComponent implements OnInit {
   }
 
   login() {
-    window.location.href = window.location.origin + '/admin/search';
+    window.location.href = window.location.origin + '/admin';
   }
 }

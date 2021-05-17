@@ -1,7 +1,7 @@
-import { DistrictDto, ResponseCodeDto, WorkflowStateCodeDto } from 'core/api';
+import { DistrictDto, ResponseCode, WorkflowStateCode } from 'core/api';
 
 export interface CodeTables {
-  responseCode: ResponseCodeDto[],
+  responseCode: ResponseCode[],
   district: DistrictDto[],
-  workflowResponseCode: WorkflowStateCodeDto[]
+  workflowResponseCode: WorkflowStateCode[]
 }

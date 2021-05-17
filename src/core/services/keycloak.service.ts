@@ -1,47 +1,30 @@
 import { Injectable } from '@angular/core';
-import { JwtUtil } from 'app/jwt-util';
 import { Observable } from 'rxjs';
+import { User } from './user';
 import * as _ from 'lodash';
+import { JwtHelperService } from "@auth0/angular-jwt";
+import { ConfigService } from './config.service';
+import { HttpClient } from "@angular/common/http";
+import { getFakeUser } from './mock-user';
 
 declare var Keycloak: any;
 
+class KeycloakConfig {
+  enabled: boolean = true;
+  url: string;
+  realm: string;
+  clientId: string = 'fom';
+}
+
 @Injectable()
 export class KeycloakService {
+  private config: KeycloakConfig;
   private keycloakAuth: any;
-  private keycloakEnabled: boolean;
-  private keycloakUrl: string;
-  private keycloakRealm: string;
   private loggedOut: string;
+  private fakeUser: User;
+  public initialized: boolean = false;
 
-  constructor() {
-    switch (window.location.origin) {
-      case 'http://localhost:4200':
-      case 'https://nr-fom-dev.pathfinder.gov.bc.ca':
-      case 'https://nr-fom-master.pathfinder.gov.bc.ca':
-        // Local, Dev, Master
-        this.keycloakEnabled = false;
-        this.keycloakUrl = 'https://sso-dev.pathfinder.gov.bc.ca/auth';
-        this.keycloakRealm = 'prc';
-        break;
-
-      case 'https://nr-fom-test.pathfinder.gov.bc.ca':
-        // Test
-        this.keycloakEnabled = false;
-        this.keycloakUrl = 'https://sso-test.pathfinder.gov.bc.ca/auth';
-        this.keycloakRealm = 'acrfd';
-        break;
-
-      default:
-        // Prod
-        // TODO - Marcelo this.keycloakEnabled = true;
-        this.keycloakEnabled = false;
-        this.keycloakUrl = 'https://sso.pathfinder.gov.bc.ca/auth';
-        this.keycloakRealm = 'acrfd';
-    }
-  }
-
-  isKeyCloakEnabled(): boolean {
-    return this.keycloakEnabled;
+  constructor(private configService: ConfigService, private http: HttpClient) {
   }
 
   private getParameterByName(name) {
@@ -58,93 +41,100 @@ export class KeycloakService {
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
   }
 
-  init(): Promise<any> {
+  async init(): Promise<any> {
+
+    // Cannot call AuthService.authControllerGetKeycloakConfig because this introduces a circular dependency when autowired in the constructor because
+    // AuthSerivce needs tokenInterceptor, tokenInterceptor needs KeycloakService. Therefore we just use the HttpClient directly in this init method.
+    var url:string = this.configService.getApiBasePath()+"/api/keycloakConfig";
+    console.log("Loading keycloak config from URL " + url);
+    var data = await this.http.get(url, { observe: "body", responseType: "json"}).toPromise(); 
+    this.config = data as KeycloakConfig;
+
+    console.log('Using keycloak config = ' + JSON.stringify(this.config));
+
     this.loggedOut = this.getParameterByName('loggedout');
 
-    if (this.keycloakEnabled) {
-      // Bootup KC
-      this.keycloakEnabled = true;
-      return new Promise((resolve, reject) => {
-        const config = {
-          url: this.keycloakUrl,
-          realm: this.keycloakRealm,
-          clientId: 'prc-admin-console'
-        };
-
-        // console.log('KC Auth init.');
-
-        this.keycloakAuth = new Keycloak(config);
-
-        this.keycloakAuth.onAuthSuccess = () => {
-          // console.log('onAuthSuccess');
-        };
-
-        this.keycloakAuth.onAuthError = () => {
-          console.log('onAuthError');
-        };
-
-        this.keycloakAuth.onAuthRefreshSuccess = () => {
-          // console.log('onAuthRefreshSuccess');
-        };
-
-        this.keycloakAuth.onAuthRefreshError = () => {
-          console.log('onAuthRefreshError');
-        };
-
-        this.keycloakAuth.onAuthLogout = () => {
-          // console.log('onAuthLogout');
-        };
-
-        // Try to get refresh tokens in the background
-        this.keycloakAuth.onTokenExpired = () => {
-          this.keycloakAuth
-            .updateToken()
-            .success(refreshed => {
-              console.log('KC refreshed token?:', refreshed);
-            })
-            .error(err => {
-              console.log('KC refresh error:', err);
-            });
-        };
-
-        // Initialize.
-        this.keycloakAuth
-          .init({})
-          .success(auth => {
-            // console.log('KC Refresh Success?:', this.keycloakAuth.authServerUrl);
-            console.log('KC Success:', auth);
-            if (!auth) {
-              if (this.loggedOut === 'true') {
-                // Don't do anything, they wanted to remain logged out.
-                // resolve(); TODO - commented to rid comp errors
-              } else {
-                this.keycloakAuth.login({ idpHint: 'idir' });
-              }
-            } else {
-              // resolve();
-            }
-          })
-          .error(err => {
-            console.log('KC error:', err);
-            reject();
-          });
-      });
+    if (!this.config.enabled) {
+      this.fakeUser = getFakeUser();
+      return null;
     }
 
-    return null; //Marcelo - TODO - delete this.
+    // Bootup KC
+    return new Promise((resolve, reject) => {
+
+      this.keycloakAuth = new Keycloak(this.config);
+/*
+      this.keycloakAuth.onAuthSuccess = () => {
+        console.log('onAuthSuccess');
+      };
+      this.keycloakAuth.onAuthError = () => {
+        console.log('onAuthError');
+      };
+      this.keycloakAuth.onAuthRefreshSuccess = () => {
+        console.log('onAuthRefreshSuccess');
+      };
+      this.keycloakAuth.onAuthRefreshError = () => {
+        console.log('onAuthRefreshError');
+      };
+      this.keycloakAuth.onAuthLogout = () => {
+        console.log('onAuthLogout');
+      };
+*/
+      // Try to get refresh tokens in the background
+      this.keycloakAuth.onTokenExpired = () => {
+        this.keycloakAuth
+          .updateToken()
+          .then(refreshed => {
+            console.log('KC refreshed token?:', refreshed);
+          })
+          .catch(err => {
+            console.log('KC refresh error:', err);
+          });
+      };
+
+      // Initialize
+      this.keycloakAuth
+        .init({})
+        .then(auth => {
+          if (!auth) {
+            if (this.loggedOut === 'true') {
+              // Don't do anything, they wanted to remain logged out.
+              resolve(null); 
+            } else {
+              this.keycloakAuth.login({ kc_idp_hint: ['idir', 'bceid']}); // TODO: Unknown if this will work as specified.
+              // If not authorized for FOM, the header-component will route the user to the not-authorized page.
+            }
+          } else {
+            resolve(null);
+          }
+        })
+        .catch(err => {
+          console.log('KC error:', err);
+          reject();
+        });
+
+      this.initialized = true; // This enables TokenInterceptor
+    });
   }
 
-  isValidForSite() {
-    if (!this.getToken()) {
-      return false;
+  public getUser(): User {
+    if (!this.config.enabled) {
+       return this.fakeUser;
+    } 
+    const token = this.getToken();
+    if (!token) {
+      return null;
     }
-    const jwt = new JwtUtil().decodeToken(this.getToken());
 
-    if (jwt && jwt.realm_access && jwt.realm_access.roles) {
-      return _.includes(jwt.realm_access.roles, 'sysadmin');
-    } else {
-      return false;
+    const helper = new JwtHelperService();
+    const decodedToken = helper.decodeToken(token);
+    if (!decodedToken) {
+      return null;
     }
+
+    console.log('decoded token = ' + JSON.stringify(decodedToken)); // TODO: REMOVE
+
+    return User.convertJwtToUser(decodedToken);
   }
 
   /**
@@ -153,11 +143,10 @@ export class KeycloakService {
    * @returns {string} keycloak auth token.
    * @memberof KeycloakService
    */
-  getToken(): string {
-    if (!this.keycloakEnabled) {
-      // return the local storage token
-      const currentUser = JSON.parse(window.localStorage.getItem('currentUser'));
-      return currentUser ? currentUser.token : null;
+  public getToken(): string {
+    if (!this.config.enabled) {
+      // TODO: Change this to convert user to JWT format?
+      return JSON.stringify(this.fakeUser);
     }
 
     return this.keycloakAuth.token;
@@ -188,23 +177,22 @@ export class KeycloakService {
     });
   }
 
-  getLogoutURL(): string {
-    // TODO? need to do two stage logoff.
-    // logoff prc, as well as bcgov?
-    // https://logon.gov.bc.ca/clp-cgi/logoff.cgi?returl=http://localhost:4200/admin/
-    // https://logontest.gov.bc.ca/clp-cgi/logoff.cgi?returl=http://localhost:4200/admin/
-    if (this.keycloakEnabled) {
-      return (
-        this.keycloakAuth.authServerUrl +
-        '/realms/' +
-        this.keycloakRealm +
-        '/protocol/openid-connect/logout?redirect_uri=' +
-        window.location.origin +
-        '/admin/not-authorized?loggedout=true'
-      );
-    } else {
-      // go to the /login page
-      return window.location.origin + '/admin/login';
+  logout() {
+    if (!this.config.enabled) {
+      this.fakeUser = null;
     }
+    // TODO: Update UserService?
+  }
+
+  getLogoutURL(): string {
+    const logoutUrl = window.location.origin + '/admin/not-authorized?loggedout=true';
+
+    if (!this.config.enabled) {
+      return logoutUrl;
+    } 
+
+    return this.keycloakAuth.authServerUrl + '/realms/' + this.config.realm +
+      '/protocol/openid-connect/logout?redirect_uri=' + logoutUrl;
+    
   }
 }

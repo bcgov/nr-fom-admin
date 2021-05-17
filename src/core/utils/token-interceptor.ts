@@ -32,6 +32,11 @@ export class TokenInterceptor implements HttpInterceptor {
    * @memberof TokenInterceptor
    */
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
+
+    if (!this.auth.initialized) {
+      return next.handle(request);
+    }
+
     request = this.addAuthHeader(request);
 
     return next.handle(request).pipe(

@@ -99,12 +99,18 @@
                     <li>
                       <span class="name">FOM Holder:</span>
                       <span
-                        class="value">{{project.forestClient ? project.forestClient.name : 'No applicant on this file'}}</span>
+                        class="value">
+<!--                        class="value">{{project.forestClient ? project.forestClient.name : 'No applicant on this file'}}-->
+                        {{project.forestClient.name}}
+                      </span>
                     </li>
                     <li>
                       <span class="name">District:</span>
                       <span
-                        class="value">{{project.district ? project.district.name : 'A district has not been specified'}}</span>
+                        class="value">
+                        {{project.district ? project.district?.name : 'A district has not been specified'}}
+<!--                        {{district ? district.name : ' - '}}-->
+                      </span>
                     </li>
                     <li>
                       <span class="name">Blocks:</span>
@@ -209,7 +215,9 @@
           <h3 class="title">Application Status</h3>
           <div class="body">
             <div
-              class="app-status">{{project.workflowState && project.workflowState.description ? project.workflowState.description : '-'}}</div>
+              class="app-status">
+              {{project.workflowState && project.workflowStateCode ? project.workflowStateCode: '-'}}
+            </div>
             <!-- <div class="app-status__date text-muted" *ngIf="application.statusHistoryEffectiveDate"> -->
             <div class="app-status__date text-muted" *ngIf="project.updateTimestamp">
               Last updated on {{project.updateTimestamp | date:'longDate'}}
@@ -227,7 +235,9 @@
             <ul class="nv-list">
               <li>
                 <span class="name">Status:</span>
-                <span class="value">{{project.workflowState && project.workflowState.description}}</span>
+                <span class="value">
+<!--                  {{project.workflowState && project.workflowState?.description}}-->
+                </span>
               </li>
               <li>
                 <span class="name">Start Date:</span>

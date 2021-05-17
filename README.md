@@ -1,7 +1,7 @@
 <!--- NOTE: This is a template for your project README. Edit the content according to the comments provided.--->
 
-# <application_license_badge>
-<!--- [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE) --->
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
+[![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-339999)](<Redirect-URL>)
 
 # bcgov/nr-fom-admin
 Administrative front-end for the FOM application.
@@ -9,19 +9,15 @@ Administrative front-end for the FOM application.
 ## Technical Details
 | Technology | Version | Website                 | Description |
 |------------|---------|-------------------------|-------------------------------------------|
-| node       | 10.x.x  | https://nodejs.org/en/  | JavaScript Runtime                        |
-| npm        | 6.x.x   | https://www.npmjs.com/  | Node Package Manager                      |
-| ng         | 6.x.x   | https://cli.angular.io/ | Angular CLI                               |
+| node       | 14.x    | https://nodejs.org/en/  | JavaScript Runtime                        |
+| npm        | 6.x     | https://www.npmjs.com/  | Node Package Manager                      |
+| ng         | 11.x    | https://cli.angular.io/ | Angular CLI                               |
 
 _Note: This app also requires [bcgov/nr-fom-api](https://github.com/bcgov/nr-fom-api) to handle its requests and authentication._
 
 ## Third-Party Products/Libraries used and the licenses they are covered by
 <!--- product/library and path to the LICENSE --->
 <!--- Example: <library_name> - [![GitHub](<shield_icon_link>)](<path_to_library_LICENSE>) --->
-
-## Project Status
-- [x] Development
-- [ ] Production/Maintenance
 
 ## Documentation
 <!--- Point to another readme or create a GitHub Pages (https://guides.github.com/features/pages/) --->
