@@ -11,13 +11,10 @@
  */
 
 
-export interface ProjectPublicSummaryDto { 
-    id: number;
-    name: string;
-    geojson: object;
-    fspId: number;
-    forestClientName: string;
-    workflowStateName: string;
-    commentingOpenDate: string;
+export interface KeycloakConfig { 
+    enabled: boolean;
+    url: string;
+    realm: string;
+    clientId: string;
 }
 

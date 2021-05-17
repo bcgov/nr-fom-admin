@@ -3,7 +3,7 @@
     <a class="navbar-brand" title="Forest Operations Map - FOM" routerLink="/home">
       <span class="navbar-brand__title">Forest Operations Map - Admin </span>
     </a>
-    <!--<span class="navbar-environment" *ngIf="api.env !== 'prod'">{{api.env}}</span>-->
+    <span class="navbar-environment" *ngIf="environmentDisplay">{{environmentDisplay}}</span>
     <button class="navbar-toggler" type="button" title="Toggle Main Navigation"
             aria-controls="navbarText"
             aria-expanded="false"
@@ -12,28 +12,24 @@
       <i class="material-icons">menu</i>
       <span>MENU</span>
     </button>
+
     <div class="navbar-collapse" [@toggleNav]="isNavMenuOpen ? 'navOpen' : 'navClosed'" id="mainNav">
       <ul class="navbar-nav">
-        <li *ngIf="jwt" class="nav-item">
-          <a class="nav-link" routerLink="/a/create" title="Find or add new FOM" tabindex="0">
+        <li *ngIf="user && user.isForestClient" class="nav-item">
+          <a class="nav-link" routerLink="/a/create" title="Add a new FOM" tabindex="0">
             <span>Add New FOM</span>
           </a>
         </li>
-        <li *ngIf="jwt" class="nav-item">
-          <a class="nav-link" routerLink="/list" title="List FOM applications" tabindex="0">
+        <li *ngIf="user && (user.isMinistry || user.isForestClient)" class="nav-item">
+          <a class="nav-link" routerLink="/list" title="Search for FOMs" tabindex="1">
             <span>Search FOMs</span>
           </a>
         </li>
-        <!-- LOGGED IN -->
-        <li *ngIf="jwt; else loggedOut" class="nav-item" placement="bottom-right">
-          <a class="nav-link" id="welcome" tabindex="0">
-            <span>{{welcomeMsg}}</span>
+        <li *ngIf="user" class="nav-item" placement="bottom-right">
+          <a class="nav-link" (click)="navigateToLogout()" title="Log out" tabindex="0">
+            <span>{{logoutMsg}}</span>
           </a>
         </li>
-        <!-- LOGGED OUT -->
-        <ng-template #loggedOut>
-          <!-- Placeholder? -->
-        </ng-template>
       </ul>
     </div>
   </nav>

@@ -4,7 +4,8 @@ labels:
   template: fom-admin-deploy
   app: fom
   app-component: ${NAME}
-  tag: ${TAG}
+  # Need prefix for suffix in case it starts with a dash or is empty. Label values aren't allowed to start with a dash.
+  suffix: fom${SUFFIX}
   app.kubernetes.io/part-of: fom
 metadata:
   name: fom-admin-deploy
@@ -21,10 +22,10 @@ parameters:
     displayName: Name
     name: NAME
     value: fom-admin
-  - description: Tag (e.g. release/build) being deployed. Changing tag not tested, might break.
-    displayName: Tag
-    name: TAG
-    value: demo
+  - description: Suffix specifying the release/build/environment. Can be blank. Example '-working-dev'
+    displayName: Suffix
+    name: SUFFIX
+    value: -main-dev
   - description: Port number
     displayName: Port number
     name: PORT
@@ -58,7 +59,7 @@ parameters:
     name: REPLICA_COUNT
     required: false
     value: '2'
-  - description: DNS Hostname for the public route. For dev should default to nr-fom-${NAME}-${TAG}-${ENV}. (But can't use other parameters in default value.)
+  - description: DNS Hostname for the public route. For dev should default to nr-fom-${NAME}${SUFFIX}. (But can't use other parameters in default value.)
     displayName: DNS Hostname
     name: HOSTNAME
     required: true
@@ -76,12 +77,12 @@ objects:
       environmentName.js: |-
         window.localStorage.setItem('fom_environment_name', '${ENV}');
     metadata:
-      name: ${NAME}-${TAG}-${ENV}
+      name: ${NAME}${SUFFIX}
   ### DeploymentConfig
   - kind: DeploymentConfig
     apiVersion: apps.openshift.io/v1
     metadata:
-      name: ${NAME}-${TAG}-${ENV}
+      name: ${NAME}${SUFFIX}
     spec:
       replicas: ${{REPLICA_COUNT}}
       revisionHistoryLimit: 10
@@ -97,7 +98,7 @@ objects:
       resources: {}
       activeDeadlineSeconds: 21600
       selector:
-        deploymentconfig: ${NAME}-${TAG}-${ENV}
+        deploymentconfig: ${NAME}${SUFFIX}
       triggers:
         - type: ImageChange
           imageChangeParams:
@@ -113,7 +114,7 @@ objects:
         metadata:
           creationTimestamp: null
           labels:
-            deploymentconfig: ${NAME}-${TAG}-${ENV}
+            deploymentconfig: ${NAME}${SUFFIX}
         spec:
           containers:
             - name: app
@@ -162,13 +163,13 @@ objects:
           volumes:
             - name: env-config
               configMap:
-                name: ${NAME}-${TAG}-${ENV}
+                name: ${NAME}${SUFFIX}
 
   ### Service
   - kind: Service
     apiVersion: v1
     metadata:
-      name: ${NAME}-${TAG}
+      name: ${NAME}${SUFFIX}
     spec:
       ports:
         - name: ${SERVICE_PORT_NAME}
@@ -176,19 +177,19 @@ objects:
           port: ${{PORT}}
           targetPort: ${{PORT}}
       selector:
-        deploymentconfig: ${NAME}-${TAG}-${ENV}
+        deploymentconfig: ${NAME}${SUFFIX}
       type: ClusterIP
       sessionAffinity: None
   ### Route
   - kind: Route
     apiVersion: v1
     metadata:
-      name: ${NAME}-${TAG}
+      name: ${NAME}${SUFFIX}
     spec:
       host: ${HOSTNAME}.apps.silver.devops.gov.bc.ca
       to:
         kind: Service
-        name: ${NAME}-${TAG}
+        name: ${NAME}${SUFFIX}
         weight: 100
       port:
         targetPort: ${SERVICE_PORT_NAME}
@@ -200,10 +201,10 @@ objects:
   - kind: NetworkPolicy
     apiVersion: networking.k8s.io/v1
     metadata:
-      name: web-allow-external-${NAME}-${TAG}
+      name: web-allow-external-${NAME}${SUFFIX}
     spec:
       podSelector:
         matchLabels:
-          deploymentconfig: ${NAME}-${TAG}-${ENV}
+          deploymentconfig: ${NAME}${SUFFIX}
       ingress:
         - {}
