@@ -92,7 +92,7 @@
         <div class="form-group mb-0">
 <!--          <legend>FOM Supporting Documents</legend>-->
 
-          <app-upload-box [multipleFiles]="true" [files]="applicationFiles"></app-upload-box>
+          <app-upload-box [multipleFiles]="true" [files]="applicationFiles" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>
         </div>
         <!-- <div class="form-group mb-0">
           <legend>FOM Supporting Documents</legend>

@@ -116,7 +116,9 @@ export class UploadBoxComponent implements OnInit {
   ];
 
   // browse Link opens the file prompt
-  @Input() files: any[] = [];
+  @Input() files: File[] = [];
+
+  @Input() newGeometry: File = null;
 
   // limit for file types (set from global config)
   allowedFileTypes: string;
@@ -134,13 +136,13 @@ export class UploadBoxComponent implements OnInit {
     const day = dateTuple[2];
 
     // get the saved document data
-    if (this.files[0]?.fileDate) {
-      this.date = this.files[0].fileDate;
-
-      /* set today's date value as all files uploaded will be today's date */
-    } else {
-      this.date = `${day} - ${month} - ${year}`;
-    }
+    // if (this.files[0]?.fileDate) {
+    //   this.date = this.files[0].fileDate;
+    //
+    //   /* set today's date value as all files uploaded will be today's date */
+    // } else {
+    //   this.date = `${day} - ${month} - ${year}`;
+    // }
 
     /* file size multiplied by 1024 for conversion */
     this.maxFileSize = (this.maxFileSizeMB ? this.maxFileSizeMB : 5) * 1048576;
@@ -150,7 +152,12 @@ export class UploadBoxComponent implements OnInit {
   onSelect(event) {
     this.files = R.concat(event.addedFiles, this.files);
     this.invalidTypeText = null;
-    console.log(this.files)
+    this.newGeometry = event.addedFiles;
+    // let file:File = event.addedFiles;
+
+    console.log('list of files: ' + this.files.length);
+    // console.log('Geometry file: ' + reader.readAsArrayBuffer(blob));
+    // console.log(this.newGeometry);
 
     if (event.addedFiles.length > 0) {
       this.fileBlobsUploaded.emit(this.files);
@@ -162,10 +169,73 @@ export class UploadBoxComponent implements OnInit {
         this.invalidTypeText = 'The file size cannot exceed ' + this.maxFileSize / 1048576 + ' MB.';
       }
     }
+
+    let reader = new FileReader();
+
+    reader.onload = function() {
+      let text = reader.result;
+      console.log(text );
+    }
+    reader.readAsText(event.addedFiles);
+
+    //const fileContent = await this.readFileContent(this.newGeometry);
+    //console.log('fileContent: ', fileContent);
+
+    // this.fileToString(this.newGeometry)
+    //   .then((result) => {
+    //     console.log(result);
+    //   }).catch((e) => {
+    //     console.log(e)
+    // });
   }
 
   onRemove(event) {
     this.files.splice(this.files.indexOf(event), 1);
     this.fileBlobsUploaded.emit(this.files);
   }
+
+
+  readFileContent (file: File): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      if (!file) {
+        resolve('');
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        console.log('before returning: ', file);
+        const text = reader.result.toString();
+        console.log('before returning: ', text);
+        resolve(text);
+
+      };
+
+      reader.readAsText(file);
+    });
+
+  }
+
+// let fileToBlob = async (file) => new Blob([new Uint8Array(await file.arrayBuffer())], {type: file.type });
+  async fileToString (file: File) {
+    console.log(this.newGeometry)
+    try {
+      let fileReader = new FileReader();
+      const response = new Response(this.newGeometry);
+      const newBlob = await response.blob();
+      console.log('after newBlog')
+      console.log(this.newGeometry)
+      const arrayBuffer = await (newBlob.arrayBuffer());
+      console.log('after await arrayBuffer')
+      fileReader.readAsText(newBlob);
+      fileReader.result
+      console.log(fileReader);
+
+      console.log(newBlob)
+      console.log(arrayBuffer)
+    }catch (e){
+      console.log(e)
+    }
+  }
+
 }

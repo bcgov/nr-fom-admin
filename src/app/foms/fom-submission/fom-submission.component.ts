@@ -43,6 +43,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
   private scrollToFragment: string = null;
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
+  files: any[] = [];
 
   get isLoading() {
     return this.stateSvc.loading;
@@ -142,6 +143,55 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
     return date && !isNaN(date.year) && !isNaN(date.month) && !isNaN(date.day);
   }
 
+
+  addNewFiles(newFiles: any[]) {
+    this.files.push(newFiles);
+    console.log('Inserted files on parent: ' + this.files.length);
+    for (let file of this.files) {
+      // console.log(file);
+
+      this.convertToBlob(file)
+        .then((result) => {
+          console.log(result);
+        }).catch((e) => {
+          console.log(e)
+      });
+
+
+    }
+  }
+
+  async convertToBlob (file: File) {
+    console.log(file)
+    try {
+      let fileReader = new FileReader();
+      const response = new Response(file);
+      const newBlob = await response.blob();
+      console.log('after newBlog')
+      console.log(file)
+      const arrayBuffer = await (newBlob.arrayBuffer());
+      console.log('after await arrayBuffer')
+      fileReader.readAsText(newBlob);
+      fileReader.result
+      console.log(fileReader);
+
+      console.log(newBlob)
+      console.log(arrayBuffer)
+    }catch (e){
+      console.log(e)
+    }
+  }
+
+  useReader(file: File){
+    let reader = new FileReader();
+
+    reader.onload = function(e) {
+      let text = reader.result;
+      console.log(text );
+    }
+    reader.readAsText(file);
+
+  }
   // add application or decision documents
   public addDocuments(files: FileList, documents: Document[]) {
     if (files && documents) {
