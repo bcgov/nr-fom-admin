@@ -46,7 +46,6 @@ export class KeycloakService {
     // Cannot call AuthService.authControllerGetKeycloakConfig because this introduces a circular dependency when autowired in the constructor because
     // AuthSerivce needs tokenInterceptor, tokenInterceptor needs KeycloakService. Therefore we just use the HttpClient directly in this init method.
     var url:string = this.configService.getApiBasePath()+"/api/keycloakConfig";
-    console.log("Loading keycloak config from URL " + url);
     var data = await this.http.get(url, { observe: "body", responseType: "json"}).toPromise(); 
     this.config = data as KeycloakConfig;
 
@@ -63,23 +62,8 @@ export class KeycloakService {
     return new Promise((resolve, reject) => {
 
       this.keycloakAuth = new Keycloak(this.config);
-/*
-      this.keycloakAuth.onAuthSuccess = () => {
-        console.log('onAuthSuccess');
-      };
-      this.keycloakAuth.onAuthError = () => {
-        console.log('onAuthError');
-      };
-      this.keycloakAuth.onAuthRefreshSuccess = () => {
-        console.log('onAuthRefreshSuccess');
-      };
-      this.keycloakAuth.onAuthRefreshError = () => {
-        console.log('onAuthRefreshError');
-      };
-      this.keycloakAuth.onAuthLogout = () => {
-        console.log('onAuthLogout');
-      };
-*/
+      // Logging could be done on various events - onAuthSuccess, onAuthError, onAuthRefreshSuccess, onAuthRefreshError, onAuthLogout - but isn't needed.
+
       // Try to get refresh tokens in the background
       this.keycloakAuth.onTokenExpired = () => {
         this.keycloakAuth
@@ -101,7 +85,7 @@ export class KeycloakService {
               // Don't do anything, they wanted to remain logged out.
               resolve(null); 
             } else {
-              this.keycloakAuth.login({ kc_idp_hint: ['idir', 'bceid']}); // TODO: Unknown if this will work as specified.
+              this.keycloakAuth.login(); // Cannot use IDP hint for two provides { kc_idp_hint: ['idir', 'bceid']}); 
               // If not authorized for FOM, the header-component will route the user to the not-authorized page.
             }
           } else {
@@ -132,9 +116,10 @@ export class KeycloakService {
       return null;
     }
 
-    console.log('decoded token = ' + JSON.stringify(decodedToken)); // TODO: REMOVE
+    const user = User.convertJwtToUser(decodedToken);
+    console.log("User " + JSON.stringify(user)); // TODO:REMOVE
 
-    return User.convertJwtToUser(decodedToken);
+    return user;
   }
 
   /**
@@ -145,7 +130,6 @@ export class KeycloakService {
    */
   public getToken(): string {
     if (!this.config.enabled) {
-      // TODO: Change this to convert user to JWT format?
       return JSON.stringify(this.fakeUser);
     }
 
@@ -181,7 +165,6 @@ export class KeycloakService {
     if (!this.config.enabled) {
       this.fakeUser = null;
     }
-    // TODO: Update UserService?
   }
 
   getLogoutURL(): string {
