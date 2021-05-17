@@ -4,13 +4,13 @@ export function getFakeUser():User {
   const userType:string = 'AllAccess'; // NoAccess, ForestClient, Ministry, AllAccess
   switch (userType) {
     case 'NoAccess':
-      return this.getFakeNoAccessUser();
+      return getFakeNoAccessUser();
     case 'ForestClient':
-      return this.getFakeForestClientUser();
+      return getFakeForestClientUser();
     case 'Ministry':
-      return this.getFakeMinistryUser();
+      return getFakeMinistryUser();
     case 'AllAccess':
-      return this.getFakeAllAccessUser();
+      return getFakeAllAccessUser();
     default:
       return null;
   }
