@@ -55,6 +55,7 @@ export class KeycloakService {
 
     if (!this.config.enabled) {
       this.fakeUser = getFakeUser();
+      this.initialized = true;
       return null;
     }
 
