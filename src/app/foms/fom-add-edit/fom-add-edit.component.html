@@ -13,7 +13,7 @@
         >
           Cancel
         </button>
-        <app-button *ngIf="isCreate; else saveButton" title="You cannot save a retired application" (click)="submit()"
+        <app-button *ngIf="isCreate; else saveButton" title="Save your changes" (click)="submit()"
                     [disabled]="!fg.isModified">{{ isLoading ? "Submitting" : "Submit" }}</app-button>
 
       </div>
@@ -107,7 +107,7 @@
           <div class="form-group col">
             <label>FOM Holder</label>
             <select class="sort-comments form-control"  (change)="changeForestClientId($event)" id="forestClient-list">
-              <option  [value]="client.id" *ngFor="let client of forestClients" [selected]="client.id === districtIdSelect" [innerHTML]=" client.name"> </option>
+              <option  [value]="client.id" *ngFor="let client of forestClients" [selected]="client.id === forestClientSelect" [innerHTML]=" client.name"> </option>
             </select>
           </div>
 
@@ -188,6 +188,6 @@
 
 
   <app-button
-    title="You cannot save a retired application"
+    title="Save your changes"
     (click)="saveApplication()">{{ isLoading ? "Saving" : "Save" }}</app-button>
 </ng-template>

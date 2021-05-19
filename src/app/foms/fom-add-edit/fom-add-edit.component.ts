@@ -7,7 +7,7 @@ import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import {Observable, of, Subject} from 'rxjs';
 import {switchMap, takeUntil, tap} from 'rxjs/operators';
 
-import {DistrictDto, ProjectDto, ProjectService, ForestClientDto} from 'core/api';
+import {DistrictDto, ProjectDto, ProjectService, ForestClientDto, ForestClientService} from 'core/api';
 import {RxFormBuilder, RxFormGroup} from '@rxweb/reactive-form-validators';
 import { DatePipe } from '@angular/common';
 import {FomAddEditForm} from './fom-add-edit.form';
@@ -63,38 +63,9 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     private formBuilder: RxFormBuilder,
     private stateSvc: StateService,
     private modalSvc: ModalService,
-    private datePipe: DatePipe
-  ) {
-      const atco: ForestClientDto = {
-      id: '1065',
-      name: 'ATCO LUMBER LTD.'
-    }
-
-    const canadianForest: ForestClientDto = {
-      id: '1271',
-      name: 'CANADIAN FOREST PRODUCTS LTD.'
-    }
-
-    const interfor: ForestClientDto = {
-      id: '2176',
-      name: 'INTERFOR CORPORATION'
-    }
-
-    const tolko: ForestClientDto = {
-      id: '147603',
-      name: 'TOLKO INDUSTRIES LTD.'
-    }
-
-    const westFraser: ForestClientDto = {
-      id: '142662',
-      name: 'WEST FRASER MILLS LTD'
-    }
-      this.forestClients.push(atco);
-      this.forestClients.push(canadianForest);
-      this.forestClients.push(interfor);
-      this.forestClients.push(tolko);
-      this.forestClients.push(westFraser);
-  }
+    private datePipe: DatePipe,
+    private  forestSvc: ForestClientService
+  ) { }
 
   // check for unsaved changes before navigating away from current route (ie, this page)
   public canDeactivate(): Observable<boolean> | boolean {
@@ -145,8 +116,18 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
       // Converting commentingClosedDate date to 'yyyy-MM-dd'
       datePipe = this.datePipe.transform(this.fg.value.commentingClosedDate,'yyyy-MM-dd');
       this.fg.get('commentingClosedDate').setValue(datePipe);
+
+      this.loadForestClients().then( (result) => {
+        this.forestClients = result;
+      }).catch((error)=> {
+        console.log('Error: ', error)
+      });
     });
   }
+
+  async loadForestClients (): Promise<ForestClientDto[]> {
+   return await this.forestSvc.forestClientControllerFindAll().toPromise()
+}
 
   addNewFiles(newFiles: any[]) {
     this.files.push(newFiles);
