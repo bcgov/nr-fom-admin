@@ -118,7 +118,7 @@ export class UploadBoxComponent implements OnInit {
   // browse Link opens the file prompt
   @Input() files: File[] = [];
 
-  @Input() newGeometry: File = null;
+  @Input() publicNoticeDocument: File = null;
 
   // limit for file types (set from global config)
   allowedFileTypes: string;
@@ -152,31 +152,40 @@ export class UploadBoxComponent implements OnInit {
   onSelect(event) {
     this.files = R.concat(event.addedFiles, this.files);
     this.invalidTypeText = null;
-    this.newGeometry = event.addedFiles;
+    // this.newGeometry = event.addedFiles;
     // let file:File = event.addedFiles;
 
-    console.log('list of files: ' + this.files.length);
-    // console.log('Geometry file: ' + reader.readAsArrayBuffer(blob));
-    // console.log(this.newGeometry);
+    //This will be logged if you attempt to upload multiple files at a time
+    console.log('rejected', event.rejectedFiles);
 
-    if (event.addedFiles.length > 0) {
+    if (event.rejectedFiles.some((r) => r.reason === 'type')) {
+      this.invalidTypeText = 'The file type is not accepted';
+    } else if (event.rejectedFiles.some((r) => r.reason === 'size')) {
+      this.invalidTypeText = 'The file size cannot exceed ' + this.maxFileSize / 1048576 + ' MB.';
+    } else if (event.rejectedFiles.some((r) => r.reason === 'no_multiple')) {
+      this.invalidTypeText = 'Only one file can be uploaded';
+    }
+
+    if (this.files.length > 1 && !this.multipleFiles){
+      console.log('files: ', this.files)
+      this.invalidTypeText = 'Only one document is allowed';
+    }
+    if (event.addedFiles.length > 0 ) {
+      console.log('inside')
       this.fileBlobsUploaded.emit(this.files);
-    } else {
-      console.log(event.rejectedFiles);
-      if (event.rejectedFiles.some((r) => r.reason === 'type')) {
-        this.invalidTypeText = 'The file type is not accepted';
-      } else if (event.rejectedFiles.some((r) => r.reason === 'size')) {
-        this.invalidTypeText = 'The file size cannot exceed ' + this.maxFileSize / 1048576 + ' MB.';
-      }
     }
+    // else {
+    //   console.log('rejected else', event.rejectedFiles);
+    //
+    // }
 
-    let reader = new FileReader();
-
-    reader.onload = function() {
-      let text = reader.result;
-      console.log(text );
-    }
-    reader.readAsText(event.addedFiles);
+    // let reader = new FileReader();
+    //
+    // reader.onload = function() {
+    //   let text = reader.result;
+    //   console.log(text );
+    // }
+    // reader.readAsText(event.addedFiles);
 
     //const fileContent = await this.readFileContent(this.newGeometry);
     //console.log('fileContent: ', fileContent);
@@ -217,25 +226,25 @@ export class UploadBoxComponent implements OnInit {
   }
 
 // let fileToBlob = async (file) => new Blob([new Uint8Array(await file.arrayBuffer())], {type: file.type });
-  async fileToString (file: File) {
-    console.log(this.newGeometry)
-    try {
-      let fileReader = new FileReader();
-      const response = new Response(this.newGeometry);
-      const newBlob = await response.blob();
-      console.log('after newBlog')
-      console.log(this.newGeometry)
-      const arrayBuffer = await (newBlob.arrayBuffer());
-      console.log('after await arrayBuffer')
-      fileReader.readAsText(newBlob);
-      fileReader.result
-      console.log(fileReader);
-
-      console.log(newBlob)
-      console.log(arrayBuffer)
-    }catch (e){
-      console.log(e)
-    }
-  }
+//   async fileToString (file: File) {
+//     console.log(this.publicNoticeDocument)
+//     try {
+//       let fileReader = new FileReader();
+//       const response = new Response(this.publicNoticeDocument);
+//       const newBlob = await response.blob();
+//       console.log('after newBlog')
+//       console.log(this.publicNoticeDocument)
+//       const arrayBuffer = await (newBlob.arrayBuffer());
+//       console.log('after await arrayBuffer')
+//       fileReader.readAsText(newBlob);
+//       fileReader.result
+//       console.log(fileReader);
+//
+//       console.log(newBlob)
+//       console.log(arrayBuffer)
+//     }catch (e){
+//       console.log(e)
+//     }
+//   }
 
 }

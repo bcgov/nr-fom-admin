@@ -191,7 +191,6 @@ export class SearchComponent implements OnInit, OnDestroy {
   public onImport() {
     // try {
     this.router.navigate(['/a/create']);
-    console.log('on import')
     // } catch (err) {
     // console.log('error, invalid application =', application);
     // this.snackBarRef = this.snackBar.open('Error creating application ...', null, { duration: 3000 });

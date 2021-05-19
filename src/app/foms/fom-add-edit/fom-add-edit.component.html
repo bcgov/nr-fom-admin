@@ -39,7 +39,7 @@
               id="id"
               name="name"
               disabled
-              [value]="originalApplication.id"
+              [value]="originalProject.id"
             />
           </div>
           <div class="form-group col-md">
@@ -128,7 +128,8 @@
         <div class="form-group mb-0">
           <legend>FOM Supporting Documents</legend>
 
-          <app-upload-box [multipleFiles]="true" [files]="applicationFiles"></app-upload-box>
+          <app-upload-box [multipleFiles]="true" [files]="fomSupportingDocuments" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>
+<!--          <app-upload-box [multipleFiles]="true" [files]="applicationFiles" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>-->
         </div>
         <!-- <div class="form-group mb-0">
           <legend>FOM Supporting Documents</legend>
@@ -172,65 +173,12 @@
       </fieldset>
 
       <fieldset name="decisionForm" id="appDecision">
-        <!-- <legend class="mb-3">Initial Public Notice</legend> -->
-        <legend>Initial Public Notice</legend>
-        <!-- <div class="mb-4" *ngIf="application.meta.decision"> -->
-        <div class="mb-4">
-          <div class="form-group">
-            <ul
-              class="doc-list mb-3"
-            >
-              <!-- <li *ngFor="let doc of (application['attachments'] || [])">
-                <span class="cell icon">
-                  <i class="material-icons">insert_drive_file</i>
-                </span>
-                <span class="cell name" [title]="doc.displayName || ''">
-                  <span class="cell__txt-content">
-                    {{ doc.documentFileName }}
-                  </span>
-                </span>
-                <span class="cell actions">
-                  <button
-                    class="btn btn-icon"
-                    type="button"
-                    title="Delete this document"
-                    (click)="
-                      deleteDocument(
-                        doc,
-                        (application['attachments'] || [])
-                      )
-                    "
-                  >
-                    <i class="material-icons">delete</i>
-                  </button>
-                </span>
-              </li> -->
-            </ul>
-            <!-- <app-file-upload
-              [fileExt]="['jpg', 'jpeg', 'png', 'pdf', 'tiff']"
-              [maxFiles]="0"
-              [maxSize]="10"
-              [showList]="false"
-              [files]="decisionFiles"
-              (filesChange)="
-                addDocuments($event, (application['attachments'] || []));
-                decisionFiles = []
-              "
-            ></app-file-upload> -->
-          </div>
+        <div class="form-group mb-0">
+          <legend>Initial Public Notice</legend>
+
+          <app-upload-box [multipleFiles]="false" [files]="initialPublicDocument" (fileBlobsUploaded)="addNewPublicNoticeDocument($event)"></app-upload-box>
+          <!--          <app-upload-box [multipleFiles]="true" [files]="applicationFiles" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>-->
         </div>
-        <!-- <button class="btn content-btn-alt" type="button" title="Add decision documents"
-          *ngIf="!application.meta.decision"
-          (click)="addDecision()">
-          <i class="material-icons md-20">add</i>
-          Add Decision Documents
-        </button>
-        <button class="btn content-btn-alt danger" type="button" title="Remove the decision documents"
-          *ngIf="application.meta.decision"
-          (click)="deleteDecision()">
-          <i class="material-icons md-20">remove</i>
-          Remove Decision Documents
-        </button> -->
       </fieldset>
     </form>
   </div>
