@@ -14,8 +14,7 @@
           Cancel
         </button>
 <!--        <app-button *ngIf="true; else saveButton" title="Upload your GeoJSON FOM File" (click)="submit()"-->
-        <app-button *ngIf="true; else saveButton" title="Upload your GeoJSON FOM File"
-                    [disabled]="!fg.isModified">{{ isLoading ? "Submitting" : "Submit" }}</app-button>
+        <app-button *ngIf="true; else saveButton" title="Upload your GeoJSON FOM File" (click)="submit()">{{ isLoading ? "Submitting" : "Submit" }}</app-button>
 
       </div>
     </div>
@@ -92,7 +91,8 @@
         <div class="form-group mb-0">
 <!--          <legend>FOM Supporting Documents</legend>-->
 
-          <app-upload-box [multipleFiles]="true" [files]="applicationFiles" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>
+          <app-upload-box [multipleFiles]="false" [files]="applicationFiles" (fileUploaded)="addNewFiles($event)"
+                          (outputFileContent)="getContentFileFromUpload($event)"></app-upload-box>
         </div>
         <!-- <div class="form-group mb-0">
           <legend>FOM Supporting Documents</legend>
