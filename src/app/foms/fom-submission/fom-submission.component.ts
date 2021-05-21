@@ -23,6 +23,8 @@ import { DatePipe } from '@angular/common';
 import {FomSubmissionForm} from './fom-submission.form';
 import {StateService} from 'core/services/state.service';
 import {ModalService} from 'core/services/modal.service';
+import {SubmissionService} from 'core/api';
+
 // import {UploadBoxComponent} from "../../../core/components/file-upload-box/file-upload-box.component";
 
 export type ApplicationPageType = 'create' | 'edit';
@@ -44,6 +46,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
   files: any[] = [];
+  contentFile: string;
 
   get isLoading() {
     return this.stateSvc.loading;
@@ -62,6 +65,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
     private formBuilder: RxFormBuilder,
     private stateSvc: StateService,
     private modalSvc: ModalService,
+    private submissionSvc: SubmissionService
     // private uploadBox: UploadBoxComponent
   ) {  }
 
@@ -103,6 +107,9 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
       }
       const form = new FomSubmissionForm(this.submissionDto);
       this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
+      this.fg.get('projectId').setValue(this.submissionDto.projectId);
+      this.fg.get('submissionTypeCode').setValue(this.submissionDto.submissionTypeCode);
+      this.fg.get('spatialObjectCode').setValue(this.submissionDto.spatialObjectCode);
       console.log('submissionDto: ' + this.fg.get('projectId').value);
     });
   }
@@ -145,82 +152,19 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
 
 
   addNewFiles(newFiles: any[]) {
+    console.log('addNewFiles:', newFiles);
     this.files.push(newFiles);
-    console.log('Inserted files on parent: ' + this.files.length);
-    for (let file of this.files) {
-      // console.log(file);
-
-      this.convertToBlob(file)
-        .then((result) => {
-          console.log(result);
-        }).catch((e) => {
-          console.log(e)
-      });
-
-
-    }
   }
 
-  async convertToBlob (file: File) {
-    console.log(file)
-    try {
-      let fileReader = new FileReader();
-      const response = new Response(file);
-      const newBlob = await response.blob();
-      console.log('after newBlog')
-      console.log(file)
-      const arrayBuffer = await (newBlob.arrayBuffer());
-      console.log('after await arrayBuffer')
-      fileReader.readAsText(newBlob);
-      fileReader.result
-      console.log(fileReader);
-
-      console.log(newBlob)
-      console.log(arrayBuffer)
-    }catch (e){
-      console.log(e)
-    }
+  getContentFileFromUpload(fileContent: string) {
+    this.contentFile = fileContent;
+    this.submissionDto.jsonSpatialSubmission = JSON.parse(this.contentFile);
+    this.fg.get('jsonSpatialSubmission').setValue(this.submissionDto.jsonSpatialSubmission);
+    // console.log('inside getContent: ', fileContent);
+    console.log('inside getContent: ', JSON.stringify(this.submissionDto));
   }
 
-  useReader(file: File){
-    let reader = new FileReader();
-
-    reader.onload = function(e) {
-      let text = reader.result;
-      console.log(text );
-    }
-    reader.readAsText(file);
-
-  }
-  // add application or decision documents
-  public addDocuments(files: FileList, documents: Document[]) {
-    if (files && documents) {
-      // safety check
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < files.length; i++) {
-        if (files[i]) {
-          // ensure file is not already in the list
-          if (_.find(documents, doc => doc.documentFileName === files[i].name)) {
-            this.snackBarRef = this.snackBar.open("Can't add duplicate file", null, {duration: 2000});
-            continue;
-          }
-
-          const formData = new FormData();
-          formData.append('displayName', files[i].name);
-          formData.append('upfile', files[i]);
-
-          const document = new Document();
-          document['formData'] = formData; // temporary
-          document.documentFileName = files[i].name;
-
-          // save document for upload to db when application is added or saved
-          documents.push(document);
-        }
-      }
-    }
-  }
-
-  // this is part 1 of saving an application and all its objects
+   // this is part 1 of saving an application and all its objects
   // (multi-part due to dependencies)
 
   validate() {
@@ -242,14 +186,17 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   async submit() {
-    this.validate();
-    if (!this.fg.valid) return;
-    if (this.stateSvc.loading) return;
-    const result = await this.projectSvc.projectControllerCreate(this.fg.value as ProjectDto).pipe(tap(obs => console.log(obs))).toPromise()
-    const {id} = result;
-    if (!id) {
-    }
-    this.onSuccess(id)
+    // this.validate();
+    // if (!this.fg.valid) return;
+    // if (this.stateSvc.loading) return;
+    // const result = await this.projectSvc.projectControllerCreate(this.fg.value as ProjectDto).pipe(tap(obs => console.log(obs))).toPromise()
+    // TODO: We need go improve this as it's returning null
+    const result = await this.submissionSvc.submissionControllerProcessSpatialSubmission(this.fg.value as SubmissionDto).toPromise();
+    console.log('result: ', result)
+    // const {id} = result;
+    // if (!id) {
+    // }
+     this.onSuccess(this.submissionDto.projectId);
   }
 
   onSuccess(id: number) {

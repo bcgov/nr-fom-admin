@@ -2,7 +2,7 @@
   <div class="container">
     <div class="title-container">
       <div class="title-container__title">
-        <h1 class="text-muted">{{isCreate ? 'Create' : 'Edit'}} FOM</h1>
+        <h1 class="text-muted">{{isCreate ? 'Add New' : 'Edit'}} FOM</h1>
       </div>
       <div class="title-container__actions">
         <button
@@ -128,7 +128,7 @@
         <div class="form-group mb-0">
           <legend>FOM Supporting Documents</legend>
 
-          <app-upload-box [multipleFiles]="true" [files]="fomSupportingDocuments" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>
+          <app-upload-box [multipleFiles]="true" [files]="fomSupportingDocuments" (fileUploaded)="addNewFiles($event)"></app-upload-box>
 <!--          <app-upload-box [multipleFiles]="true" [files]="applicationFiles" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>-->
         </div>
         <!-- <div class="form-group mb-0">
@@ -176,7 +176,8 @@
         <div class="form-group mb-0">
           <legend>Initial Public Notice</legend>
 
-          <app-upload-box [multipleFiles]="false" [files]="initialPublicDocument" (fileBlobsUploaded)="addNewPublicNoticeDocument($event)"></app-upload-box>
+          <app-upload-box [multipleFiles]="false" [files]="initialPublicDocument"
+                          (fileUploaded)="addNewPublicNoticeDocument($event)"></app-upload-box>
           <!--          <app-upload-box [multipleFiles]="true" [files]="applicationFiles" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>-->
         </div>
       </fieldset>

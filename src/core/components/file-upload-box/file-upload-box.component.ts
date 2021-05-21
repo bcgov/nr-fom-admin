@@ -90,7 +90,8 @@ export class UploadBoxComponent implements OnInit {
   @Input() date: string;
   @Input() maxFileSizeMB: number;
 
-  @Output() fileBlobsUploaded = new EventEmitter<File[]>();
+  @Output() fileUploaded = new EventEmitter<File[]>();
+  @Output() outputFileContent = new EventEmitter<string>();
   monthVal = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   faLockOpen = faLockOpen;
   faLock = faLock;
@@ -128,6 +129,8 @@ export class UploadBoxComponent implements OnInit {
 
   invalidTypeText: string;
 
+  fileContent: string;
+
   constructor() { }
   ngOnInit(): void {
     const dateTuple = dateBuilder();
@@ -152,8 +155,6 @@ export class UploadBoxComponent implements OnInit {
   onSelect(event) {
     this.files = R.concat(event.addedFiles, this.files);
     this.invalidTypeText = null;
-    // this.newGeometry = event.addedFiles;
-    // let file:File = event.addedFiles;
 
     //This will be logged if you attempt to upload multiple files at a time
     console.log('rejected', event.rejectedFiles);
@@ -169,38 +170,31 @@ export class UploadBoxComponent implements OnInit {
     if (this.files.length > 1 && !this.multipleFiles){
       console.log('files: ', this.files)
       this.invalidTypeText = 'Only one document is allowed';
+      this.onRemove(event);
     }
     if (event.addedFiles.length > 0 ) {
-      console.log('inside')
-      this.fileBlobsUploaded.emit(this.files);
+      // console.log('inside')
+      this.lookFile(this.files[0]);
+      console.log('File Content After: ', this.fileContent);
+
     }
-    // else {
-    //   console.log('rejected else', event.rejectedFiles);
-    //
-    // }
+  }
 
-    // let reader = new FileReader();
-    //
-    // reader.onload = function() {
-    //   let text = reader.result;
-    //   console.log(text );
-    // }
-    // reader.readAsText(event.addedFiles);
-
-    //const fileContent = await this.readFileContent(this.newGeometry);
-    //console.log('fileContent: ', fileContent);
-
-    // this.fileToString(this.newGeometry)
-    //   .then((result) => {
-    //     console.log(result);
-    //   }).catch((e) => {
-    //     console.log(e)
-    // });
+  lookFile(file: File) {
+    // console.log("file = " + JSON.stringify(file));
+    let reader = new FileReader();
+    reader.addEventListener('load', (event) => {
+      this.fileContent = event.target.result.toString();
+      this.fileUploaded.emit(this.files);
+      this.outputFileContent.emit(this.fileContent);
+    })
+    reader.readAsText(file);
   }
 
   onRemove(event) {
+    console.log('inside onRemove');
     this.files.splice(this.files.indexOf(event), 1);
-    this.fileBlobsUploaded.emit(this.files);
+    this.fileUploaded.emit(this.files);
   }
 
 
