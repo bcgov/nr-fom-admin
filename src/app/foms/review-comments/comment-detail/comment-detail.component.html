@@ -4,7 +4,6 @@
 
 <div class="comment-detail-container" *ngIf="comment">
   <div class="title-container__title">
-    <!-- <h2>{{comment.commentAuthor.contactName || 'Anonymous'}} <span *ngIf="comment.commentAuthor.orgName">({{comment.commentAuthor.orgName}})</span></h2> -->
     <h2>{{comment.name || 'Anonymous'}}</h2>
     <div class="comment-detail__date">
       {{comment.createTimestamp | date:'medium'}}
@@ -25,30 +24,34 @@
   <div class="comment-detail__body" [innerHTML]="comment.feedback | newlines"></div>
   <hr>
 
-
-  <div class="row">
-    <div class="col-md-6">
-      <label>Classify comment</label>
-    </div>
-    <div class="col-md-6">
-      <label>Details</label>
-    </div>
-  </div>
+  
   <form [formGroup]="commentFormGroup">
     <div class="row">
-      <div class="col-md-6">
-        <select class="sort-comments form-control mb-3" id="comment-response" formControlName="responseCode">
-          <option *ngFor="let code of responseCodes" [ngValue]="code.code">{{code.description}}</option>
-
-        </select>
-      </div>
-      <div class="col-md-6">
-      <textarea class="form-control  mb" rows="3" id="detail" name="detail" formControlName="responseDetails">
-      </textarea>
+      <div class="col-md-4">
+        <label>Response to Commment</label>
       </div>
     </div>
-    <ng-content>
+    <div class="row">
+      <div class="col-md-3">
+        <select class="sort-comments form-control mb-3" id="comment-response" formControlName="responseCode">
+          <option *ngFor="let code of responseCodes" [ngValue]="code.code">{{code.description}}</option>
+        </select>
+      </div>
+    </div>
 
+    <div class="row">
+      <div class="col-md-12">
+        <label>Response Details</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <textarea class="form-control  mb" rows="3" id="detail" name="detail" formControlName="responseDetails">
+        </textarea>
+      </div>
+    </div>
+    &nbsp;
+    <ng-content>
     </ng-content>
-  </form>
+</form>
 </div>
