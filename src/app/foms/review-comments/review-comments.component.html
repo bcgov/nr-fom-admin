@@ -26,10 +26,12 @@
         <div class="review-comments__list panel">
           <div class="panel-header">
             <h2>Comments ({{data?.comments?.length}})</h2>
+            <!--
             <select class="sort-comments form-control" [formControl]="sortControl" placeholder="Sort by">
 
               <option *ngFor="let sortKey of sortKeys;" [ngValue]="sortKey">{{sortKey.innerHTML}}</option>
             </select>
+            -->
           </div>
           <div class="panel-scroll" #commentListScrollContainer>
             <ng-container *ngIf="results$ | async as results">
@@ -46,6 +48,9 @@
                     </div>
                     <div class="comment-date">
                       {{(item.createTimestamp | date) || '-'}}
+                    </div>
+                    <div class="comment-response">
+                      {{item.response?.description || '(no response)'}}
                     </div>
                   </div>
                   <div class="comment-body">{{item.feedback}}</div>
