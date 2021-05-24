@@ -99,7 +99,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
       if (!this.isCreate) {
         this.originalProject = data as ProjectDto;
 
-        console.log('ProjectDto: ', JSON.stringify(data));
+
         if (data.districtId != null){
           this.districtIdSelect = this.originalProject.districtId;
         }
@@ -109,6 +109,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
       const form = new FomAddEditForm(data);
       this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
+      console.log('ProjectDto: ', this.fg.value as ProjectDto);
 
       // Converting commentingOpenDate date to 'yyyy-MM-dd'
       let datePipe = this.datePipe.transform(this.fg.value.commentingOpenDate,'yyyy-MM-dd');
