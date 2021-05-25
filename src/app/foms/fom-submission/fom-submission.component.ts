@@ -46,6 +46,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
   files: any[] = [];
+  public geoTypeValues: String[] = [];
   contentFile: string;
 
   get isLoading() {
@@ -65,7 +66,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
     private formBuilder: RxFormBuilder,
     private stateSvc: StateService,
     private modalSvc: ModalService,
-    private submissionSvc: SubmissionService
+    private submissionSvc: SubmissionService,
     // private uploadBox: UploadBoxComponent
   ) {  }
 
@@ -92,7 +93,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngOnInit() {
-
+   this.geoTypeValues = Object.values(SpatialObjectCodeEnum);
     this.route.url.pipe(takeUntil(this.ngUnsubscribe), switchMap(url => {
         // this.state = url[1].path === 'create' ? 'create' : 'edit'
         return this.projectSvc.projectControllerFindOne(this.route.snapshot.params.appId);
@@ -109,7 +110,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
       this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
       this.fg.get('projectId').setValue(this.submissionDto.projectId);
       this.fg.get('submissionTypeCode').setValue(this.submissionDto.submissionTypeCode);
-      this.fg.get('spatialObjectCode').setValue(this.submissionDto.spatialObjectCode);
+      // this.fg.get('spatialObjectCode').setValue(this.submissionDto.spatialObjectCode);
       console.log('submissionDto: ' + this.fg.get('projectId').value);
     });
   }
@@ -158,10 +159,15 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
 
   getContentFileFromUpload(fileContent: string) {
     this.contentFile = fileContent;
-    this.submissionDto.jsonSpatialSubmission = JSON.parse(this.contentFile);
+    try {
+      this.submissionDto.jsonSpatialSubmission = JSON.parse(this.contentFile);
+    }catch (e) {
+      // TODO - Show the proper popup message
+      throw new Error(e);
+    }
     this.fg.get('jsonSpatialSubmission').setValue(this.submissionDto.jsonSpatialSubmission);
     // console.log('inside getContent: ', fileContent);
-    console.log('inside getContent: ', JSON.stringify(this.submissionDto));
+    // console.log('inside getContent: ', JSON.stringify(this.submissionDto));
   }
 
    // this is part 1 of saving an application and all its objects
@@ -186,6 +192,11 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   async submit() {
+    // console.log('project', this.fg.get('projectId').value)
+    // console.log('submissionTypeCode', this.fg.get('submissionTypeCode').value)
+    // console.log('spatialObjectCode', this.fg.get('spatialObjectCode').value)
+    // console.log('spatialSub', this.fg.get('jsonSpatialSubmission').value)
+
     // this.validate();
     // if (!this.fg.valid) return;
     // if (this.stateSvc.loading) return;
@@ -206,6 +217,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
 
 
   async saveApplication() {
+    console.log('inside save')
     const {id, district, forestClient, workflowState, ...rest} = this.project;
 
     const updateDto = {...rest, ...this.fg.value}
@@ -232,11 +244,8 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
 
   }
 
-  changeDistrictId(e) {
-    this.fg.get('districtId').setValue(e.target.value);
-  }
 
-  changeForestClientId(e) {
-    this.fg.get('forestClientNumber').setValue(e.target.value);
+  changeGeoType(e) {
+    this.fg.get('spatialObjectCode').setValue(e.target.value);
   }
 }

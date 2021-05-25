@@ -16,22 +16,26 @@ import {ReviewCommentsComponent} from './review-comments/review-comments.compone
 import {CommentDetailComponent} from './review-comments/comment-detail/comment-detail.component';
 import {LeafletModule} from '@asymmetrik/ngx-leaflet';
 import { FomSubmissionComponent } from './fom-submission/fom-submission.component';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 // services
 // import { ExportService } from 'core/services/export.service';
 
 @NgModule({
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    CommonModule,
-    SharedModule,
-    NgxPaginationModule,
-    NgbModule,
-    InlineSVGModule.forRoot(),
-    FomRoutingModule,
-    LeafletModule
-  ],
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        CommonModule,
+        SharedModule,
+        NgxPaginationModule,
+        NgbModule,
+        InlineSVGModule.forRoot(),
+        FomRoutingModule,
+        LeafletModule,
+        BrowserAnimationsModule,
+        BsDatepickerModule.forRoot(),
+
+    ],
   declarations: [
     FomDetailComponent,
     FomAsideComponent,

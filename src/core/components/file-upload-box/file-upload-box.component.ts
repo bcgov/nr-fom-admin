@@ -174,14 +174,11 @@ export class UploadBoxComponent implements OnInit {
     }
     if (event.addedFiles.length > 0 ) {
       // console.log('inside')
-      this.lookFile(this.files[0]);
-      console.log('File Content After: ', this.fileContent);
-
+      this.readFileContent(this.files[0]);
     }
   }
 
-  lookFile(file: File) {
-    // console.log("file = " + JSON.stringify(file));
+  readFileContent(file: File) {
     let reader = new FileReader();
     reader.addEventListener('load', (event) => {
       this.fileContent = event.target.result.toString();
@@ -198,26 +195,6 @@ export class UploadBoxComponent implements OnInit {
   }
 
 
-  readFileContent (file: File): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      if (!file) {
-        resolve('');
-      }
-
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        console.log('before returning: ', file);
-        const text = reader.result.toString();
-        console.log('before returning: ', text);
-        resolve(text);
-
-      };
-
-      reader.readAsText(file);
-    });
-
-  }
 
 // let fileToBlob = async (file) => new Blob([new Uint8Array(await file.arrayBuffer())], {type: file.type });
 //   async fileToString (file: File) {

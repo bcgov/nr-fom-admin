@@ -51,12 +51,16 @@
             <label  style="white-space: nowrap;">Submission Type:</label>
           </div>
           <div class="col">
-            <label  style="white-space: nowrap;">Proposed</label>
-<!--              <select name="typeCode" class="sort-comments form-control"  id="district-list">-->
-<!--              &lt;!&ndash;              <option  [value]="district.id" *ngFor="let district of districts" [selected]="district.id === districtIdSelect"> {{district.name}}</option>&ndash;&gt;-->
-<!--                <option value="proposed">Proposed</option>-->
-<!--                <option value="final">Final</option>-->
-<!--            </select>-->
+<!--            <label  style="white-space: nowrap;">Proposed</label>-->
+            <input
+              type="text"
+              class="form-control"
+              id="submissionTypeCode"
+              name="submissionTypeCode"
+              formControlName="submissionTypeCode"
+              disabled
+              [appFormControl]="fg.get('submissionTypeCode')"
+            />
           </div>
         </div>
         <p>
@@ -66,28 +70,13 @@
             <label>Geo Spatial Object Type:</label>
           </div>
           <div class="form-group col">
-            <select name="objectType" class="sort-comments form-control"   id="forestClient-list">
+            <select name="objectType" class="sort-comments form-control" (change)="changeGeoType($event)" id="geoSpatialType-list">
 <!--              <option  [value]="client.id" *ngFor="let client of forestClients" [selected]="client.id === districtIdSelect" [innerHTML]=" client.name"> </option>-->
-              <option value="cutBlock">Cut Block</option>
-              <option value="roadSection">Road Section</option>
-              <option value="wtra">WTRA</option>
+              <option  [value]="geoType" *ngFor="let geoType of geoTypeValues" [innerHTML]=" geoType"> </option>
             </select>
           </div>
 
         </div>
-<!--        <div class="form-group">-->
-<!--          <label>Description</label>-->
-<!--          <textarea-->
-<!--            class="form-control"-->
-<!--            rows="3"-->
-<!--            id="description"-->
-<!--            name="description"-->
-<!--            formControlName="description"-->
-<!--            [appFormControl]="fg.get('description')"-->
-
-<!--          >-->
-<!--          </textarea>-->
-<!--        </div>-->
         <div class="form-group mb-0">
 <!--          <legend>FOM Supporting Documents</legend>-->
 
