@@ -109,7 +109,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
       const form = new FomAddEditForm(data);
       this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
-      console.log('ProjectDto: ', this.fg.value as ProjectDto);
+      // console.log('ProjectDto: ', this.fg.value as ProjectDto);
 
       // Converting commentingOpenDate date to 'yyyy-MM-dd'
       let datePipe = this.datePipe.transform(this.fg.value.commentingOpenDate,'yyyy-MM-dd');
@@ -132,12 +132,12 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
   addNewFiles(newFiles: any[]) {
     this.files.push(newFiles);
-    console.log('Inserted files on parent: ' + this.files.length);
+    // console.log('Inserted files on parent: ' + this.files.length);
   }
 
   addNewPublicNoticeDocument(newDocument: any) {
     this.publicNoticeDocument = newDocument;
-    console.log('public notice', this.publicNoticeDocument);
+    // console.log('public notice', this.publicNoticeDocument);
   }
 
   ngAfterViewInit() {
