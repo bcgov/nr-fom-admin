@@ -103,7 +103,7 @@
 .review-comments__list {
   @include flex(0 0 auto);
 
-  width: 20rem;
+  width: 23rem;
   border-right: 1px solid #ddd;
   background: #f7f8fa;
 }
@@ -161,7 +161,8 @@
 
 .comment-item-header {
   @include flex-box();
-
+  @include flex-direction(row);
+  justify-content: flex-start;
   align-items: baseline;
 }
 
@@ -174,6 +175,23 @@
   font-weight: 700;
 }
 
+.comment-date {
+  @include flex(0 0 auto);
+
+  white-space: nowrap;
+  font-size: 90%;
+  margin-left: 0.5rem;
+}
+
+.comment-response {
+ @include flex(0 0 auto);
+
+  font-weight: 700;
+  white-space: nowrap;
+  font-weight: 90%;
+  margin-left: 0.5rem;
+}
+/*
 .comment-attachments {
   margin-top: 0.5rem;
   font-size: 90%;
@@ -184,7 +202,7 @@
     font-size: 16px;
   }
 }
-
+*/
 .comment-body {
   @include flex(1 1 auto);
 
@@ -195,12 +213,6 @@
   color: #666;
 }
 
-.comment-date {
-  @include flex(0 0 auto);
-
-  white-space: nowrap;
-  font-size: 90%;
-}
 
 // pagination
 
