@@ -44,27 +44,49 @@
           </div>
           <div class="form-group col-md">
             <label>Commenting Open Date</label>
-            <input
-              type="text"
-              class="form-control"
-              id="commentingOpenDate"
-              name="commentingOpenDate"
-              formControlName="commentingOpenDate"
-              [appFormControl]="fg.get('commentingOpenDate')"
-            />
-<!--              value="{{ originalApplication.commentingOpenDate | date: 'longDate' }}"-->
-
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Datepicker"
+                bsDatepicker
+                #openDate="bsDatepicker"
+                id="commentingOpenDate"
+                name="commentingOpenDate"
+                formControlName="commentingOpenDate"
+                [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD', adaptivePosition: true, containerClass: 'theme-dark-blue' }"
+                [appFormControl]="fg.get('commentingOpenDate')"
+              />
+              <div class="input-group-append">
+                <button class="btn btn-icon"  type="button" tabindex="-1" (click)="openDate.show()"
+                        [attr.aria-expanded]="openDate.isOpen">
+                  <i class="material-icons">date_range</i>
+                </button>
+              </div>
+            </div>
           </div>
           <div class="form-group col-md">
             <label>Commenting Closed Date</label>
-            <input
-              type="text"
-              class="form-control"
-              id="commentingClosedDate"
-              name="commentingClosedDate"
-              formControlName="commentingClosedDate"
-              [appFormControl]="fg.get('commentingClosedDate')"
-            />
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Datepicker"
+                bsDatepicker
+                #closedDate="bsDatepicker"
+                id="commentingClosedDate"
+                name="commentingClosedDate"
+                formControlName="commentingClosedDate"
+                [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD', adaptivePosition: true, containerClass: 'theme-dark-blue'  }"
+                [appFormControl]="fg.get('commentingClosedDate')"
+              />
+              <div class="input-group-append">
+                <button class="btn btn-icon"  type="button" tabindex="-1" (click)="closedDate.show()"
+                        [attr.aria-expanded]="closedDate.isOpen">
+                  <i class="material-icons">date_range</i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -131,45 +153,6 @@
           <app-upload-box [multipleFiles]="true" [files]="fomSupportingDocuments" (fileUploaded)="addNewFiles($event)"></app-upload-box>
 <!--          <app-upload-box [multipleFiles]="true" [files]="applicationFiles" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>-->
         </div>
-        <!-- <div class="form-group mb-0">
-          <legend>FOM Supporting Documents</legend>
-          <ul
-            class="doc-list mb-3"
-          >
-            <li *ngFor="let doc of (originalApplication?.attachments || [])">
-              <span class="cell icon">
-                <i class="material-icons">insert_drive_file</i>
-              </span>
-              <span class="cell name" [title]="doc.displayName || ''">
-                <span class="cell__txt-content">{{
-                  doc.documentFileName
-                }}</span>
-              </span>
-              <span class="cell actions">
-                <button
-                  class="btn btn-icon"
-                  type="button"
-                  title="Delete this document"
-
-                >
-                  <i class="material-icons">delete</i>
-                </button>
-              </span>
-            </li>
-          </ul> -->
-        <!-- <app-file-upload
-          *ngIf=" (application['attachments'] || [])"
-          [fileExt]="['jpg', 'jpeg', 'png', 'pdf', 'tiff']"
-          [maxFiles]="0"
-          [maxSize]="10"
-          [showList]="false"
-          [files]="applicationFiles"
-          (filesChange)="
-            addDocuments($event,  (application['attachments'] || []));
-            applicationFiles = []
-          "
-        ></app-file-upload> -->
-        <!-- </div> -->
       </fieldset>
 
       <fieldset name="decisionForm" id="appDecision">
