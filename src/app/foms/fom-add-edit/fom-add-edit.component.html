@@ -54,7 +54,8 @@
                 id="commentingOpenDate"
                 name="commentingOpenDate"
                 formControlName="commentingOpenDate"
-                [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD', adaptivePosition: true, containerClass: 'theme-dark-blue' }"
+                [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD', adaptivePosition: true,
+                containerClass: 'theme-dark-blue', showWeekNumbers: false }"
                 [appFormControl]="fg.get('commentingOpenDate')"
               />
               <div class="input-group-append">
