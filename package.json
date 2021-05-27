@@ -7,6 +7,7 @@
     "build": "ng build --prod",
     "postinstall": "ngcc --properties es5 browser module main --first-only",
     "test": "ng test",
+    "test-ci": "ng test --watch=false --code-coverage",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
