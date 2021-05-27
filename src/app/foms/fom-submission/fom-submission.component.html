@@ -80,48 +80,9 @@
         <div class="form-group mb-0">
 <!--          <legend>FOM Supporting Documents</legend>-->
 
-          <app-upload-box [multipleFiles]="false" [files]="applicationFiles" (fileUploaded)="addNewFiles($event)"
+          <app-upload-box [multipleFiles]="false" [files]="applicationFiles" [fileTypes]="fileTypesParent" (fileUploaded)="addNewFiles($event)"
                           (outputFileContent)="getContentFileFromUpload($event)"></app-upload-box>
         </div>
-        <!-- <div class="form-group mb-0">
-          <legend>FOM Supporting Documents</legend>
-          <ul
-            class="doc-list mb-3"
-          >
-            <li *ngFor="let doc of (originalApplication?.attachments || [])">
-              <span class="cell icon">
-                <i class="material-icons">insert_drive_file</i>
-              </span>
-              <span class="cell name" [title]="doc.displayName || ''">
-                <span class="cell__txt-content">{{
-                  doc.documentFileName
-                }}</span>
-              </span>
-              <span class="cell actions">
-                <button
-                  class="btn btn-icon"
-                  type="button"
-                  title="Delete this document"
-
-                >
-                  <i class="material-icons">delete</i>
-                </button>
-              </span>
-            </li>
-          </ul> -->
-        <!-- <app-file-upload
-          *ngIf=" (application['attachments'] || [])"
-          [fileExt]="['jpg', 'jpeg', 'png', 'pdf', 'tiff']"
-          [maxFiles]="0"
-          [maxSize]="10"
-          [showList]="false"
-          [files]="applicationFiles"
-          (filesChange)="
-            addDocuments($event,  (application['attachments'] || []));
-            applicationFiles = []
-          "
-        ></app-file-upload> -->
-        <!-- </div> -->
       </fieldset>
 
 <!--      <fieldset name="decisionForm" id="appDecision">-->

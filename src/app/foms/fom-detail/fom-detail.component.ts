@@ -53,7 +53,6 @@ export class FomDetailComponent implements OnInit, OnDestroy {
           this.isProjectActive = true;
         }
         this.fetchingAllPublicComments();
-        console.log('fom detail: ' + this.project.workflowStateCode['code']);
       } else {
         alert("Uh-oh, couldn't load fom");
         // application not found --> navigate back to search
