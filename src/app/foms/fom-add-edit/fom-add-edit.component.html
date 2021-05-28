@@ -30,8 +30,8 @@
         <legend>Application Details</legend>
       </div>
       <fieldset>
-        <div class="form-row" *ngIf="!this.isCreate">
-          <div class="form-group col-md-2">
+        <div class="form-row" >
+          <div class="form-group col-md-2" *ngIf="!this.isCreate">
             <label>ID</label>
             <input
               type="text"
@@ -78,7 +78,8 @@
                 id="commentingClosedDate"
                 name="commentingClosedDate"
                 formControlName="commentingClosedDate"
-                [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD', adaptivePosition: true, containerClass: 'theme-dark-blue'  }"
+                [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD', adaptivePosition: true,
+                containerClass: 'theme-dark-blue', showWeekNumbers: false  }"
                 [appFormControl]="fg.get('commentingClosedDate')"
               />
               <div class="input-group-append">
@@ -109,7 +110,7 @@
           <div class="col">
             <label for="fsp-id" style="white-space: nowrap;">District</label>
             <select class="sort-comments form-control" (change)="changeDistrictId($event)" id="district-list">
-<!--              <option  [value]="district.id" *ngFor="let district of districts" [selected]="district.id === districtIdSelect"> {{district.name}}</option>-->
+              <option *ngIf="this.isCreate">  </option>
               <option  [value]="district.id" *ngFor="let district of districts" [selected]="district.id === districtIdSelect" [innerHTML]=" district.name"> </option>
                </select>
           </div>
@@ -130,6 +131,7 @@
           <div class="form-group col">
             <label>FOM Holder</label>
             <select class="sort-comments form-control"  (change)="changeForestClientId($event)" id="forestClient-list">
+              <option *ngIf="this.isCreate">  </option>
               <option  [value]="client.id" *ngFor="let client of forestClients" [selected]="client.id === forestClientSelect" [innerHTML]=" client.name"> </option>
             </select>
           </div>

@@ -5,10 +5,7 @@ const currentYear = new Date().getFullYear();
 const currentMonth = new Date().getMonth();
 const currentDay = new Date().getDate();
 import * as R from 'remeda';
-export function dateBuilder() {
-  const dateTuple = [currentYear, currentMonth, currentDay];
-  return dateTuple;
-}
+
 @Component({
   selector: 'app-upload-box',
   template: `
@@ -133,19 +130,6 @@ export class UploadBoxComponent implements OnInit {
 
   constructor() { }
   ngOnInit(): void {
-    const dateTuple = dateBuilder();
-    const year = dateTuple[0];
-    const month = this.monthVal[dateTuple[1]];
-    const day = dateTuple[2];
-
-    // get the saved document data
-    // if (this.files[0]?.fileDate) {
-    //   this.date = this.files[0].fileDate;
-    //
-    //   /* set today's date value as all files uploaded will be today's date */
-    // } else {
-    //   this.date = `${day} - ${month} - ${year}`;
-    // }
 
     /* file size multiplied by 1024 for conversion */
     this.maxFileSize = (this.maxFileSizeMB ? this.maxFileSizeMB : 5) * 1048576;
@@ -157,8 +141,6 @@ export class UploadBoxComponent implements OnInit {
     this.invalidTypeText = null;
 
     //This will be logged if you attempt to upload multiple files at a time
-    console.log('rejected', event.rejectedFiles);
-
     if (event.rejectedFiles.some((r) => r.reason === 'type')) {
       this.invalidTypeText = 'The file type is not accepted';
     } else if (event.rejectedFiles.some((r) => r.reason === 'size')) {
@@ -193,29 +175,4 @@ export class UploadBoxComponent implements OnInit {
     this.files.splice(this.files.indexOf(event), 1);
     this.fileUploaded.emit(this.files);
   }
-
-
-
-// let fileToBlob = async (file) => new Blob([new Uint8Array(await file.arrayBuffer())], {type: file.type });
-//   async fileToString (file: File) {
-//     console.log(this.publicNoticeDocument)
-//     try {
-//       let fileReader = new FileReader();
-//       const response = new Response(this.publicNoticeDocument);
-//       const newBlob = await response.blob();
-//       console.log('after newBlog')
-//       console.log(this.publicNoticeDocument)
-//       const arrayBuffer = await (newBlob.arrayBuffer());
-//       console.log('after await arrayBuffer')
-//       fileReader.readAsText(newBlob);
-//       fileReader.result
-//       console.log(fileReader);
-//
-//       console.log(newBlob)
-//       console.log(arrayBuffer)
-//     }catch (e){
-//       console.log(e)
-//     }
-//   }
-
 }

@@ -13,6 +13,7 @@ import { DatePipe } from '@angular/common';
 import {FomAddEditForm} from './fom-add-edit.form';
 import {StateService} from 'core/services/state.service';
 import {ModalService} from 'core/services/modal.service';
+import {toNumber} from "ngx-bootstrap/timepicker/timepicker.utils";
 
 export type ApplicationPageType = 'create' | 'edit';
 
@@ -189,8 +190,9 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
           buttons: {confirm: {text: 'OK'}}
         }
       })
-      console.log(this.fg)
+
     }
+    console.log('inside validate: ', this.fg)
     return this.fg.valid;
   }
 
@@ -213,11 +215,12 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async saveApplication() {
     const {id, district, forestClient, workflowState, ...rest} = this.originalProject;
-
+    console.log('inside save: ', this.fg)
     const updateDto = {...rest, ...this.fg.value}
+    console.log('inside validate updateDto: ', updateDto)
     try {
       const result = await this.projectSvc.projectControllerUpdate(id, updateDto as ProjectDto).pipe(tap(obs => console.log(obs))).toPromise();
-      console.log(result);
+      // console.log('result: ', result);
       if (result) return this.onSuccess(id);
       this.modalSvc.openDialog({
         data: {
@@ -239,7 +242,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   changeDistrictId(e) {
-    this.fg.get('districtId').setValue(e.target.value);
+    this.fg.get('districtId').setValue(parseInt(e.target.value));
   }
 
   changeForestClientId(e) {
