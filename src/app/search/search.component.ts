@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 import {ProjectService} from "core/api";
 
 // Testing fetching Districts
-import {ProjectDto} from 'core/api';
+import {ProjectResponse} from 'core/api';
 
 @Component({
   selector: 'app-search',
@@ -21,7 +21,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   private paramMap: ParamMap = null;
 
   public keywords: string;
-  public projects: ProjectDto[] = [];
+  public projects: ProjectResponse[] = [];
   public count = 0; // used in template
 
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
@@ -191,7 +191,6 @@ export class SearchComponent implements OnInit, OnDestroy {
   public onImport() {
     // try {
     this.router.navigate(['/a/create']);
-    console.log('on import')
     // } catch (err) {
     // console.log('error, invalid application =', application);
     // this.snackBarRef = this.snackBar.open('Error creating application ...', null, { duration: 3000 });

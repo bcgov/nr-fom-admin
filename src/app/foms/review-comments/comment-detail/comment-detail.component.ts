@@ -2,7 +2,7 @@ import {Component, Input} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {RxFormBuilder} from '@rxweb/reactive-form-validators';
 import {ResponseCode} from 'core/api';
-import {PublicCommentDto} from "core/api";
+import {PublicCommentAdminResponse} from "core/api";
 import {CommentDetailForm} from './comment-detail.form';
 
 @Component({
@@ -13,10 +13,10 @@ import {CommentDetailForm} from './comment-detail.form';
 })
 export class CommentDetailComponent {
   commentFormGroup: FormGroup;
-  comment: PublicCommentDto;
+  comment: PublicCommentAdminResponse;
   @Input() responseCodes: ResponseCode[]
 
-  @Input() set selectedComment(comment: PublicCommentDto) {
+  @Input() set selectedComment(comment: PublicCommentAdminResponse) {
     console.log(comment)
     const commentFormGroup = new CommentDetailForm(comment)
     this.commentFormGroup = this.formBuilder.group(commentFormGroup)

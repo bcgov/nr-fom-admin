@@ -10,7 +10,7 @@ import {ConfirmComponent} from 'app/confirm/confirm.component';
 // import {Application} from 'core/models/application';
 import {PublicComment} from 'core/models/publiccomment';
 
-import {ProjectDto, ProjectService} from 'core/api';
+import {ProjectResponse, ProjectService} from 'core/api';
 
 
 @Component({
@@ -23,11 +23,11 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   public isUnpublishing = false;
   public isDeleting = false;
   public isRefreshing = false;
-  public application: ProjectDto = null;
+  public application: ProjectResponse = null;
   public publicComment: PublicComment = null;
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
-  public project: ProjectDto = null;
+  public project: ProjectResponse = null;
   public isProjectActive = false;
   public numberComments = null;
 
@@ -42,10 +42,10 @@ export class FomDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // get data from route resolver
-    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: ProjectDto }) => {
+    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: ProjectResponse }) => {
       if (data.application) {
         this.project = data.application;
-        // console.log('projectDTO: '+ JSON.stringify(data.application));
+        // console.log('ProjectResponse: '+ JSON.stringify(data.application));
         // console.log('projecForestClien: '+ JSON.stringify(data.application.district));
         // this.forestClient = data.application.forestClient;
         // this.district = data.application.district;
@@ -53,7 +53,6 @@ export class FomDetailComponent implements OnInit, OnDestroy {
           this.isProjectActive = true;
         }
         this.fetchingAllPublicComments();
-        console.log('fom detail: ' + this.project.workflowStateCode['code']);
       } else {
         alert("Uh-oh, couldn't load fom");
         // application not found --> navigate back to search
@@ -340,7 +339,7 @@ export class FomDetailComponent implements OnInit, OnDestroy {
           })
           .pipe(takeUntil(this.ngUnsubscribe))
           .subscribe(
-            (application: ProjectDto) => {
+            (application: ProjectResponse) => {
               this.isPublishing = false;
               this.application = application;
             },

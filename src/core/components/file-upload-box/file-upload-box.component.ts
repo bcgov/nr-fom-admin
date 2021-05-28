@@ -5,10 +5,7 @@ const currentYear = new Date().getFullYear();
 const currentMonth = new Date().getMonth();
 const currentDay = new Date().getDate();
 import * as R from 'remeda';
-export function dateBuilder() {
-  const dateTuple = [currentYear, currentMonth, currentDay];
-  return dateTuple;
-}
+
 @Component({
   selector: 'app-upload-box',
   template: `
@@ -90,7 +87,8 @@ export class UploadBoxComponent implements OnInit {
   @Input() date: string;
   @Input() maxFileSizeMB: number;
 
-  @Output() fileBlobsUploaded = new EventEmitter<File[]>();
+  @Output() fileUploaded = new EventEmitter<File[]>();
+  @Output() outputFileContent = new EventEmitter<string>();
   monthVal = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   faLockOpen = faLockOpen;
   faLock = faLock;
@@ -116,7 +114,9 @@ export class UploadBoxComponent implements OnInit {
   ];
 
   // browse Link opens the file prompt
-  @Input() files: any[] = [];
+  @Input() files: File[] = [];
+
+  @Input() publicNoticeDocument: File = null;
 
   // limit for file types (set from global config)
   allowedFileTypes: string;
@@ -126,21 +126,10 @@ export class UploadBoxComponent implements OnInit {
 
   invalidTypeText: string;
 
+  fileContent: string;
+
   constructor() { }
   ngOnInit(): void {
-    const dateTuple = dateBuilder();
-    const year = dateTuple[0];
-    const month = this.monthVal[dateTuple[1]];
-    const day = dateTuple[2];
-
-    // get the saved document data
-    if (this.files[0]?.fileDate) {
-      this.date = this.files[0].fileDate;
-
-      /* set today's date value as all files uploaded will be today's date */
-    } else {
-      this.date = `${day} - ${month} - ${year}`;
-    }
 
     /* file size multiplied by 1024 for conversion */
     this.maxFileSize = (this.maxFileSizeMB ? this.maxFileSizeMB : 5) * 1048576;
@@ -150,22 +139,40 @@ export class UploadBoxComponent implements OnInit {
   onSelect(event) {
     this.files = R.concat(event.addedFiles, this.files);
     this.invalidTypeText = null;
-    console.log(this.files)
 
-    if (event.addedFiles.length > 0) {
-      this.fileBlobsUploaded.emit(this.files);
-    } else {
-      console.log(event.rejectedFiles);
-      if (event.rejectedFiles.some((r) => r.reason === 'type')) {
-        this.invalidTypeText = 'The file type is not accepted';
-      } else if (event.rejectedFiles.some((r) => r.reason === 'size')) {
-        this.invalidTypeText = 'The file size cannot exceed ' + this.maxFileSize / 1048576 + ' MB.';
-      }
+    //This will be logged if you attempt to upload multiple files at a time
+    if (event.rejectedFiles.some((r) => r.reason === 'type')) {
+      this.invalidTypeText = 'The file type is not accepted';
+    } else if (event.rejectedFiles.some((r) => r.reason === 'size')) {
+      this.invalidTypeText = 'The file size cannot exceed ' + this.maxFileSize / 1048576 + ' MB.';
+    } else if (event.rejectedFiles.some((r) => r.reason === 'no_multiple')) {
+      this.invalidTypeText = 'Only one file can be uploaded';
+    }
+
+    if (this.files.length > 1 && !this.multipleFiles){
+      console.log('files: ', this.files)
+      this.invalidTypeText = 'Only one document is allowed';
+      this.onRemove(event);
+    }
+    if (event.addedFiles.length > 0 ) {
+      // console.log('inside')
+      this.readFileContent(this.files[0]);
     }
   }
 
+  readFileContent(file: File) {
+    let reader = new FileReader();
+    reader.addEventListener('load', (event) => {
+      this.fileContent = event.target.result.toString();
+      this.fileUploaded.emit(this.files);
+      this.outputFileContent.emit(this.fileContent);
+    })
+    reader.readAsText(file);
+  }
+
   onRemove(event) {
+    console.log('inside onRemove');
     this.files.splice(this.files.indexOf(event), 1);
-    this.fileBlobsUploaded.emit(this.files);
+    this.fileUploaded.emit(this.files);
   }
 }

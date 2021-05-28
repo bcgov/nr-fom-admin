@@ -1,21 +1,14 @@
-// import {AfterViewInit, Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
-// import {NgForm} from '@angular/forms';
-// import { Location } from '@angular/common';
 import {MatSnackBar, MatSnackBarRef, SimpleSnackBar} from '@angular/material/snack-bar';
 import {ActivatedRoute, Router} from '@angular/router';
-import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import {Observable, of, Subject} from 'rxjs';
 import {switchMap, takeUntil, tap} from 'rxjs/operators';
-import * as _ from 'lodash';
 
-// import {ConfirmComponent} from 'app/confirm/confirm.component';
-import {Document} from 'core/models/document';
 import {
-  ProjectDto,
+  ProjectResponse,
   ProjectService,
   SpatialObjectCodeEnum,
-  SubmissionDto,
+  SubmissionRequest,
   SubmissionTypeCodeEnum
 } from 'core/api';
 import {RxFormBuilder, RxFormGroup} from '@rxweb/reactive-form-validators';
@@ -23,9 +16,7 @@ import { DatePipe } from '@angular/common';
 import {FomSubmissionForm} from './fom-submission.form';
 import {StateService} from 'core/services/state.service';
 import {ModalService} from 'core/services/modal.service';
-// import {UploadBoxComponent} from "../../../core/components/file-upload-box/file-upload-box.component";
-
-export type ApplicationPageType = 'create' | 'edit';
+import {SubmissionService} from 'core/api';
 
 @Component({
   selector: 'app-fom-submission',
@@ -35,14 +26,17 @@ export type ApplicationPageType = 'create' | 'edit';
 })
 export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy {
   fg: RxFormGroup;
-// test = this.fg.get('')
-  project: ProjectDto;
+  project: ProjectResponse;
 
-  public submissionDto:  SubmissionDto;
+  public SubmissionRequest:  SubmissionRequest;
   public applicationFiles: File[] = [];
+  public fileTypesParent: string[] = ['text/plain', 'application/json']
   private scrollToFragment: string = null;
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
+  files: any[] = [];
+  public geoTypeValues: String[] = [];
+  contentFile: string;
 
   get isLoading() {
     return this.stateSvc.loading;
@@ -61,7 +55,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
     private formBuilder: RxFormBuilder,
     private stateSvc: StateService,
     private modalSvc: ModalService,
-    // private uploadBox: UploadBoxComponent
+    private submissionSvc: SubmissionService,
   ) {  }
 
   // check for unsaved changes before navigating away from current route (ie, this page)
@@ -81,28 +75,27 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
   public cancelChanges() {
     // this.location.back(); // FAILS WHEN CANCEL IS CANCELLED (DUE TO DIRTY FORM OR UNSAVED DOCUMENTS) MULTIPLE TIMES
     const routerFragment = ['/a', this.project.id]
-
     this.router.navigate(routerFragment);
 
   }
 
   ngOnInit() {
-
+   this.geoTypeValues = Object.values(SpatialObjectCodeEnum);
     this.route.url.pipe(takeUntil(this.ngUnsubscribe), switchMap(url => {
-        // this.state = url[1].path === 'create' ? 'create' : 'edit'
         return this.projectSvc.projectControllerFindOne(this.route.snapshot.params.appId);
       }
-    )).subscribe((data: ProjectDto) => {
-      this.project = data as ProjectDto;
-      this.submissionDto = <SubmissionDto> {
+    )).subscribe((data: ProjectResponse) => {
+      this.project = data as ProjectResponse;
+      this.SubmissionRequest = <SubmissionRequest> {
         projectId: data.id,
         submissionTypeCode: SubmissionTypeCodeEnum.Proposed,
         spatialObjectCode: SpatialObjectCodeEnum.CutBlock,
         jsonSpatialSubmission: Object
       }
-      const form = new FomSubmissionForm(this.submissionDto);
+      const form = new FomSubmissionForm(this.SubmissionRequest);
       this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
-      console.log('submissionDto: ' + this.fg.get('projectId').value);
+      this.fg.get('projectId').setValue(this.SubmissionRequest.projectId);
+      this.fg.get('submissionTypeCode').setValue(this.SubmissionRequest.submissionTypeCode);
     });
   }
 
@@ -127,51 +120,28 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
     this.ngUnsubscribe.complete();
   }
 
-  // @ts-ignore
-  private static dateToNgbDate(date: Date): NgbDateStruct {
-    return date ? {year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate()} : null;
+  addNewFiles(newFiles: any[]) {
+    console.log('addNewFiles:', newFiles);
+    this.files.push(newFiles);
   }
 
-  // @ts-ignore
-  private static ngbDateToDate(date: NgbDateStruct): Date {
-    return new Date(date.year, date.month - 1, date.day);
-  }
-
-  // used in template
-  public isValidDate(date: NgbDateStruct): boolean {
-    return date && !isNaN(date.year) && !isNaN(date.month) && !isNaN(date.day);
-  }
-
-  // add application or decision documents
-  public addDocuments(files: FileList, documents: Document[]) {
-    if (files && documents) {
-      // safety check
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < files.length; i++) {
-        if (files[i]) {
-          // ensure file is not already in the list
-          if (_.find(documents, doc => doc.documentFileName === files[i].name)) {
-            this.snackBarRef = this.snackBar.open("Can't add duplicate file", null, {duration: 2000});
-            continue;
-          }
-
-          const formData = new FormData();
-          formData.append('displayName', files[i].name);
-          formData.append('upfile', files[i]);
-
-          const document = new Document();
-          document['formData'] = formData; // temporary
-          document.documentFileName = files[i].name;
-
-          // save document for upload to db when application is added or saved
-          documents.push(document);
+  getContentFileFromUpload(fileContent: string) {
+    this.contentFile = fileContent;
+    try {
+      this.SubmissionRequest.jsonSpatialSubmission = JSON.parse(this.contentFile);
+    }catch (e) {
+      this.modalSvc.openDialog({
+        data: {
+          message: 'Your file is broken. Please review the Geo Spatial data',
+          title: '',
+          width: '340px',
+          height: '200px',
+          buttons: {confirm: {text: 'OK'}}
         }
-      }
+      })
     }
+    this.fg.get('jsonSpatialSubmission').setValue(this.SubmissionRequest.jsonSpatialSubmission);
   }
-
-  // this is part 1 of saving an application and all its objects
-  // (multi-part due to dependencies)
 
   validate() {
     if (!this.fg.valid) {
@@ -192,14 +162,11 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   async submit() {
-    this.validate();
-    if (!this.fg.valid) return;
-    if (this.stateSvc.loading) return;
-    const result = await this.projectSvc.projectControllerCreate(this.fg.value as ProjectDto).pipe(tap(obs => console.log(obs))).toPromise()
-    const {id} = result;
-    if (!id) {
-    }
-    this.onSuccess(id)
+    // TODO: We need go improve this as it's returning null
+    const result = await this.submissionSvc.submissionControllerProcessSpatialSubmission(this.fg.value as SubmissionRequest).toPromise();
+    console.log('result: ', result)
+
+     this.onSuccess(this.SubmissionRequest.projectId);
   }
 
   onSuccess(id: number) {
@@ -207,39 +174,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
 
   }
 
-
-  async saveApplication() {
-    const {id, district, forestClient, workflowState, ...rest} = this.project;
-
-    const updateDto = {...rest, ...this.fg.value}
-    try {
-      const result = await this.projectSvc.projectControllerUpdate(id, updateDto as ProjectDto).pipe(tap(obs => console.log(obs))).toPromise();
-      console.log(result);
-      if (result) return this.onSuccess(id);
-      this.modalSvc.openDialog({
-        data: {
-          message: 'There was an error with the request please try again',
-          title: '',
-          width: '340px',
-          height: '200px',
-          buttons: {confirm: {text: 'OK'}}
-        }
-      })
-
-
-      // this.onSuccess( id )
-      // console.log( this.application );
-    } catch (err) {
-
-    }
-
-  }
-
-  changeDistrictId(e) {
-    this.fg.get('districtId').setValue(e.target.value);
-  }
-
-  changeForestClientId(e) {
-    this.fg.get('forestClientNumber').setValue(e.target.value);
+  changeGeoType(e) {
+    this.fg.get('spatialObjectCode').setValue(e.target.value);
   }
 }

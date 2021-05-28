@@ -3,7 +3,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, ParamMap, Params, Router} from '@angular/router';
 import {ReasonCodes, RegionCodes, StatusCodes} from 'core/utils/constants/application';
 import {CodeType, ConstantUtils} from 'core/utils/constants/constantUtils';
-import {ProjectDto, ProjectService} from 'core/api';
+import {ProjectResponse, ProjectService} from 'core/api';
 
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -34,9 +34,9 @@ export class ListComponent implements OnInit, OnDestroy {
   public exporting = false;
 
   // list of applications to display
-  public applications: ProjectDto[] = [];
+  public applications: ProjectResponse[] = [];
 
-  public projects: ProjectDto[] = [];
+  public projects: ProjectResponse[] = [];
 
   // drop down filter values
   public regionCodes = new RegionCodes().getCodeGroups();
@@ -111,7 +111,7 @@ export class ListComponent implements OnInit, OnDestroy {
       .subscribe(
         projects => {
           projects.forEach(project => {
-            this.projects.push(project as ProjectDto);
+            this.projects.push(project as ProjectResponse);
           });
 
         },
@@ -667,7 +667,7 @@ export class ListComponent implements OnInit, OnDestroy {
    * @memberof ListComponent
    */
   // @ts-ignore
-  isAmendment(project: ProjectDto): boolean {
+  isAmendment(project: ProjectResponse): boolean {
     /* return !!(
       project &&
       ConstantUtils.getCode(CodeType.STATUS, project.status) === StatusCodes.ABANDONED.code &&
@@ -684,7 +684,7 @@ export class ListComponent implements OnInit, OnDestroy {
    * @returns {string}
    * @memberof ListComponent
    */
-  getStatusStringLong(project: ProjectDto): string {
+  getStatusStringLong(project: ProjectResponse): string {
     if (!project) {
       return StatusCodes.UNKNOWN.text.long;
     }
@@ -701,7 +701,7 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   // @ts-ignore
-  isApplicationRetired(project: ProjectDto): boolean {
+  isApplicationRetired(project: ProjectResponse): boolean {
     /* if (
       // project.statusHistoryEffectiveDate &&
       [StatusCodes.DECISION_APPROVED.code, StatusCodes.DECISION_NOT_APPROVED.code, StatusCodes.ABANDONED.code].includes(

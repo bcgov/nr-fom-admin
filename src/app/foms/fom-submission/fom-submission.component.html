@@ -14,8 +14,7 @@
           Cancel
         </button>
 <!--        <app-button *ngIf="true; else saveButton" title="Upload your GeoJSON FOM File" (click)="submit()"-->
-        <app-button *ngIf="true; else saveButton" title="Upload your GeoJSON FOM File"
-                    [disabled]="!fg.isModified">{{ isLoading ? "Submitting" : "Submit" }}</app-button>
+        <app-button *ngIf="true; else saveButton" title="Upload your GeoJSON FOM File" (click)="submit()">{{ isLoading ? "Submitting" : "Submit" }}</app-button>
 
       </div>
     </div>
@@ -52,12 +51,16 @@
             <label  style="white-space: nowrap;">Submission Type:</label>
           </div>
           <div class="col">
-            <label  style="white-space: nowrap;">Proposed</label>
-<!--              <select name="typeCode" class="sort-comments form-control"  id="district-list">-->
-<!--              &lt;!&ndash;              <option  [value]="district.id" *ngFor="let district of districts" [selected]="district.id === districtIdSelect"> {{district.name}}</option>&ndash;&gt;-->
-<!--                <option value="proposed">Proposed</option>-->
-<!--                <option value="final">Final</option>-->
-<!--            </select>-->
+<!--            <label  style="white-space: nowrap;">Proposed</label>-->
+            <input
+              type="text"
+              class="form-control"
+              id="submissionTypeCode"
+              [readonly]="true"
+              name="submissionTypeCode"
+              formControlName="submissionTypeCode"
+              [appFormControl]="fg.get('submissionTypeCode')"
+            />
           </div>
         </div>
         <p>
@@ -67,72 +70,19 @@
             <label>Geo Spatial Object Type:</label>
           </div>
           <div class="form-group col">
-            <select name="objectType" class="sort-comments form-control"   id="forestClient-list">
+            <select name="objectType" class="sort-comments form-control" (change)="changeGeoType($event)" id="geoSpatialType-list">
 <!--              <option  [value]="client.id" *ngFor="let client of forestClients" [selected]="client.id === districtIdSelect" [innerHTML]=" client.name"> </option>-->
-              <option value="cutBlock">Cut Block</option>
-              <option value="roadSection">Road Section</option>
-              <option value="wtra">WTRA</option>
+              <option  [value]="geoType" *ngFor="let geoType of geoTypeValues" [innerHTML]=" geoType"> </option>
             </select>
           </div>
 
         </div>
-<!--        <div class="form-group">-->
-<!--          <label>Description</label>-->
-<!--          <textarea-->
-<!--            class="form-control"-->
-<!--            rows="3"-->
-<!--            id="description"-->
-<!--            name="description"-->
-<!--            formControlName="description"-->
-<!--            [appFormControl]="fg.get('description')"-->
-
-<!--          >-->
-<!--          </textarea>-->
-<!--        </div>-->
         <div class="form-group mb-0">
 <!--          <legend>FOM Supporting Documents</legend>-->
 
-          <app-upload-box [multipleFiles]="true" [files]="applicationFiles"></app-upload-box>
+          <app-upload-box [multipleFiles]="false" [files]="applicationFiles" [fileTypes]="fileTypesParent" (fileUploaded)="addNewFiles($event)"
+                          (outputFileContent)="getContentFileFromUpload($event)"></app-upload-box>
         </div>
-        <!-- <div class="form-group mb-0">
-          <legend>FOM Supporting Documents</legend>
-          <ul
-            class="doc-list mb-3"
-          >
-            <li *ngFor="let doc of (originalApplication?.attachments || [])">
-              <span class="cell icon">
-                <i class="material-icons">insert_drive_file</i>
-              </span>
-              <span class="cell name" [title]="doc.displayName || ''">
-                <span class="cell__txt-content">{{
-                  doc.documentFileName
-                }}</span>
-              </span>
-              <span class="cell actions">
-                <button
-                  class="btn btn-icon"
-                  type="button"
-                  title="Delete this document"
-
-                >
-                  <i class="material-icons">delete</i>
-                </button>
-              </span>
-            </li>
-          </ul> -->
-        <!-- <app-file-upload
-          *ngIf=" (application['attachments'] || [])"
-          [fileExt]="['jpg', 'jpeg', 'png', 'pdf', 'tiff']"
-          [maxFiles]="0"
-          [maxSize]="10"
-          [showList]="false"
-          [files]="applicationFiles"
-          (filesChange)="
-            addDocuments($event,  (application['attachments'] || []));
-            applicationFiles = []
-          "
-        ></app-file-upload> -->
-        <!-- </div> -->
       </fieldset>
 
 <!--      <fieldset name="decisionForm" id="appDecision">-->

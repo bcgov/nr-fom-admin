@@ -216,11 +216,8 @@
           <div class="body">
             <div
               class="app-status">
-              {{project.workflowState && project.workflowStateCode ? project.workflowStateCode: '-'}}
-            </div>
-            <!-- <div class="app-status__date text-muted" *ngIf="application.statusHistoryEffectiveDate"> -->
-            <div class="app-status__date text-muted" *ngIf="project.updateTimestamp">
-              Last updated on {{project.updateTimestamp | date:'longDate'}}
+<!--              {{project.workflowState && project.workflowStateCode ? project.workflowStateCode: '-'}}-->
+              {{project.workflowState ? project.workflowState.code: '-'}}
             </div>
           </div>
         </div>
