@@ -8,14 +8,14 @@ import {Observable} from 'rxjs';
 // import { Project } from 'core/models/project';
 // import { StatusCodes } from 'app/utils/constants/application';
 // import { ConstantUtils, CodeType } from 'app/utils/constants/constantUtils';
-import {ProjectDto, ProjectService} from 'core/api';
+import {ProjectResponse, ProjectService} from 'core/api';
 
 @Injectable()
-export class ApplicationDetailResolver implements Resolve<ProjectDto> {
+export class ApplicationDetailResolver implements Resolve<ProjectResponse> {
   constructor(private projectService: ProjectService) {
   }
 
-  resolve(route: ActivatedRouteSnapshot): Observable<ProjectDto> {
+  resolve(route: ActivatedRouteSnapshot): Observable<ProjectResponse> {
     const projectId = parseInt(route.paramMap.get('appId'));
     console.log('valued projectId: ' + projectId);
 
