@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CommentScopeCodeService, DistrictService, ResponseCodeService, WorkflowStateCodeService } from 'core/api';
+import { DistrictService, PublicCommentService, ProjectService } from 'core/api';
 import { CodeTables } from 'core/models/code-tables';
 import { BehaviorSubject, forkJoin } from 'rxjs';
 
@@ -40,18 +40,17 @@ export class StateService {
   }
 
   constructor (
-    private responseCodeSvc: ResponseCodeService, 
-    private districtSvc: DistrictService, 
-    private workflowStateCodeSvc: WorkflowStateCodeService,
-    private commentScopeCodeSvc: CommentScopeCodeService,
+    private publicCommentSvc: PublicCommentService,
+    private districtSvc: DistrictService,
+    private projectSvc: ProjectService
     ) { }
 
   getCodeTables() {
     return forkJoin({
-        responseCode: this.responseCodeSvc.responseCodeControllerFindAll(), 
-        district: this.districtSvc.districtControllerFindAll(), 
-        workflowResponseCode: this.workflowStateCodeSvc.workflowStateCodeControllerFindAll(),
-        commentScopeCode: this.commentScopeCodeSvc.commentScopeCodeControllerFindAll(),
+        responseCode: this.publicCommentSvc.responseCodeControllerFindAll(),
+        district: this.districtSvc.districtControllerFindAll(),
+        workflowResponseCode: this.projectSvc.workflowStateCodeControllerFindAll(),
+        commentScopeCode: this.publicCommentSvc.commentScopeCodeControllerFindAll(),
       })
   }
 }

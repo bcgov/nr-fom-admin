@@ -3,7 +3,7 @@ import {Subject} from 'rxjs';
 import * as L from 'leaflet';
 import * as _ from 'lodash';
 
-import {ProjectDto} from 'core/api';
+import {ProjectResponse} from 'core/api/';
 
 @Component({
   selector: 'app-application-aside',
@@ -11,7 +11,7 @@ import {ProjectDto} from 'core/api';
   styleUrls: ['./fom-aside.component.scss']
 })
 export class FomAsideComponent implements OnInit, OnDestroy {
-  @Input() project: ProjectDto = null;
+  @Input() project: ProjectResponse = null;
 
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
   public fg: L.FeatureGroup;

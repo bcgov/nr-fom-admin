@@ -24,7 +24,7 @@
   <div class="comment-detail__body" [innerHTML]="comment.feedback | newlines"></div>
   <hr>
 
-  
+
   <form [formGroup]="commentFormGroup">
     <div class="row">
       <div class="col-md-4">
@@ -33,7 +33,7 @@
     </div>
     <div class="row">
       <div class="col-md-3">
-        <select class="sort-comments form-control mb-3" id="comment-response" formControlName="responseCode">
+        <select class="sort-comments form-control mb-3" id="comment-response" formControlName="response">
           <option *ngFor="let code of responseCodes" [ngValue]="code.code">{{code.description}}</option>
         </select>
       </div>

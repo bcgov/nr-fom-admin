@@ -1,20 +1,19 @@
-import {PublicComment} from '../../../../core/models/publiccomment';
 import {prop} from "@rxweb/reactive-form-validators"
-import {PublicCommentDto} from "../../../../core/api";
+import {PublicCommentAdminResponse, ResponseCode} from "../../../../core/api";
 
-const UPDATE_FIELDS = ['responseDetails', 'responseCode'] as const;
+const UPDATE_FIELDS = ['responseDetails', 'response'] as const;
 
-export class CommentDetailForm implements Pick<PublicCommentDto, typeof UPDATE_FIELDS[number]> {
+export class CommentDetailForm implements Pick<PublicCommentAdminResponse, typeof UPDATE_FIELDS[number]> {
   @prop()
   responseDetails: string = '';
 
   @prop()
-  responseCode: string = '';
+  response: ResponseCode;
 
-  constructor(comment: PublicCommentDto) {
-    const {responseCode, responseDetails} = comment || {}
+  constructor(comment: PublicCommentAdminResponse) {
+    const {response, responseDetails} = comment || {}
     if (comment) {
-      this.responseCode = responseCode;
+      this.response = response;
       this.responseDetails = responseDetails;
     }
 

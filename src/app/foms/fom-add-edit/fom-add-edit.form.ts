@@ -1,5 +1,5 @@
 import {minLength, prop, required} from '@rxweb/reactive-form-validators';
-import {ProjectDto} from 'core/api';
+import {ProjectResponse, DistrictResponse, ForestClientResponse, WorkflowStateCode} from 'core/api';
 import * as R from 'remeda';
 
 const updateFields = [
@@ -8,12 +8,12 @@ const updateFields = [
   'commentingOpenDate',
   'commentingClosedDate',
   'fspId',
-  'districtId',
-  'forestClientNumber',
-  'workflowStateCode'
+  'district',
+  'forestClient',
+  'workflowState'
 ] as const;
 
-export class FomAddEditForm implements Pick<ProjectDto,
+export class FomAddEditForm implements Pick<ProjectResponse,
   typeof updateFields[number]> {
 
   @prop()
@@ -43,22 +43,21 @@ export class FomAddEditForm implements Pick<ProjectDto,
   @required()
   @minLength({value: 1})
 
-  districtId: number;
+  district: DistrictResponse;
 
   @prop()
   @required()
 
   @minLength({value: 1})
-  forestClientNumber: string;
+  forestClient: ForestClientResponse;
 
   @prop()
   @required()
 
-  workflowStateCode: string = 'INITIAL';
+  workflowState: WorkflowStateCode;
 
-  constructor(project?: Partial<ProjectDto>) {
+  constructor(project?: Partial<ProjectResponse>) {
     if (project) {
-
 
       Object.assign(this, R.pick(project, updateFields));
     }

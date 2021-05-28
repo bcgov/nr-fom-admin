@@ -1,5 +1,5 @@
 import {minLength, prop, required} from '@rxweb/reactive-form-validators';
-import {SubmissionDto, SpatialObjectCodeEnum, SubmissionTypeCodeEnum} from 'core/api';
+import {SubmissionRequest, SpatialObjectCodeEnum, SubmissionTypeCodeEnum} from 'core/api';
 import * as R from 'remeda';
 
 const updateFields = [
@@ -9,7 +9,7 @@ const updateFields = [
   'jsonSpatialSubmission'
 ] as const;
 
-export class FomSubmissionForm implements Pick<SubmissionDto,
+export class FomSubmissionForm implements Pick<SubmissionRequest,
   typeof updateFields[number]> {
 
   @prop()
@@ -32,7 +32,7 @@ export class FomSubmissionForm implements Pick<SubmissionDto,
 
   jsonSpatialSubmission: object;
 
-  constructor(submission?: Partial<SubmissionDto>) {
+  constructor(submission?: Partial<SubmissionRequest>) {
     if (submission) {
       Object.assign(this, R.pick(submission, updateFields));
     }

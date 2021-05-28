@@ -3,19 +3,19 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {forkJoin, Observable, Subject} from 'rxjs';
 import {map, startWith, takeUntil} from 'rxjs/operators';
 
-import {PublicCommentDto} from 'core/api';
+import {PublicCommentAdminResponse} from 'core/api';
 import {
-  ProjectDto,
+  ProjectResponse,
   ProjectService,
   PublicCommentService,
-  UpdatePublicCommentDto
+  PublicCommentAdminUpdateRequest
 } from 'core/api';
 import {FormControl} from '@angular/forms';
 import * as R from 'remeda'
 import {ModalService} from 'core/services/modal.service';
 import {StateService} from 'core/services/state.service';
 
-type SortKeysType = keyof Pick<PublicCommentDto, 'createTimestamp' | 'name'>
+type SortKeysType = keyof Pick<PublicCommentAdminResponse, 'createTimestamp' | 'name'>
 type SortDirType = 'asc' | 'desc'
 
 class SortKey {
@@ -48,7 +48,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
   @ViewChild('commentListScrollContainer', {read: ElementRef})
   public commentListScrollContainer: ElementRef; // TODO: Something is up with this...
 
-  comment: PublicCommentDto;
+  comment: PublicCommentAdminResponse;
 
   readonly sortKeys: SortKey[] = [
     {innerHTML: 'Oldest', value: 'createTimestamp', dir: 'desc'},
@@ -58,25 +58,25 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
   ];
   sortControl: FormControl = new FormControl(this.sortKeys[1]);
 
-  data$: Observable<{ project: ProjectDto, comments: PublicCommentDto[]; }>
+  data$: Observable<{ project: ProjectResponse, comments: PublicCommentAdminResponse[]; }>
 
   responseCodes = this.stateSvc.getCodeTable('responseCode')
 
-  commentsList: PublicCommentDto[];
+  commentsList: PublicCommentAdminResponse[];
 
-  results$: Observable<PublicCommentDto[]> = this.sortControl.valueChanges.pipe(startWith(this.sortKeys[1].value), map(dir => {
+  results$: Observable<PublicCommentAdminResponse[]> = this.sortControl.valueChanges.pipe(startWith(this.sortKeys[1].value), map(dir => {
 
     return dir.dir === 'asc' ? R.sortBy(this.comments, (item) => item[dir.value]) : R.reverse(R.sortBy(this.comments, (item) => item[dir.value]));
 
   }))
 
   public loading = false;
-  public project: ProjectDto = null;
-  public comments: PublicCommentDto[] = [];
-  public publicComments: PublicCommentDto[] = [];
+  public project: ProjectResponse = null;
+  public comments: PublicCommentAdminResponse[] = [];
+  public publicComments: PublicCommentAdminResponse[] = [];
   public alerts: string[] = [];
   public currentComment: Comment;
-  public currentPublicComment: PublicCommentDto;
+  public currentPublicComment: PublicCommentAdminResponse;
 
 
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
@@ -99,7 +99,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     const {appId} = this.route.snapshot.params;
 
     this.data$ = forkJoin(this.projectSvc.projectControllerFindOne(appId),
-      this.commentSvc.publicCommentControllerFindByProjectId(appId))
+      this.commentSvc.publicCommentControllerFind(appId))
       .pipe(takeUntil(this.ngUnsubscribe), map(result => {
 
       const [project, comments] = result;
@@ -121,7 +121,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  async saveComment(update: UpdatePublicCommentDto, selectedComment: PublicCommentDto) {
+  async saveComment(update: PublicCommentAdminUpdateRequest, selectedComment: PublicCommentAdminResponse) {
 
     const {id} = selectedComment;
 

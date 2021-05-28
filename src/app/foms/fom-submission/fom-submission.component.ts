@@ -5,10 +5,10 @@ import {Observable, of, Subject} from 'rxjs';
 import {switchMap, takeUntil, tap} from 'rxjs/operators';
 
 import {
-  ProjectDto,
+  ProjectResponse,
   ProjectService,
   SpatialObjectCodeEnum,
-  SubmissionDto,
+  SubmissionRequest,
   SubmissionTypeCodeEnum
 } from 'core/api';
 import {RxFormBuilder, RxFormGroup} from '@rxweb/reactive-form-validators';
@@ -26,9 +26,9 @@ import {SubmissionService} from 'core/api';
 })
 export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy {
   fg: RxFormGroup;
-  project: ProjectDto;
+  project: ProjectResponse;
 
-  public submissionDto:  SubmissionDto;
+  public SubmissionRequest:  SubmissionRequest;
   public applicationFiles: File[] = [];
   public fileTypesParent: string[] = ['text/plain', 'application/json']
   private scrollToFragment: string = null;
@@ -84,18 +84,18 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
     this.route.url.pipe(takeUntil(this.ngUnsubscribe), switchMap(url => {
         return this.projectSvc.projectControllerFindOne(this.route.snapshot.params.appId);
       }
-    )).subscribe((data: ProjectDto) => {
-      this.project = data as ProjectDto;
-      this.submissionDto = <SubmissionDto> {
+    )).subscribe((data: ProjectResponse) => {
+      this.project = data as ProjectResponse;
+      this.SubmissionRequest = <SubmissionRequest> {
         projectId: data.id,
         submissionTypeCode: SubmissionTypeCodeEnum.Proposed,
         spatialObjectCode: SpatialObjectCodeEnum.CutBlock,
         jsonSpatialSubmission: Object
       }
-      const form = new FomSubmissionForm(this.submissionDto);
+      const form = new FomSubmissionForm(this.SubmissionRequest);
       this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
-      this.fg.get('projectId').setValue(this.submissionDto.projectId);
-      this.fg.get('submissionTypeCode').setValue(this.submissionDto.submissionTypeCode);
+      this.fg.get('projectId').setValue(this.SubmissionRequest.projectId);
+      this.fg.get('submissionTypeCode').setValue(this.SubmissionRequest.submissionTypeCode);
     });
   }
 
@@ -128,7 +128,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
   getContentFileFromUpload(fileContent: string) {
     this.contentFile = fileContent;
     try {
-      this.submissionDto.jsonSpatialSubmission = JSON.parse(this.contentFile);
+      this.SubmissionRequest.jsonSpatialSubmission = JSON.parse(this.contentFile);
     }catch (e) {
       this.modalSvc.openDialog({
         data: {
@@ -140,7 +140,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
         }
       })
     }
-    this.fg.get('jsonSpatialSubmission').setValue(this.submissionDto.jsonSpatialSubmission);
+    this.fg.get('jsonSpatialSubmission').setValue(this.SubmissionRequest.jsonSpatialSubmission);
   }
 
   validate() {
@@ -163,10 +163,10 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
 
   async submit() {
     // TODO: We need go improve this as it's returning null
-    const result = await this.submissionSvc.submissionControllerProcessSpatialSubmission(this.fg.value as SubmissionDto).toPromise();
+    const result = await this.submissionSvc.submissionControllerProcessSpatialSubmission(this.fg.value as SubmissionRequest).toPromise();
     console.log('result: ', result)
 
-     this.onSuccess(this.submissionDto.projectId);
+     this.onSuccess(this.SubmissionRequest.projectId);
   }
 
   onSuccess(id: number) {
