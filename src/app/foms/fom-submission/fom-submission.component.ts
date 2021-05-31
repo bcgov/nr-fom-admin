@@ -17,6 +17,7 @@ import {FomSubmissionForm} from './fom-submission.form';
 import {StateService} from 'core/services/state.service';
 import {ModalService} from 'core/services/modal.service';
 import {SubmissionService} from 'core/api';
+import {WorkflowStateEnum} from "../../../core/api/model/workflowStateEnum";
 
 @Component({
   selector: 'app-fom-submission',
@@ -28,7 +29,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
   fg: RxFormGroup;
   project: ProjectResponse;
 
-  public SubmissionRequest:  SubmissionRequest;
+  public originalSubmissionRequest:  SubmissionRequest;
   public applicationFiles: File[] = [];
   public fileTypesParent: string[] = ['text/plain', 'application/json']
   private scrollToFragment: string = null;
@@ -49,7 +50,6 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    // private location: Location,
     public snackBar: MatSnackBar,
     private projectSvc: ProjectService,
     private formBuilder: RxFormBuilder,
@@ -86,16 +86,17 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
       }
     )).subscribe((data: ProjectResponse) => {
       this.project = data as ProjectResponse;
-      this.SubmissionRequest = <SubmissionRequest> {
+      this.originalSubmissionRequest = <SubmissionRequest> {
         projectId: data.id,
-        submissionTypeCode: SubmissionTypeCodeEnum.Proposed,
+        submissionTypeCode: data.workflowState.code === WorkflowStateEnum.COMMENT_CLOSED ? SubmissionTypeCodeEnum.Final: SubmissionTypeCodeEnum.Proposed,
         spatialObjectCode: SpatialObjectCodeEnum.CutBlock,
         jsonSpatialSubmission: Object
       }
-      const form = new FomSubmissionForm(this.SubmissionRequest);
+      const form = new FomSubmissionForm(this.originalSubmissionRequest);
       this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
-      this.fg.get('projectId').setValue(this.SubmissionRequest.projectId);
-      this.fg.get('submissionTypeCode').setValue(this.SubmissionRequest.submissionTypeCode);
+      this.fg.get('projectId').setValue(this.originalSubmissionRequest.projectId);
+      this.fg.get('submissionTypeCode').setValue(this.originalSubmissionRequest.submissionTypeCode);
+
     });
   }
 
@@ -121,14 +122,13 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   addNewFiles(newFiles: any[]) {
-    console.log('addNewFiles:', newFiles);
     this.files.push(newFiles);
   }
 
   getContentFileFromUpload(fileContent: string) {
     this.contentFile = fileContent;
     try {
-      this.SubmissionRequest.jsonSpatialSubmission = JSON.parse(this.contentFile);
+      this.originalSubmissionRequest.jsonSpatialSubmission = JSON.parse(this.contentFile);
     }catch (e) {
       this.modalSvc.openDialog({
         data: {
@@ -140,7 +140,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
         }
       })
     }
-    this.fg.get('jsonSpatialSubmission').setValue(this.SubmissionRequest.jsonSpatialSubmission);
+    this.fg.get('jsonSpatialSubmission').setValue(this.originalSubmissionRequest.jsonSpatialSubmission);
   }
 
   validate() {
@@ -156,17 +156,16 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
           buttons: {confirm: {text: 'OK'}}
         }
       })
-      console.log(this.fg)
     }
     return this.fg.valid;
   }
 
   async submit() {
     // TODO: We need go improve this as it's returning null
-    const result = await this.submissionSvc.submissionControllerProcessSpatialSubmission(this.fg.value as SubmissionRequest).toPromise();
-    console.log('result: ', result)
-
-     this.onSuccess(this.SubmissionRequest.projectId);
+    const {projectId, submissionTypeCode, ...rest} = this.originalSubmissionRequest;
+    let submissionRequest = {...rest, ...this.fg.value}
+    await this.submissionSvc.submissionControllerProcessSpatialSubmission(submissionRequest as SubmissionRequest).toPromise();
+    this.onSuccess(this.originalSubmissionRequest.projectId);
   }
 
   onSuccess(id: number) {
@@ -176,5 +175,14 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
 
   changeGeoType(e) {
     this.fg.get('spatialObjectCode').setValue(e.target.value);
+  }
+
+  getGeoSpatialTypeDescription(type: string){
+    if( type === SpatialObjectCodeEnum.CutBlock ){
+      return 'Cut block'
+    }else if( type === SpatialObjectCodeEnum.RoadSection ) {
+      return 'Road section'
+    }
+    return 'Wildlife/tree retention area'
   }
 }
