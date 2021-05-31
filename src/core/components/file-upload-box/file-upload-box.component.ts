@@ -23,7 +23,7 @@ import * as R from 'remeda';
             <span class="material-icons">
               cloud_upload
             </span>
-            <div>Drag files to Upload</div>
+            <div>Drag file to upload</div>
             <div>or</div>
             <div>
               <a href="javascript:void(0)">Browse</a>
