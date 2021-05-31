@@ -177,7 +177,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
     this.fg.get('spatialObjectCode').setValue(e.target.value);
   }
 
-  getGeoSpatialTypeDescription(type: string){
+  getGeoSpatialTypeDescription(type: String){
     if( type === SpatialObjectCodeEnum.CutBlock ){
       return 'Cut block'
     }else if( type === SpatialObjectCodeEnum.RoadSection ) {
