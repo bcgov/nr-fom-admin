@@ -13,8 +13,7 @@
         >
           Cancel
         </button>
-<!--        <app-button *ngIf="true; else saveButton" title="Upload your GeoJSON FOM File" (click)="submit()"-->
-        <app-button *ngIf="true; else saveButton" title="Upload your GeoJSON FOM File" (click)="submit()">{{ isLoading ? "Submitting" : "Submit" }}</app-button>
+        <app-button  title="Upload your GeoJSON FOM File" (click)="submit()">{{ isLoading ? "Submitting" : "Submit" }}</app-button>
 
       </div>
     </div>
@@ -51,28 +50,23 @@
             <label  style="white-space: nowrap;">Submission Type:</label>
           </div>
           <div class="col">
-<!--            <label  style="white-space: nowrap;">Proposed</label>-->
-            <input
-              type="text"
-              class="form-control"
-              id="submissionTypeCode"
-              [readonly]="true"
-              name="submissionTypeCode"
-              formControlName="submissionTypeCode"
-              [appFormControl]="fg.get('submissionTypeCode')"
-            />
+            <span
+              class="value">
+              {{originalSubmissionRequest.submissionTypeCode === 'FINAL' ? 'Final' : 'Proposed'}}
+            </span>
           </div>
         </div>
         <p>
         <!-- <legend>Application Details</legend> -->
         <div class="form-row">
-          <div class="form-group col-md-2">
-            <label>Geo Spatial Object Type:</label>
+          <div class="form-group col-md-3">
+            <label>GeoSpatial Object Type:</label>
           </div>
           <div class="form-group col">
             <select name="objectType" class="sort-comments form-control" (change)="changeGeoType($event)" id="geoSpatialType-list">
 <!--              <option  [value]="client.id" *ngFor="let client of forestClients" [selected]="client.id === districtIdSelect" [innerHTML]=" client.name"> </option>-->
-              <option  [value]="geoType" *ngFor="let geoType of geoTypeValues" [innerHTML]=" geoType"> </option>
+              <option  [value]="geoType" *ngFor="let geoType of geoTypeValues"
+                       [innerHTML]=" getGeoSpatialTypeDescription(geoType)"> </option>
             </select>
           </div>
 
@@ -84,18 +78,7 @@
                           (outputFileContent)="getContentFileFromUpload($event)"></app-upload-box>
         </div>
       </fieldset>
-
-<!--      <fieldset name="decisionForm" id="appDecision">-->
-<!--      </fieldset>-->
     </form>
   </div>
 </div>
 
-<ng-template #saveButton>
-
-
-  <app-button
-    title="Upload your GeoJSON FOM File "> </app-button>
-<!--    (click)="saveApplication()">{{ isLoading ? "Saving" : "Save" }}</app-button>-->
-<!--    (click)="saveApplication()">{{ isLoading ? "Saving" : "Save" }}</app-button>-->
-</ng-template>

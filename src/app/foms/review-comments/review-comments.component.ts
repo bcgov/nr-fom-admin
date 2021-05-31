@@ -96,10 +96,10 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     if (this.commentListScrollContainer && this.commentListScrollContainer.nativeElement) {
       this.commentListScrollContainer.nativeElement.scrollTop = 0;
     }
-    const {appId} = this.route.snapshot.params;
+    const {appId: projectId} = this.route.snapshot.params;
 
-    this.data$ = forkJoin(this.projectSvc.projectControllerFindOne(appId),
-      this.commentSvc.publicCommentControllerFind(appId))
+    this.data$ = forkJoin(this.projectSvc.projectControllerFindOne(projectId),
+      this.commentSvc.publicCommentControllerFind(projectId))
       .pipe(takeUntil(this.ngUnsubscribe), map(result => {
 
       const [project, comments] = result;
