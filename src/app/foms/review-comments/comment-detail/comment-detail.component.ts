@@ -20,8 +20,10 @@ export class CommentDetailComponent {
   @Input() responseCodes: ResponseCode[]
 
   @Input() set selectedComment(comment: PublicCommentAdminResponse) {
+    this.comment = comment;
     const commentFormGroup = new CommentDetailForm(comment)
-    this.commentFormGroup = this.formBuilder.group(commentFormGroup)
+    this.commentFormGroup = this.formBuilder.formGroup(commentFormGroup);
+
     this.comment = comment;
   };
 
