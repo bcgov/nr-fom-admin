@@ -85,7 +85,6 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private projectSvc: ProjectService,
-    // private commentsSvc: PublicCommentsService,
     private modalSvc: ModalService,
     private commentSvc: PublicCommentService,
     private stateSvc: StateService
@@ -122,15 +121,14 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
   }
 
   async saveComment(update: PublicCommentAdminUpdateRequest, selectedComment: PublicCommentAdminResponse) {
-
     const {id} = selectedComment;
+    update.revisionCount = selectedComment.revisionCount;
 
+    // TODO: error handling seems not quite right, need to revise it later.
     try {
-      const result = await this.commentSvc.publicCommentControllerUpdate(id, {...selectedComment, ...update}).toPromise()
-      console.log(result)
+      const result = await this.commentSvc.publicCommentControllerUpdate(id, update).toPromise()
       if (result) {
         this.modalSvc.openSnackBar({message: 'Comment saved', button: 'OK'})
-        // this.comments = await this.commentsSvc.publicCommentsControllerFindAll().toPromise();
         this.sortControl.setValue(this.sortControl.value)
       } else {
         this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Failed to update', title: ''}})

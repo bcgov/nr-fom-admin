@@ -1,7 +1,8 @@
-import { DistrictResponse, ResponseCode, WorkflowStateCode } from 'core/api';
+import { CommentScopeCode, DistrictResponse, ResponseCode, WorkflowStateCode } from 'core/api';
 
 export interface CodeTables {
   responseCode: ResponseCode[],
   district: DistrictResponse[],
-  workflowResponseCode: WorkflowStateCode[]
+  workflowResponseCode: WorkflowStateCode[],
+  commentScopeCode: CommentScopeCode[]
 }

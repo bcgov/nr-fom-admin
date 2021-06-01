@@ -1,5 +1,7 @@
 @import "~assets/styles/base/base.scss";
 
+$light-blue: #007bff;
+
 .comment-detail-container {
   padding: 1.5rem 2rem;
 }
@@ -22,6 +24,15 @@
 .comment-detail__meta {
   margin-top: 0.5rem;
   font-size: 90%;
+}
+
+.comment-detail__scope {
+  margin-top: 1.25rem;
+  .scope-desc {
+    font-weight: 650;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: $light-blue;
+  }
 }
 
 .comment-detail__body {
