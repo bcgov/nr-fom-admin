@@ -17,7 +17,8 @@ export class CommentDetailComponent {
   commentScopeCodes: _.Dictionary<CommentScopeCode>;
   commentFormGroup: FormGroup;
   comment: PublicCommentAdminResponse;
-  @Input() responseCodes: ResponseCode[]
+  public responseCode: string = '';
+  @Input() responseCodes: ResponseCode[];
 
   @Input() set selectedComment(comment: PublicCommentAdminResponse) {
     this.comment = comment;
