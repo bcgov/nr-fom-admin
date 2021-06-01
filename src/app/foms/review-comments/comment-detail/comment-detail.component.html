@@ -45,10 +45,9 @@
         <select class="sort-comments form-control mb-3" id="responseCode" 
           name="responseCode"
           formControlName="responseCode">
-          <option value="">Select a Response</option>
+          <option [ngValue]="null" disabled>Select a Response</option>
           <option *ngFor="let code of responseCodes" 
-                  [ngValue]="code.code"
-                  [selected]="code.code === responseCode">{{code.description}}</option>
+                  [ngValue]="code.code">{{code.description}}</option>
         </select>
       </div>
     </div>

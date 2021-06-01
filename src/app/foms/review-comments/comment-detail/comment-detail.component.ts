@@ -17,14 +17,11 @@ export class CommentDetailComponent {
   commentScopeCodes: _.Dictionary<CommentScopeCode>;
   commentFormGroup: FormGroup;
   comment: PublicCommentAdminResponse;
-  public responseCode: string = '';
   @Input() responseCodes: ResponseCode[];
 
   @Input() set selectedComment(comment: PublicCommentAdminResponse) {
-    this.comment = comment;
     const commentFormGroup = new CommentDetailForm(comment)
     this.commentFormGroup = this.formBuilder.formGroup(commentFormGroup);
-
     this.comment = comment;
   };
 
