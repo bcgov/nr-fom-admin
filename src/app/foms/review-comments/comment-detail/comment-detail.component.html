@@ -21,9 +21,18 @@
     </div>
   </div>
   <hr>
+  <div class="comment-detail__scope">
+    Commenting On: 
+    <span class="scope-desc">
+      {{comment.commentScope.description}} 
+      {{ (commentScopeCodes.CUT_BLOCK.code === comment.commentScope.code)? comment.scopeCutBlockId: 
+        ((commentScopeCodes.ROAD_SECTION.code === comment.commentScope.code)? comment.scopeRoadSectionId:
+        '')
+      }}
+    </span>
+  </div>
   <div class="comment-detail__body" [innerHTML]="comment.feedback | newlines"></div>
   <hr>
-
 
   <form [formGroup]="commentFormGroup">
     <div class="row">
@@ -32,9 +41,13 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-md-3">
-        <select class="sort-comments form-control mb-3" id="comment-response" formControlName="response">
-          <option *ngFor="let code of responseCodes" [ngValue]="code.code">{{code.description}}</option>
+      <div class="col-md-4">
+        <select class="sort-comments form-control mb-3" id="responseCode" 
+          name="responseCode"
+          formControlName="responseCode">
+          <option [ngValue]="null" disabled>Select a Response</option>
+          <option *ngFor="let code of responseCodes" 
+                  [ngValue]="code.code">{{code.description}}</option>
         </select>
       </div>
     </div>
