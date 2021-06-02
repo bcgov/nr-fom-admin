@@ -39,7 +39,7 @@
               id="id"
               name="name"
               disabled
-              [value]="originalProject.id"
+              [value]="originalProjectResponse.id"
             />
           </div>
           <div class="form-group col-md">
@@ -111,7 +111,7 @@
             <label for="fsp-id" style="white-space: nowrap;">District</label>
             <select class="sort-comments form-control" (change)="changeDistrictId($event)" id="district-list">
               <option *ngIf="this.isCreate">  </option>
-              <option  [value]="district.id" *ngFor="let district of districts" [selected]="district.id === districtIdSelect" [innerHTML]=" district.name"> </option>
+              <option  [value]="district.id" *ngFor="let district of districts" [selected]="district.id === districtIdSelect" [innerHTML]=" district.name "> </option>
                </select>
           </div>
         </div>
@@ -130,10 +130,18 @@
           </div>
           <div class="form-group col">
             <label>FOM Holder</label>
-            <select class="sort-comments form-control"  (change)="changeForestClientId($event)" id="forestClient-list">
+            <select *ngIf="this.isCreate" class="sort-comments form-control"  (change)="changeForestClientId($event)" id="forestClient-list">
               <option *ngIf="this.isCreate">  </option>
               <option  [value]="client.id" *ngFor="let client of forestClients" [selected]="client.id === forestClientSelect" [innerHTML]=" client.name"> </option>
             </select>
+            <input *ngIf="!this.isCreate"
+                   type="text"
+              class="form-control"
+              id="forestId"
+              name="forestName"
+              disabled
+              [value]="originalProjectResponse.forestClient.name"
+            />
           </div>
 
         </div>
@@ -150,20 +158,20 @@
           >
           </textarea>
         </div>
-        <div class="form-group mb-0">
-          <legend>FOM Supporting Documents</legend>
-
-          <app-upload-box [multipleFiles]="true" [files]="fomSupportingDocuments" (fileUploaded)="addNewFiles($event)"></app-upload-box>
-<!--          <app-upload-box [multipleFiles]="true" [files]="applicationFiles" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>-->
-        </div>
-      </fieldset>
-
-      <fieldset name="decisionForm" id="appDecision">
-        <div class="form-group mb-0">
+        <div class="form-group mb-0" *ngIf="!this.isCreate">
           <legend>Initial Public Notice</legend>
 
           <app-upload-box [multipleFiles]="false" [files]="initialPublicDocument"
                           (fileUploaded)="addNewPublicNoticeDocument($event)"></app-upload-box>
+          <!--          <app-upload-box [multipleFiles]="true" [files]="applicationFiles" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>-->
+        </div>
+      </fieldset>
+
+      <fieldset name="decisionForm" id="appDecision"  *ngIf="!this.isCreate">
+        <div class="form-group mb-0"  >
+          <legend>FOM Supporting Documents</legend>
+
+          <app-upload-box [multipleFiles]="true" [files]="fomSupportingDocuments" (fileUploaded)="addNewFiles($event)"></app-upload-box>
           <!--          <app-upload-box [multipleFiles]="true" [files]="applicationFiles" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>-->
         </div>
       </fieldset>
