@@ -1,7 +1,7 @@
 <div class="search-container">
   <form #f="ngForm" class="search-form ui form" (ngSubmit)="onSubmit()">
   <div class="container">
-    <h1>Search FOMs</h1>
+    <h2>Search FOMs</h2>
     <div class="filter-grid">
       <div class="input-group main-search-field">
         <input id="fspIdInput" type="number" min="0" step="1"
@@ -18,7 +18,7 @@
                   title="Filter by Status"
                   [disabled]="searching"
                   [(ngModel)]="fStatus">
-            <option [value]="undefined">Select a Status</option> <!-- Note, for 'string' type use "undefined" so it can pre-selected -->
+            <option [value]="undefined">Select a status</option> <!-- Note, for 'string' type use "undefined" so it can pre-selected -->
             <option *ngFor="let status of statusCodes" 
                     [value]="status.code"
                     [selected]="status.code === fStatus">
