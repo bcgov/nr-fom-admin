@@ -20,6 +20,7 @@ import { DatePipe } from '@angular/common';
 import {FomAddEditForm} from './fom-add-edit.form';
 import {StateService} from 'core/services/state.service';
 import {ModalService} from 'core/services/modal.service';
+import {WorkflowStateEnum} from "core/api/model/workflowStateEnum";
 import {toNumber} from "ngx-bootstrap/timepicker/timepicker.utils";
 
 export type ApplicationPageType = 'create' | 'edit';
@@ -34,7 +35,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   fg: RxFormGroup;
 // test = this.fg.get('')
   state: ApplicationPageType;
-  originalProject: ProjectResponse;
+  originalProjectResponse: ProjectResponse;
 
   get isCreate() {
     return this.state === 'create';
@@ -91,7 +92,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public cancelChanges() {
     // this.location.back(); // FAILS WHEN CANCEL IS CANCELLED (DUE TO DIRTY FORM OR UNSAVED DOCUMENTS) MULTIPLE TIMES
-    const routerFragment = this.isCreate ? ['/search'] : ['/a', this.originalProject.id]
+    const routerFragment = this.isCreate ? ['/search'] : ['/a', this.originalProjectResponse.id]
 
     this.router.navigate(routerFragment);
 
@@ -105,16 +106,14 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     )).subscribe((data: ProjectResponse) => {
       if (!this.isCreate) {
-        this.originalProject = data as ProjectResponse;
-
-
+        this.originalProjectResponse = data as ProjectResponse;
         if (data.district){
-          this.districtIdSelect = this.originalProject.district.id;
+          this.districtIdSelect = this.originalProjectResponse.district.id;
         }
 
-        this.forestClientSelect = this.originalProject.forestClient.id;
+        this.forestClientSelect = this.originalProjectResponse.forestClient.id;
       }
-
+      console.log('ngOnInint is create')
       const form = new FomAddEditForm(data);
       this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
       // console.log('ProjectResponse: ', this.fg.value as ProjectResponse);
@@ -125,6 +124,10 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
       // Converting commentingClosedDate date to 'yyyy-MM-dd'
       datePipe = this.datePipe.transform(this.fg.value.commentingClosedDate,'yyyy-MM-dd');
       this.fg.get('commentingClosedDate').setValue(datePipe);
+
+      this.fg.get('district').setValue(this.districtIdSelect);
+
+      // this.fg.get('workflowState').setValue(WorkflowStateEnum.INITIAL);
 
       this.loadForestClients().then( (result) => {
         this.forestClients = result;
@@ -190,7 +193,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
       this.fg.updateValueAndValidity({onlySelf: false, emitEvent: true});
       this.modalSvc.openDialog({
         data: {
-          message: 'Invalid inputs',
+          message: 'You missed some information. ',
           title: '',
           width: '340px',
           height: '200px',
@@ -199,7 +202,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
       })
 
     }
-    console.log('inside validate: ', this.fg)
+    console.log('inside validate: ', this.fg);
     return this.fg.valid;
   }
 
@@ -207,7 +210,12 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.validate();
     if (!this.fg.valid) return;
     if (this.stateSvc.loading) return;
-    const result = await this.projectSvc.projectControllerCreate(this.fg.value as ProjectCreateRequest).pipe(tap(obs => console.log(obs))).toPromise()
+    let projectCreate = this.fg.value as ProjectCreateRequest
+    projectCreate['districtId'] = this.districtIdSelect;
+    projectCreate.forestClientNumber = this.fg.get('forestClient').value;
+
+      console.log('projectCreate: ', projectCreate)
+    const result = await this.projectSvc.projectControllerCreate(projectCreate).pipe(tap(obs => console.log(obs))).toPromise()
     const {id} = result;
     if (!id) {
     }
@@ -221,13 +229,23 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   async saveApplication() {
-    const {id, district, forestClient, workflowState, ...rest} = this.originalProject;
-    console.log('inside save: ', this.fg)
-    const projectUpdateRequest = {...rest, ...this.fg.value}
-    console.log('Trying to save projectUpdateRequest: ', projectUpdateRequest)
+    const {id, forestClient, workflowState, ...rest} = this.originalProjectResponse;
+    // console.log('inside save: ', this.fg)
+    let projectUpdateRequest = {...rest, ...this.fg.value}
+    projectUpdateRequest['districtId'] = projectUpdateRequest.district;
+
+    console.log('Trying to save projectUpdateRequest: ', JSON.stringify(projectUpdateRequest))
+    if(!projectUpdateRequest.description) {
+      console.log('inside if');
+      return;
+    }else {
+        console.log('outside if',projectUpdateRequest.description )
+    }
+
+    this.validate();
+    if (!this.fg.valid) return;
     try {
-      const result = await this.projectSvc.projectControllerUpdate(id, projectUpdateRequest as ProjectUpdateRequest).pipe(tap(obs => console.log(obs))).toPromise();
-      console.log('result: ', result);
+      const result = await this.projectSvc.projectControllerUpdate(id, projectUpdateRequest).pipe(tap(obs => console.log(obs))).toPromise();
       if (result) return this.onSuccess(id);
       this.modalSvc.openDialog({
         data: {
@@ -250,6 +268,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
   changeDistrictId(e) {
     this.fg.get('district').setValue(parseInt(e.target.value));
+    this.districtIdSelect = parseInt(e.target.value);
   }
 
   changeForestClientId(e) {

@@ -45,7 +45,7 @@ export class FomDetailComponent implements OnInit, OnDestroy {
     this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: ProjectResponse }) => {
       if (data.application) {
         this.project = data.application;
-        // console.log('ProjectResponse: '+ JSON.stringify(data.application));
+        console.log('ProjectResponse: '+ JSON.stringify(data.application));
         // console.log('projecForestClien: '+ JSON.stringify(data.application.district));
         // this.forestClient = data.application.forestClient;
         // this.district = data.application.district;
