@@ -1,54 +1,89 @@
 <div class="search-container">
+  <form #f="ngForm" class="search-form ui form" (ngSubmit)="onSubmit()">
   <div class="container">
-    <h1>Find FOM by FSP</h1>
-    <form #f="ngForm" class="search-form ui form" (ngSubmit)="onSubmit()">
-      <label for="keywordInput">Enter FSP ID</label>
+    <h1>Search FOMs</h1>
+    <div class="filter-grid">
       <div class="input-group main-search-field">
-        <input class="form-control" type="text" name="keywordInput" id="keywordInput" [(ngModel)]="keywords"
-               [disabled]="searching" autofocus/>
-        <div class="input-group-append">
-          <!-- prevent searching if input is empty or we're already searching -->
-          <button class="btn btn-primary" type="submit" [disabled]="!keywords || searching">
-            <i class="spinner rotating" [hidden]="!searching"></i>
-            <span>{{searching ? 'Searching...' : 'Find'}}</span>
-          </button>
-        </div>
+        <input id="fspIdInput" type="number" min="0" step="1"
+              class="form-control filter-input"
+              style="font-size: 14px;" 
+              name="fFspId" placeholder="Enter FSP ID"
+              [(ngModel)]="fFspId"
+              [disabled]="searching" autofocus/>
       </div>
-    </form>
-  </div>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-2">
-        <div class="btn-container">
-          <!-- (click)="onImport(application)" [disabled]="application.meta.isRetired"> -->
-          <button class="btn btn-sm btn-primary btn-container" type="button" title="Create a new FOM"
-                  (click)="onImport()">
-            <i class="material-icons">add</i>
-            Create
-          </button>
-        </div>
+
+      <div>
+          <select name="fStatus"
+                  class="form-control filter-select"
+                  title="Filter by Status"
+                  [disabled]="searching"
+                  [(ngModel)]="fStatus">
+            <option [value]="undefined">Select a Status</option> <!-- Note, for 'string' type use "undefined" so it can pre-selected -->
+            <option *ngFor="let status of statusCodes" 
+                    [value]="status.code"
+                    [selected]="status.code === fStatus">
+                    {{status.description}}</option>
+          </select>
       </div>
-      <div> Add New Forest Operations Map</div>
+
+      <div>
+        <select name="fDistrict"
+                class="form-control filter-select"
+                title="Filter by District"
+                [disabled]="searching"
+                [(ngModel)]="fDistrict">
+          <option [value]="null" selected>Select a district</option> <!-- Note, for 'number' type use "null" so it can pre-selected -->
+          <option *ngFor="let district of districts" 
+                  [value]="district.id"
+                  [selected]="district.id === fDistrict">
+                  {{district.name}}</option>
+        </select>
+      </div>
+
+      <div class="input-group main-search-field">
+        <input id="FOMHolderInput" type="text"
+              class="form-control filter-input"
+              style="font-size: 14px;"
+              name="fHolder" placeholder="Enter FOM Holder Name (or portion)"
+              [(ngModel)]="fHolder"
+              [disabled]="searching" autofocus/>
+      </div>
+
+      <div class="filter-buttons">
+        <button class="filter-btn-clear btn btn-secondary" 
+                (click)="clearQueryParameters()"
+                [disabled]="searching"
+                type="button" 
+                title="Clear search filters">Clear
+        </button>
+        <button class="filter-btn-search btn btn-primary" type="submit"
+                [disabled]="searching" title="Search for FOMs">
+          Search
+          <i class="spinner-border" [hidden]="!searching"></i>
+        </button>
+      </div>
     </div>
   </div>
+  </form>
 </div>
 
 
 <div class="container">
   <div class="search-results">
-    <h2 *ngIf="ranSearch && !searching && count == 0">
-      <strong>No results found for "{{keywords ? keywords : 'unknown'}}"</strong>
+    <h2 *ngIf="!searching && count == 0">
+      <strong>No results found.</strong>
     </h2>
 
-    <h2 *ngIf="ranSearch && !searching && count > 0">
-      <strong>{{count}} result<span *ngIf="count != 1">s</span> found for "{{keywords ? keywords : 'unknown'}}"</strong>
+    <h2 *ngIf="!searching && count > 0">
+      <strong>{{count}} result<span *ngIf="count != 1">s</span> found.</strong>
     </h2>
     <table class="table" *ngIf="count > 0">
       <thead>
       <tr>
         <th class="disp">FOM ID</th>
         <th class="client">FOM Name</th>
-        <th class="client">Create Date</th>
+        <th class="client">FSP ID</th>
+        <th class="client">District</th>
         <th class="status">FOM Status</th>
         <th class="status">Commenting Open Date</th>
         <th class="actions"></th>
@@ -63,7 +98,10 @@
             [innerHTML]="project.name ? (project.name | titlecase) : '<em>No FOM name on this File</em>'">
           </td>
           <td>
-            {{project.createTimestamp| date:'mediumDate'}}
+            {{project.fspId}}
+          </td>
+          <td>
+            {{project.district?.name}}
           </td>
           <td>
             {{project.workflowState? project.workflowState.description : 'Unknown'}}
@@ -98,40 +136,7 @@
             </div>
           </td>
         </tr>
-<!--        <tr>-->
-<!--          <td colspan="6">-->
-<!--            <span class="comment-info">-->
-<!--              &lt;!&ndash; TODO: Fix me! &ndash;&gt;-->
-<!--              &lt;!&ndash;<span *ngIf="project.publicComments && project.publicComments.length > 0">-->
-<!--                <strong>-->
-<!--                  <a [routerLink]="['/comments', project.id]">{{ project.publicComments.length }}-->
-<!--                    {{project.publicComments.length === 1 ? 'comment' : 'comments'}}</a>-->
-<!--                </strong>-->
-<!--                &nbsp;-&nbsp;-->
-<!--              </span> &ndash;&gt;-->
-<!--&lt;!&ndash;              <span>&ndash;&gt;-->
-<!--&lt;!&ndash;                &nbsp;&nbsp; Commenting &nbsp; Closed - {{ project.commentingClosedDate | date:'longDate' || 'Unknown'}}&ndash;&gt;-->
-<!--&lt;!&ndash;              </span>&ndash;&gt;-->
-<!--              &lt;!&ndash; <span *ngIf="application.meta.currentPeriod">-->
-<!--                &nbsp;-&nbsp;-->
-<!--                {{application.meta.currentPeriod.startDate | date:'longDate'}} to-->
-<!--                {{application.meta.currentPeriod.endDate | date:'longDate'}}-->
-<!--                <span *ngIf="application.meta.currentPeriod.meta.daysRemaining">-->
-<!--                  &nbsp;({{application.meta.currentPeriod.meta.daysRemaining + (application.meta.currentPeriod.meta.daysRemaining === 1 ? ' day ' : ' days ') + 'remaining'}})-->
-<!--                </span>-->
-<!--              </span> &ndash;&gt;-->
-<!--            </span>-->
-<!--          </td>-->
-<!--        </tr>-->
       </ng-template>
     </table>
   </div>
-  <!-- <div class="btn-container" *ngIf="ranSearch && !searching && count > 0">
-      (click)="onImport(application)" [disabled]="application.meta.isRetired">
-      <button class="btn btn-sm btn-primary btn-container" type="button" title="Create a new FOM"
-          (click)="onImport()" >
-          <i class="material-icons">add</i>
-          Create
-      </button>
-  </div> -->
 </div>
