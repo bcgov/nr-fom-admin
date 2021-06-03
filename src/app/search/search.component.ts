@@ -5,15 +5,11 @@ import {Location} from '@angular/common';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import * as _ from 'lodash';
-
 import {ProjectService} from "core/api";
-
-// Testing fetching Districts
 import {ProjectResponse} from 'core/api';
 import { StateService } from 'core/services/state.service';
 import { KeycloakService } from 'core/services/keycloak.service';
 import { User } from 'core/services/user'
-import { ConfigService } from 'core/services/config.service';
 
 @Component({
   selector: 'app-search',
@@ -69,10 +65,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.searchProjectService.projectControllerFind( this.fFspId , districtArg, workFlowStateCodeArg, this.fHolder)
       .subscribe(
         projects => {
-          projects.forEach(project => {
-            // @ts-ignore
-            this.projects.push(project as Project);
-          });
+          this.projects = projects;
           this.count = this.projects.length;
         },
         error => {
@@ -80,8 +73,8 @@ export class SearchComponent implements OnInit, OnDestroy {
 
           this.searching = false;
 
-          this.snackBarRef = this.snackBar.open('Error searching foms ...', 'RETRY');
-          this.snackBarRef.onAction().subscribe(() => this.onSubmit());
+          this.snackBarRef = this.snackBar.open('Error searching foms ...', null, {duration: 3000});
+          // this.snackBarRef.onAction().subscribe(() => this.onSubmit()); // commenting out 'action' so user does not click again/and again.
         },
         () => {
           this.searching = false;
