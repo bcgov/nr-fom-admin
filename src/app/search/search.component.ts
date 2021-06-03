@@ -65,10 +65,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.searchProjectService.projectControllerFind( this.fFspId , districtArg, workFlowStateCodeArg, this.fHolder)
       .subscribe(
         projects => {
-          projects.forEach(project => {
-            // @ts-ignore
-            this.projects.push(project as Project);
-          });
+          this.projects = projects;
           this.count = this.projects.length;
         },
         error => {
@@ -76,8 +73,8 @@ export class SearchComponent implements OnInit, OnDestroy {
 
           this.searching = false;
 
-          this.snackBarRef = this.snackBar.open('Error searching foms ...', 'RETRY');
-          this.snackBarRef.onAction().subscribe(() => this.onSubmit());
+          this.snackBarRef = this.snackBar.open('Error searching foms ...', null, {duration: 3000});
+          // this.snackBarRef.onAction().subscribe(() => this.onSubmit()); // commenting out 'action' so user does not click again/and again.
         },
         () => {
           this.searching = false;
