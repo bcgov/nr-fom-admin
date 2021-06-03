@@ -5,15 +5,11 @@ import {Location} from '@angular/common';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import * as _ from 'lodash';
-
 import {ProjectService} from "core/api";
-
-// Testing fetching Districts
 import {ProjectResponse} from 'core/api';
 import { StateService } from 'core/services/state.service';
 import { KeycloakService } from 'core/services/keycloak.service';
 import { User } from 'core/services/user'
-import { ConfigService } from 'core/services/config.service';
 
 @Component({
   selector: 'app-search',
