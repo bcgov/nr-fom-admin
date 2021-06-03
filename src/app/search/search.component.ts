@@ -10,6 +10,7 @@ import {ProjectResponse} from 'core/api';
 import { StateService } from 'core/services/state.service';
 import { KeycloakService } from 'core/services/keycloak.service';
 import { User } from 'core/services/user'
+import { isNil } from 'lodash';
 
 @Component({
   selector: 'app-search',
@@ -61,8 +62,9 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.count = 0;
 
     const workFlowStateCodeArg = this.fStatus === 'undefined'? null: this.fStatus;
-    const districtArg = isNaN(this.fDistrict)? null : this.fDistrict;
-    this.searchProjectService.projectControllerFind( this.fFspId , districtArg, workFlowStateCodeArg, this.fHolder)
+    const districtArg = (isNaN(this.fDistrict) || isNil(this.fDistrict))? null : this.fDistrict.toString();
+    const fspIdArg = (isNaN(this.fFspId) || isNil(this.fFspId))? null : this.fFspId.toString();
+    this.searchProjectService.projectControllerFind(fspIdArg , districtArg, workFlowStateCodeArg, this.fHolder)
       .subscribe(
         projects => {
           this.projects = projects;

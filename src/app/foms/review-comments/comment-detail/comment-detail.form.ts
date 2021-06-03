@@ -1,5 +1,5 @@
 import {prop, required} from "@rxweb/reactive-form-validators"
-import {PublicCommentAdminResponse, PublicCommentAdminUpdateRequest, ResponseCode} from "../../../../core/api";
+import {PublicCommentAdminResponse, PublicCommentAdminUpdateRequest, ResponseCodeEnum} from "../../../../core/api";
 
 const UPDATE_FIELDS = ['responseDetails', 'responseCode'] as const;
 
@@ -9,10 +9,10 @@ export class CommentDetailForm implements Pick<PublicCommentAdminUpdateRequest, 
 
   @prop()
   @required()
-  responseCode: string = '';
+  responseCode: ResponseCodeEnum;
 
   constructor(comment: PublicCommentAdminResponse) {
-    this.responseCode = comment.response?.code;
+    this.responseCode = comment.response?.code as ResponseCodeEnum;
     this.responseDetails = comment.responseDetails;
   }
 
