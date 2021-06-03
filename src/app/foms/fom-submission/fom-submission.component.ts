@@ -88,7 +88,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
       this.project = data as ProjectResponse;
       this.originalSubmissionRequest = <SubmissionRequest> {
         projectId: data.id,
-        submissionTypeCode: data.workflowState.code === WorkflowStateEnum.COMMENT_CLOSED ? SubmissionTypeCodeEnum.Final: SubmissionTypeCodeEnum.Proposed,
+        submissionTypeCode: data.workflowState.code === WorkflowStateEnum.CommentClosed ? SubmissionTypeCodeEnum.Final: SubmissionTypeCodeEnum.Proposed,
         spatialObjectCode: SpatialObjectCodeEnum.CutBlock,
         jsonSpatialSubmission: Object
       }
