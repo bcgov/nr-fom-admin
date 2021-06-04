@@ -40,7 +40,6 @@ export class FomAddEditForm implements Pick<ProjectResponse,
   @prop()
   @required()
   @minLength({value: 1})
-
   district: DistrictResponse;
 
   @prop()
