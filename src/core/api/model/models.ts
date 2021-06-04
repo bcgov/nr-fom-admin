@@ -22,4 +22,3 @@ export * from './submissionRequest';
 export * from './submissionTypeCode';
 export * from './submissionTypeCodeEnum';
 export * from './workflowStateCode';
-export * from './workflowStateEnum';

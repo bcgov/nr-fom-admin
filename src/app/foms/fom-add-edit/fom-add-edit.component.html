@@ -104,18 +104,19 @@
               name="fsp-id"
               formControlName="fspId"
               [appFormControl]="fg.get('fspId')"
-
             />
           </div>
           <div class="col">
             <label for="fsp-id" style="white-space: nowrap;">District</label>
-            <select class="sort-comments form-control" (change)="changeDistrictId($event)" id="district-list">
-              <option *ngIf="this.isCreate">  </option>
+            <select class="sort-comments form-control" [ngClass]="{'is-invalid': !districtIdSelect && isSubmitSaveClicked}" (change)="changeDistrictId($event)" id="district-list">
+              <option *ngIf="this.isCreate || !districtIdSelect">  </option>
               <option  [value]="district.id" *ngFor="let district of districts" [selected]="district.id === districtIdSelect" [innerHTML]=" district.name "> </option>
-               </select>
+            </select>
           </div>
         </div>
         <!-- <legend>Application Details</legend> -->
+        <div class="form-row">
+        </div>
         <div class="form-row">
           <div class="form-group col">
             <label>FOM Name</label>
@@ -130,7 +131,7 @@
           </div>
           <div class="form-group col">
             <label>FOM Holder</label>
-            <select *ngIf="this.isCreate" class="sort-comments form-control"  (change)="changeForestClientId($event)" id="forestClient-list">
+            <select *ngIf="this.isCreate" class="sort-comments form-control" [ngClass]="{'is-invalid': !forestClientSelect && isSubmitSaveClicked}" (change)="changeForestClientId($event)" id="forestClient-list">
               <option *ngIf="this.isCreate">  </option>
               <option  [value]="client.id" *ngFor="let client of forestClients" [selected]="client.id === forestClientSelect" [innerHTML]=" client.name"> </option>
             </select>
@@ -147,14 +148,13 @@
         </div>
         <div class="form-group">
           <label>Description</label>
-          <textarea
-            class="form-control"
+          <textarea (keyup)="changeDescription($event)"
+            class="form-control" [ngClass]="{'is-invalid': !descriptionIsEmpty && isSubmitSaveClicked && !isCreate}"
             rows="3"
             id="description"
             name="description"
             formControlName="description"
             [appFormControl]="fg.get('description')"
-
           >
           </textarea>
         </div>

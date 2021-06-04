@@ -20,8 +20,6 @@ import { DatePipe } from '@angular/common';
 import {FomAddEditForm} from './fom-add-edit.form';
 import {StateService} from 'core/services/state.service';
 import {ModalService} from 'core/services/modal.service';
-import {WorkflowStateEnum} from "core/api/model/workflowStateEnum";
-import {toNumber} from "ngx-bootstrap/timepicker/timepicker.utils";
 
 export type ApplicationPageType = 'create' | 'edit';
 
@@ -54,6 +52,8 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   public forestClientSelect: any = null;
   files: any[] = [];
   publicNoticeDocument: any;
+  public isSubmitSaveClicked = false;
+  public descriptionIsEmpty: string = null;
 
   get isLoading() {
     return this.stateSvc.loading;
@@ -66,7 +66,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    // private location: Location,
+
     public snackBar: MatSnackBar,
     private projectSvc: ProjectService,
     private formBuilder: RxFormBuilder,
@@ -107,16 +107,14 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     )).subscribe((data: ProjectResponse) => {
       if (!this.isCreate) {
         this.originalProjectResponse = data as ProjectResponse;
-        if (data.district){
+        if (data.district) {
           this.districtIdSelect = this.originalProjectResponse.district.id;
         }
 
         this.forestClientSelect = this.originalProjectResponse.forestClient.id;
       }
-      console.log('ngOnInint is create')
       const form = new FomAddEditForm(data);
       this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
-      // console.log('ProjectResponse: ', this.fg.value as ProjectResponse);
 
       // Converting commentingOpenDate date to 'yyyy-MM-dd'
       let datePipe = this.datePipe.transform(this.fg.value.commentingOpenDate,'yyyy-MM-dd');
@@ -127,7 +125,9 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.fg.get('district').setValue(this.districtIdSelect);
 
-      // this.fg.get('workflowState').setValue(WorkflowStateEnum.INITIAL);
+      if(data.description) {
+        this.descriptionIsEmpty = data.description;
+      }
 
       this.loadForestClients().then( (result) => {
         this.forestClients = result;
@@ -143,12 +143,10 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
   addNewFiles(newFiles: any[]) {
     this.files.push(newFiles);
-    // console.log('Inserted files on parent: ' + this.files.length);
   }
 
   addNewPublicNoticeDocument(newDocument: any) {
     this.publicNoticeDocument = newDocument;
-    // console.log('public notice', this.publicNoticeDocument);
   }
 
   ngAfterViewInit() {
@@ -172,28 +170,13 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  // @ts-ignore
-  private static dateToNgbDate(date: Date): NgbDateStruct {
-    return date ? {year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate()} : null;
-  }
-
-  // @ts-ignore
-  private static ngbDateToDate(date: NgbDateStruct): Date {
-    return new Date(date.year, date.month - 1, date.day);
-  }
-
-  // used in template
-  public isValidDate(date: NgbDateStruct): boolean {
-    return date && !isNaN(date.year) && !isNaN(date.month) && !isNaN(date.day);
-  }
-
   validate() {
     if (!this.fg.valid) {
       this.fg.markAllAsTouched();
       this.fg.updateValueAndValidity({onlySelf: false, emitEvent: true});
       this.modalSvc.openDialog({
         data: {
-          message: 'You missed some information. ',
+          message: 'Please review the highlighted fields ',
           title: '',
           width: '340px',
           height: '200px',
@@ -202,11 +185,11 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
       })
 
     }
-    console.log('inside validate: ', this.fg);
     return this.fg.valid;
   }
 
   async submit() {
+    this.isSubmitSaveClicked = true;
     this.validate();
     if (!this.fg.valid) return;
     if (this.stateSvc.loading) return;
@@ -214,7 +197,6 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     projectCreate['districtId'] = this.districtIdSelect;
     projectCreate.forestClientNumber = this.fg.get('forestClient').value;
 
-      console.log('projectCreate: ', projectCreate)
     const result = await this.projectSvc.projectControllerCreate(projectCreate).pipe(tap(obs => console.log(obs))).toPromise()
     const {id} = result;
     if (!id) {
@@ -229,20 +211,15 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   async saveApplication() {
+    this.isSubmitSaveClicked = true;
+    this.validate();
     const {id, forestClient, workflowState, ...rest} = this.originalProjectResponse;
-    // console.log('inside save: ', this.fg)
     let projectUpdateRequest = {...rest, ...this.fg.value}
     projectUpdateRequest['districtId'] = projectUpdateRequest.district;
 
     console.log('Trying to save projectUpdateRequest: ', JSON.stringify(projectUpdateRequest))
-    if(!projectUpdateRequest.description) {
-      console.log('inside if');
-      return;
-    }else {
-        console.log('outside if',projectUpdateRequest.description )
-    }
 
-    this.validate();
+    //
     if (!this.fg.valid) return;
     try {
       const result = await this.projectSvc.projectControllerUpdate(id, projectUpdateRequest).pipe(tap(obs => console.log(obs))).toPromise();
@@ -256,10 +233,6 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
           buttons: {confirm: {text: 'OK'}}
         }
       })
-
-
-      // this.onSuccess( id )
-      // console.log( this.application );
     } catch (err) {
 
     }
@@ -273,5 +246,13 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
   changeForestClientId(e) {
     this.fg.get('forestClient').setValue(e.target.value);
+    this.forestClientSelect = parseInt(e.target.value);
+  }
+
+  changeDescription(e) {
+    this.descriptionIsEmpty = e.target.value;
+    if(!this.descriptionIsEmpty && !this.isCreate){
+      this.fg.get('description').setErrors({incorrect: true})
+    }
   }
 }

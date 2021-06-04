@@ -17,7 +17,7 @@ import {FomSubmissionForm} from './fom-submission.form';
 import {StateService} from 'core/services/state.service';
 import {ModalService} from 'core/services/modal.service';
 import {SubmissionService} from 'core/api';
-import {WorkflowStateEnum} from "core/api/model/workflowStateEnum";
+import {WorkflowStateEnum} from "core/models/workflowStateEnum";
 
 @Component({
   selector: 'app-fom-submission',
