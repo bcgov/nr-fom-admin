@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {forkJoin, Observable, Subject} from 'rxjs';
-import {map, startWith, takeUntil} from 'rxjs/operators';
+import {map, takeUntil} from 'rxjs/operators';
 
 import {PublicCommentAdminResponse} from 'core/api';
 import {
@@ -10,20 +10,8 @@ import {
   PublicCommentService,
   PublicCommentAdminUpdateRequest
 } from 'core/api';
-import {FormControl} from '@angular/forms';
-import * as R from 'remeda'
 import {ModalService} from 'core/services/modal.service';
 import {StateService} from 'core/services/state.service';
-
-type SortKeysType = keyof Pick<PublicCommentAdminResponse, 'createTimestamp' | 'name'>
-type SortDirType = 'asc' | 'desc'
-
-class SortKey {
-  innerHTML: string;
-  value: SortKeysType;
-  dir: SortDirType
-}
-
 
 export const ERROR_DIALOG = {
   // title: 'The requested project does not exist.',
@@ -49,35 +37,12 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
   public commentListScrollContainer: ElementRef; // TODO: Something is up with this...
 
   comment: PublicCommentAdminResponse;
-
-  readonly sortKeys: SortKey[] = [
-    {innerHTML: 'Oldest', value: 'createTimestamp', dir: 'desc'},
-    {innerHTML: 'Newest', value: 'createTimestamp', dir: 'asc'},
-    {innerHTML: 'Name (A-Z)', value: 'name', dir: 'desc'},
-    {innerHTML: 'Name (Z-A)', value: 'name', dir: 'asc'}
-  ];
-  sortControl: FormControl = new FormControl(this.sortKeys[1]);
-
-  data$: Observable<{ project: ProjectResponse, comments: PublicCommentAdminResponse[]; }>
-
+  data$: Observable<{ project: ProjectResponse, comments: PublicCommentAdminResponse[]; }>;
   responseCodes = this.stateSvc.getCodeTable('responseCode')
-
-  commentsList: PublicCommentAdminResponse[];
-
-  results$: Observable<PublicCommentAdminResponse[]> = this.sortControl.valueChanges.pipe(startWith(this.sortKeys[1].value), map(dir => {
-
-    return dir.dir === 'asc' ? R.sortBy(this.comments, (item) => item[dir.value]) : R.reverse(R.sortBy(this.comments, (item) => item[dir.value]));
-
-  }))
 
   public loading = false;
   public project: ProjectResponse = null;
   public comments: PublicCommentAdminResponse[] = [];
-  public publicComments: PublicCommentAdminResponse[] = [];
-  public alerts: string[] = [];
-  public currentComment: Comment;
-  public currentPublicComment: PublicCommentAdminResponse;
-
 
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
 
@@ -102,12 +67,11 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.ngUnsubscribe), map(result => {
 
       const [project, comments] = result;
-
+      this.project = project;
       this.comments = comments;
 
       if (!project) {
         const ref = this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Home', title: ''}});
-
         ref.afterClosed().subscribe(() => this.router.navigate(['admin/search']))
       }
 
@@ -129,7 +93,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
       const result = await this.commentSvc.publicCommentControllerUpdate(id, update).toPromise()
       if (result) {
         this.modalSvc.openSnackBar({message: 'Comment saved', button: 'OK'})
-        this.sortControl.setValue(this.sortControl.value)
+        // TODO, refresh list?
       } else {
         this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Failed to update', title: ''}})
       }

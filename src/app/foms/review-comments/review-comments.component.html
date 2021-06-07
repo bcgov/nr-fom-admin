@@ -1,11 +1,11 @@
-<ngb-alert type="danger" [dismissible]="false" *ngFor="let alert of alerts">{{alert}}</ngb-alert>
+<!-- <ngb-alert type="danger" [dismissible]="false" *ngFor="let alert of alerts">{{alert}}</ngb-alert> -->
 <ng-container *ngIf="data$ | async as data">
   <div class="top-container">
     <div class="container">
-      <div class="breadcrumb-container">
+      <!-- <div class="breadcrumb-container">
         <a *ngIf="project" [routerLink]="['/a', data?.project?.id]">
           <i class="material-icons md-18">arrow_back </i> Back to Fom Details</a>
-      </div>
+      </div> -->
       <div class="title-container">
         <div class="title-container__title">
           <h1>Review Comments for FOM ID : {{data?.project?.id}}</h1>
@@ -25,21 +25,14 @@
       <div class="review-comments">
         <div class="review-comments__list panel">
           <div class="panel-header">
-            <h2>Comments ({{data?.comments?.length}})</h2>
-            <!--
-            <select class="sort-comments form-control" [formControl]="sortControl" placeholder="Sort by">
-
-              <option *ngFor="let sortKey of sortKeys;" [ngValue]="sortKey">{{sortKey.innerHTML}}</option>
-            </select>
-            -->
           </div>
           <div class="panel-scroll" #commentListScrollContainer>
-            <ng-container *ngIf="results$ | async as results">
+            <ng-container *ngIf="data$ | async as results">
 
               <!-- <ng-template ngFor let-item [ngForOf]="publicComments"> -->
               <ng-container>
 
-                <div class="comment-item" *ngFor="let item of results" [class.active]="item?.id === comment?.id"
+                <div class="comment-item" *ngFor="let item of results.comments" [class.active]="item?.id === comment?.id"
                      (click)="commentDetailForm.selectedComment = item">
 
                   <div class="comment-item-header">
@@ -54,13 +47,6 @@
                     </div>
                   </div>
                   <div class="comment-body">{{item.feedback}}</div>
-
-                  <!-- <div class="comment-attachments" *ngIf="item.documents.length > 0">
-                    <i class="material-icons">
-                      attach_file
-                    </i>
-                    {{item.documents && item.documents.length}} {{item.documents.length === 1 ? "Attachment":"Attachments"}}
-                  </div> -->
                 </div>
               </ng-container>
 
