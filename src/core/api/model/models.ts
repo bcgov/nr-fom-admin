@@ -1,6 +1,5 @@
 export * from './attachmentResponse';
 export * from './attachmentTypeCode';
-export * from './attachmentTypeEnum';
 export * from './commentScopeCode';
 export * from './districtResponse';
 export * from './forestClientResponse';
@@ -22,3 +21,4 @@ export * from './submissionRequest';
 export * from './submissionTypeCode';
 export * from './submissionTypeCodeEnum';
 export * from './workflowStateCode';
+export * from './workflowStateEnum';
