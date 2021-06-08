@@ -77,6 +77,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
 
     // TODO: error handling seems not quite right, need to revise it later.
     try {
+      this.loading = true;
       const result = await this.commentSvc.publicCommentControllerUpdate(id, update).toPromise()
       if (result) {
         const sbRef = this.modalSvc.openSnackBar({message: 'Comment saved', button: 'OK'});
@@ -84,12 +85,15 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
           // Comment is saved successfully, so triggering service to retrieve comment list 
           // from backend for consistent state of the list at frontend.
           this.commentSaved$.next();
+          this.loading = false;
         });
       } else {
         this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Failed to update', title: ''}})
+        this.loading = false;
       }
     } catch (err) {
       this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Failed to update', title: ''}})
+      this.loading = false;
     }
   }
 

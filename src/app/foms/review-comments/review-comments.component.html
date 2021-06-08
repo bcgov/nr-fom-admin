@@ -50,7 +50,9 @@
           <div class="panel-scroll">
             <app-comment-detail #commentDetailForm="commentForm" [responseCodes]="responseCodes">
               <div class="row">
-                <button class="btn btn-sm btn-primary btn-container" type="button" title="Save this comment response"
+                <button type="button" title="Save this comment response"
+                        class="btn btn-sm btn-primary btn-container"
+                        [disabled]="loading"
                         (click)="saveComment(commentDetailForm.commentFormGroup.value, commentDetailForm.comment)">
                   Save response
                 </button>
