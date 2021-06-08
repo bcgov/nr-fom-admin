@@ -13,6 +13,7 @@ import {
   ProjectService,
   ForestClientResponse,
   ForestClientService,
+  AttachmentService,
   ProjectCreateRequest, ProjectUpdateRequest
 } from 'core/api';
 import {RxFormBuilder, RxFormGroup} from '@rxweb/reactive-form-validators';
@@ -20,6 +21,8 @@ import { DatePipe } from '@angular/common';
 import {FomAddEditForm} from './fom-add-edit.form';
 import {StateService} from 'core/services/state.service';
 import {ModalService} from 'core/services/modal.service';
+import {convertElementSourceSpanToLoc} from "@angular-eslint/template-parser/dist/convert-source-span-to-loc";
+import {AttachmentUploadService} from "../../../core/utils/attachmentUploadService";
 
 export type ApplicationPageType = 'create' | 'edit';
 
@@ -51,9 +54,19 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   public districtIdSelect: any = null;
   public forestClientSelect: any = null;
   files: any[] = [];
-  publicNoticeDocument: any;
+  publicNoticeContent: any;
   public isSubmitSaveClicked = false;
   public descriptionIsEmpty: string = null;
+  public fileTypesParentInitial: string[] =
+    ['image/png', 'image/jpeg', 'image/jpg', 'image/tiff',
+      'image/x-tiff', 'application/pdf']
+
+  public fileTypesParentSupporting: string[] =
+    ['application/pdf', 'image/jpg', 'image/jpeg', 'text/csv', 'image/png', 'text/plain',
+     'application/rtf', 'image/tiff', 'application/msword',
+     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+     'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    ]
 
   get isLoading() {
     return this.stateSvc.loading;
@@ -69,6 +82,8 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public snackBar: MatSnackBar,
     private projectSvc: ProjectService,
+    private attachmentSvc: AttachmentService,
+    private attachmentUploadSvc: AttachmentUploadService,
     private formBuilder: RxFormBuilder,
     private stateSvc: StateService,
     private modalSvc: ModalService,
@@ -145,8 +160,25 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.files.push(newFiles);
   }
 
-  addNewPublicNoticeDocument(newDocument: any) {
-    this.publicNoticeDocument = newDocument;
+
+
+  getContentFileFromUpload(fileContent: any) {
+    this.publicNoticeContent = fileContent;
+    try {
+      // this.originalSubmissionRequest.jsonSpatialSubmission = JSON.parse(this.contentFile);
+      console.log('inside getContenFileParent: ', this.publicNoticeContent)
+    }catch (e) {
+      this.modalSvc.openDialog({
+        data: {
+          message: 'Your file is broken. Please review the Geo Spatial data',
+          title: '',
+          width: '340px',
+          height: '200px',
+          buttons: {confirm: {text: 'OK'}}
+        }
+      })
+    }
+    // this.fg.get('jsonSpatialSubmission').setValue(this.originalSubmissionRequest.jsonSpatialSubmission);
   }
 
   ngAfterViewInit() {
@@ -222,8 +254,20 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     //
     if (!this.fg.valid) return;
     try {
-      const result = await this.projectSvc.projectControllerUpdate(id, projectUpdateRequest).pipe(tap(obs => console.log(obs))).toPromise();
-      if (result) return this.onSuccess(id);
+      // const result = await this.projectSvc.projectControllerUpdate(id, projectUpdateRequest).pipe(tap(obs => console.log(obs))).toPromise();
+      const fileAsBlob = new Blob([this.publicNoticeContent]);
+      const file = this.files[0];
+      console.log('file: ', file);
+      // const resultAttachment = await this.attachmentSvc.attachmentControllerCreate(fileBlob, 3, 'PUBLIC_NOTICE').pipe(tap(obs => console.log(obs))).toPromise();
+
+      // This service was created by Marcelo but it also fails to transmit the 'body'
+      //
+      const resultAttachment = await this.attachmentUploadSvc.attachmentCreate(file, 3, 'PUBLIC_NOTICE').pipe(tap(obs => console.log(obs))).toPromise();
+      // if (result && resultAttachment) {
+      // if (result) {
+      if (resultAttachment) {
+        return this.onSuccess(id);
+      }
       this.modalSvc.openDialog({
         data: {
           message: 'There was an error with the request please try again',
@@ -234,7 +278,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       })
     } catch (err) {
-
+      // console.log(err)
     }
 
   }

@@ -1,9 +1,6 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
-import { faLockOpen, faLock } from '@fortawesome/free-solid-svg-icons';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
 
-const currentYear = new Date().getFullYear();
-const currentMonth = new Date().getMonth();
-const currentDay = new Date().getDate();
 import * as R from 'remeda';
 
 @Component({
@@ -23,7 +20,7 @@ import * as R from 'remeda';
             <span class="material-icons">
               cloud_upload
             </span>
-            <div>Drag file to upload</div>
+            <div>{{ multipleFiles ? dragMultipleFileMessage : dragSingleFileMessage }}</div>
             <div>or</div>
             <div>
               <a href="javascript:void(0)">Browse</a>
@@ -86,11 +83,13 @@ export class UploadBoxComponent implements OnInit {
   @Input() fileDate: string;
   @Input() date: string;
   @Input() maxFileSizeMB: number;
+  @Input() isBlob: boolean = false;
+  dragMultipleFileMessage: string ='Drag files to upload';
+  dragSingleFileMessage: string = 'Drag file to upload';
 
   @Output() fileUploaded = new EventEmitter<File[]>();
   @Output() outputFileContent = new EventEmitter<string>();
   monthVal = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  faLockOpen = faLockOpen;
   faLock = faLock;
 
   @Input() fileTypes: string[] = [
@@ -123,16 +122,15 @@ export class UploadBoxComponent implements OnInit {
 
   // bytes - default to max 10mb (set from global config)
   maxFileSize = 0;
-
   invalidTypeText: string;
-
   fileContent: string;
+  fileContentArrayBuffer: any;
 
   constructor() { }
   ngOnInit(): void {
 
     /* file size multiplied by 1024 for conversion */
-    this.maxFileSize = (this.maxFileSizeMB ? this.maxFileSizeMB : 5) * 1048576;
+    this.maxFileSize = (this.maxFileSizeMB ? this.maxFileSizeMB : 10) * 1048576;
     this.allowedFileTypes = this.fileTypes.join(', ');
   }
 
@@ -156,7 +154,12 @@ export class UploadBoxComponent implements OnInit {
     }
     if (event.addedFiles.length > 0 ) {
       // console.log('inside')
-      this.readFileContent(this.files[0]);
+      if( this.isBlob){
+        console.log('isBlob')
+        this.readFileContentAsBlob(this.files[0])
+      } else {
+        this.readFileContent(this.files[0]);
+      }
     }
   }
 
@@ -168,6 +171,17 @@ export class UploadBoxComponent implements OnInit {
       this.outputFileContent.emit(this.fileContent);
     })
     reader.readAsText(file);
+  }
+
+  readFileContentAsBlob(file: Blob) {
+    console.log('readAsBlob');
+    let reader = new FileReader();
+    reader.addEventListener('load', (event) => {
+      this.fileContentArrayBuffer = event.target.result;
+      this.fileUploaded.emit(this.files);
+      this.outputFileContent.emit(this.fileContentArrayBuffer);
+    })
+    reader.readAsArrayBuffer(file);
   }
 
   onRemove(event) {
