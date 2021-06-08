@@ -99,9 +99,10 @@
             <th class="disp">FOM ID</th>
             <th class="client">FOM Name</th>
             <th class="disp">FSP ID</th>
+            <th class="client">FOM Holder Name</th>
             <th class="client">District</th>
             <th class="status">FOM Status</th>
-            <th class="client">Commenting Open Date</th>
+            <th class="client">Commenting Closed Date</th>
             <th class="actions"></th>
           </tr>
           </thead>
@@ -116,6 +117,9 @@
               <td>
                 {{project.fspId}}
               </td>
+              <td
+                [innerHTML]="project.forestClient ? (project.forestClient.name | titlecase) : ''">
+              </td>
               <td>
                 {{project.district?.name}}
               </td>
@@ -123,7 +127,7 @@
                 {{project.workflowState? project.workflowState.description : 'Unknown'}}
               </td>
               <td>
-                {{project.commentingOpenDate | date:'mediumDate'}}
+                {{project.commentingClosedDate | date:'mediumDate'}}
               </td>
   
               <td class="actions">
