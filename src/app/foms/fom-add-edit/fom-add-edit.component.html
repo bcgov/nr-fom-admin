@@ -162,7 +162,11 @@
           <legend>Initial Public Notice</legend>
 
           <app-upload-box [multipleFiles]="false" [files]="initialPublicDocument"
-                          (fileUploaded)="addNewPublicNoticeDocument($event)"></app-upload-box>
+                          [isBlob]="true"
+                          [fileTypes]="fileTypesParentInitial"
+                          (fileUploaded)="addNewFiles($event)"
+                          (outputFileContent)="getContentFileFromUpload($event)"
+          ></app-upload-box>
           <!--          <app-upload-box [multipleFiles]="true" [files]="applicationFiles" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>-->
         </div>
       </fieldset>
@@ -171,8 +175,10 @@
         <div class="form-group mb-0"  >
           <legend>FOM Supporting Documents</legend>
 
-          <app-upload-box [multipleFiles]="true" [files]="fomSupportingDocuments" (fileUploaded)="addNewFiles($event)"></app-upload-box>
-          <!--          <app-upload-box [multipleFiles]="true" [files]="applicationFiles" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>-->
+          <app-upload-box [multipleFiles]="true" [files]="fomSupportingDocuments"
+                          [isBlob]="true"
+                          [fileTypes]="fileTypesParentSupporting"
+                          (fileUploaded)="addNewFiles($event)"></app-upload-box>
         </div>
       </fieldset>
     </form>

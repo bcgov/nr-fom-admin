@@ -74,7 +74,8 @@
         <div class="form-group mb-0">
 <!--          <legend>FOM Supporting Documents</legend>-->
 
-          <app-upload-box [multipleFiles]="false" [files]="applicationFiles" [fileTypes]="fileTypesParent" (fileUploaded)="addNewFiles($event)"
+          <app-upload-box [multipleFiles]="false" [files]="applicationFiles" [fileTypes]="fileTypesParent"
+                          (fileUploaded)="addNewFiles($event)"
                           (outputFileContent)="getContentFileFromUpload($event)"></app-upload-box>
         </div>
       </fieldset>

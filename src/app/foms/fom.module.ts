@@ -18,6 +18,7 @@ import {LeafletModule} from '@asymmetrik/ngx-leaflet';
 import { FomSubmissionComponent } from './fom-submission/fom-submission.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { AttachmentUploadService } from '../../core/utils/attachmentUploadService';
 // services
 // import { ExportService } from 'core/services/export.service';
 
@@ -51,6 +52,9 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
     ReviewCommentsComponent,
     CommentDetailComponent,
     FomSubmissionComponent
+  ],
+  providers: [
+    AttachmentUploadService
   ]
 })
 export class FomModule {
