@@ -31,6 +31,7 @@
           </label>
           <input id="fspIdInput" name="fFspId" type="number" 
                 min="0" step="1"
+                oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, 9);"
                 class="form-control"
                 style="font-size: 14px;"
                 [(ngModel)]="fFspId"

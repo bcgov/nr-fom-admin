@@ -11,6 +11,7 @@ import { StateService } from 'core/services/state.service';
 import { KeycloakService } from 'core/services/keycloak.service';
 import { User } from 'core/services/user'
 import { isNil } from 'lodash';
+import { ModalService } from 'core/services/modal.service';
 
 @Component({
   selector: 'app-search',
@@ -39,7 +40,8 @@ export class SearchComponent implements OnInit, OnDestroy {
     private stateSvc: StateService,
     private keycloakService: KeycloakService,
     public snackBar: MatSnackBar,
-    public searchProjectService: ProjectService
+    public searchProjectService: ProjectService,
+    private modalSvc: ModalService
   ) { 
     this.user = this.keycloakService.getUser();
   }
@@ -69,12 +71,15 @@ export class SearchComponent implements OnInit, OnDestroy {
         projects => {
           this.projects = projects;
           this.count = this.projects.length;
+          const limit = 2500;
+          if (this.count >= limit) {
+            this.modalSvc.openSnackBar({message: `Warning: Maximum of ${limit} search results exceeded - 
+            not all results have been displayed. Please refine your search criteria.`, button: 'OK'});
+          }
         },
         error => {
           console.error('error =', error);
-
           this.searching = false;
-
           this.snackBarRef = this.snackBar.open('Error searching foms ...', null, {duration: 3000});
           // this.snackBarRef.onAction().subscribe(() => this.onSubmit()); // commenting out 'action' so user does not click again/and again.
         },
