@@ -1,18 +1,16 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {forkJoin, Observable, Subject} from 'rxjs';
-import {map, takeUntil} from 'rxjs/operators';
+import {ActivatedRoute} from '@angular/router';
+import {Observable, Subject} from 'rxjs';
 
 import {PublicCommentAdminResponse} from 'core/api';
 import {
-  ProjectResponse,
-  ProjectService,
   PublicCommentService,
   PublicCommentAdminUpdateRequest
 } from 'core/api';
 import {ModalService} from 'core/services/modal.service';
 import {StateService} from 'core/services/state.service';
 
+// TODO: Not sure why we use this for error message...
 export const ERROR_DIALOG = {
   // title: 'The requested project does not exist.',
   // message: 'Please try again.',
@@ -31,25 +29,20 @@ export const ERROR_DIALOG = {
   styleUrls: ['./review-comments.component.scss']
 })
 export class ReviewCommentsComponent implements OnInit, OnDestroy {
-  readonly PAGE_SIZE = 20;
 
   @ViewChild('commentListScrollContainer', {read: ElementRef})
   public commentListScrollContainer: ElementRef; // TODO: Something is up with this...
-
-  comment: PublicCommentAdminResponse;
-  data$: Observable<{ project: ProjectResponse, comments: PublicCommentAdminResponse[]; }>;
-  responseCodes = this.stateSvc.getCodeTable('responseCode')
-
+ 
+  public responseCodes = this.stateSvc.getCodeTable('responseCode')
   public loading = false;
-  public project: ProjectResponse = null;
-  public comments: PublicCommentAdminResponse[] = [];
+  public projectId: number;
 
+  public data$: Observable<PublicCommentAdminResponse[]>;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
+  private commentSaved$ = new Subject(); // To notify when 'save' happen.
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
-    private projectSvc: ProjectService,
     private modalSvc: ModalService,
     private commentSvc: PublicCommentService,
     private stateSvc: StateService
@@ -60,23 +53,17 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     if (this.commentListScrollContainer && this.commentListScrollContainer.nativeElement) {
       this.commentListScrollContainer.nativeElement.scrollTop = 0;
     }
-    const {appId: projectId} = this.route.snapshot.params;
+    
+    this.projectId = this.route.snapshot.params.appId;
+    this.data$ = this.getProjectComments();
 
-    this.data$ = forkJoin(this.projectSvc.projectControllerFindOne(projectId),
-      this.commentSvc.publicCommentControllerFind(projectId))
-      .pipe(takeUntil(this.ngUnsubscribe), map(result => {
+    this.commentSaved$.subscribe(() => {
+      this.data$ = this.getProjectComments();
+    });
+  }
 
-      const [project, comments] = result;
-      this.project = project;
-      this.comments = comments;
-
-      if (!project) {
-        const ref = this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Home', title: ''}});
-        ref.afterClosed().subscribe(() => this.router.navigate(['admin/search']))
-      }
-
-      return {project, comments}
-    }))
+  getProjectComments() {
+    return this.commentSvc.publicCommentControllerFind(this.projectId);
   }
 
   ngOnDestroy() {
@@ -92,15 +79,18 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     try {
       const result = await this.commentSvc.publicCommentControllerUpdate(id, update).toPromise()
       if (result) {
-        this.modalSvc.openSnackBar({message: 'Comment saved', button: 'OK'})
-        // TODO, refresh list?
+        const sbRef = this.modalSvc.openSnackBar({message: 'Comment saved', button: 'OK'});
+        sbRef.onAction().subscribe(() => {
+          // Comment is saved successfully, so triggering service to retrieve comment list 
+          // from backend for consistent state of the list at frontend.
+          this.commentSaved$.next();
+        });
       } else {
         this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Failed to update', title: ''}})
       }
     } catch (err) {
-
+      this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Failed to update', title: ''}})
     }
-
   }
 
 

@@ -8,13 +8,8 @@
       </div> -->
       <div class="title-container">
         <div class="title-container__title">
-          <h1>Review Comments for FOM ID : {{data?.project?.id}}</h1>
+          <h1>Review Comments for FOM ID : {{projectId}}</h1>
         </div>
-        <!-- <div class="title-container__actions">
-          <button class="btn btn-light" (click)="exportToExcel()" [disabled]="comments.length === 0">
-            Export to Excel
-          </button>
-        </div> -->
       </div>
     </div>
   </div>
@@ -27,14 +22,11 @@
           <div class="panel-header">
           </div>
           <div class="panel-scroll" #commentListScrollContainer>
-            <ng-container *ngIf="data$ | async as results">
+            <ng-container *ngIf="data$  | async as result">
 
-              <!-- <ng-template ngFor let-item [ngForOf]="publicComments"> -->
               <ng-container>
-
-                <div class="comment-item" *ngFor="let item of results.comments" [class.active]="item?.id === comment?.id"
+                <div class="comment-item" *ngFor="let item of result" [class.active]="item?.id === commentDetailForm?.comment?.id"
                      (click)="commentDetailForm.selectedComment = item">
-
                   <div class="comment-item-header">
                     <div class="comment-author">
                       {{item.name || 'Anonymous'}}
@@ -61,7 +53,6 @@
                 <button class="btn btn-sm btn-primary btn-container" type="button" title="Save this comment response"
                         (click)="saveComment(commentDetailForm.commentFormGroup.value, commentDetailForm.comment)">
                   Save response
-
                 </button>
               </div>
             </app-comment-detail>
@@ -73,6 +64,5 @@
 </ng-container>
 
 <ng-template #noComments>
-
   No comments available for the application.
 </ng-template>
