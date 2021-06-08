@@ -32,6 +32,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   public searching = false;
   public statusCodes = this.stateSvc.getCodeTable('workflowResponseCode');
   public districts = this.stateSvc.getCodeTable('district');
+  public searched = false;
 
   constructor(
     private location: Location,
@@ -79,11 +80,13 @@ export class SearchComponent implements OnInit, OnDestroy {
         },
         error => {
           console.error('error =', error);
+          this.searched = true;
           this.searching = false;
           this.snackBarRef = this.snackBar.open('Error searching foms ...', null, {duration: 3000});
           // this.snackBarRef.onAction().subscribe(() => this.onSubmit()); // commenting out 'action' so user does not click again/and again.
         },
         () => {
+          this.searched = true;
           this.searching = false;
         });
   }
@@ -131,6 +134,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.saveQueryParameters();
     this.projects = [];
     this.count = 0;
+    this.searched = false;
   }
 
   ngOnDestroy() {
