@@ -25,10 +25,11 @@
     Commenting On: 
     <span class="scope-desc">
       {{comment.commentScope.description}} 
-      {{ (commentScopeCodes.CUT_BLOCK.code === comment.commentScope.code)? comment.scopeCutBlockId: 
-        ((commentScopeCodes.ROAD_SECTION.code === comment.commentScope.code)? comment.scopeRoadSectionId:
+      {{ (commentScopeCodes.CUT_BLOCK.code === comment.commentScope.code)? '#'+ comment.scopeCutBlockId: 
+        ((commentScopeCodes.ROAD_SECTION.code === comment.commentScope.code)? '#'+ comment.scopeRoadSectionId:
         '')
       }}
+      {{ comment.scopeFeatureName? ' - '+ comment.scopeFeatureName: ''}}
     </span>
   </div>
   <div class="comment-detail__body" [innerHTML]="comment.feedback | newlines"></div>
