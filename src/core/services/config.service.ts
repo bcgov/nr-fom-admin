@@ -9,7 +9,7 @@ export function retrieveApiBasePath():string {
     return 'https://' + hostname.replace('fom-admin', 'fom-api');
   } else {
     // Using single URL for both Admin & API
-    return hostname;
+    return 'https://' + hostname;
   }
 }
 
