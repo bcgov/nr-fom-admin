@@ -5,10 +5,11 @@ export function retrieveApiBasePath():string {
   if (hostname == 'localhost') {
     return 'http://localhost:3333';
   } else if (hostname.includes('nr-fom-admin') && hostname.includes('devops.gov.bc.ca')) {
+    // TODO: This is the old hostname format, to be removed.
     return 'https://' + hostname.replace('fom-admin', 'fom-api');
   } else {
-    // TODO: May need special case for production vanity URL, or implement solution for dynamically loading from a config map.
-    throw new Error('Unrecognized hostname ' + hostname + ' cannot infer API URL.');
+    // Using single URL for both Admin & API
+    return hostname;
   }
 }
 
