@@ -1,4 +1,3 @@
-// import {AfterViewInit, Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 
 import {MatSnackBar, MatSnackBarRef, SimpleSnackBar} from '@angular/material/snack-bar';
@@ -241,7 +240,6 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
-
   async saveApplication() {
     this.isSubmitSaveClicked = true;
     this.validate();
@@ -249,20 +247,12 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     let projectUpdateRequest = {...rest, ...this.fg.value}
     projectUpdateRequest['districtId'] = projectUpdateRequest.district;
 
-    console.log('Trying to save projectUpdateRequest: ', JSON.stringify(projectUpdateRequest))
-
-    //
     if (!this.fg.valid) return;
     try {
       // const result = await this.projectSvc.projectControllerUpdate(id, projectUpdateRequest).pipe(tap(obs => console.log(obs))).toPromise();
-      const fileAsBlob = new Blob([this.publicNoticeContent]);
       const file = this.files[0];
-      console.log('file: ', file);
-      // const resultAttachment = await this.attachmentSvc.attachmentControllerCreate(fileBlob, 3, 'PUBLIC_NOTICE').pipe(tap(obs => console.log(obs))).toPromise();
-
-      // This service was created by Marcelo but it also fails to transmit the 'body'
-      //
-      const resultAttachment = await this.attachmentUploadSvc.attachmentCreate(file, 3, 'PUBLIC_NOTICE').pipe(tap(obs => console.log(obs))).toPromise();
+      const fileContent = new Blob([this.publicNoticeContent], {type: file[0].type});
+      const resultAttachment = await this.attachmentUploadSvc.attachmentCreate(file, fileContent, 3, 'PUBLIC_NOTICE').pipe(tap(obs => console.log(obs))).toPromise();
       // if (result && resultAttachment) {
       // if (result) {
       if (resultAttachment) {
