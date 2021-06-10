@@ -149,7 +149,7 @@
         <div class="form-group">
           <label>Description</label>
           <textarea (keyup)="changeDescription($event)"
-            class="form-control" [ngClass]="{'is-invalid': !descriptionIsEmpty && isSubmitSaveClicked && !isCreate}"
+            class="form-control" [ngClass]="{'is-invalid': !descriptionValue && isSubmitSaveClicked && !isCreate}"
             rows="3"
             id="description"
             name="description"

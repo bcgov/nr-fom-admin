@@ -15,7 +15,7 @@ export class AttachmentUploadService {
     this.encoder = new CustomHttpParameterCodec();
   }
 
-  
+
  /**
   * For fileupdate using FormData, refer to these two links for useful info:
   * https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
