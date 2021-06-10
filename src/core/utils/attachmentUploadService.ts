@@ -28,11 +28,12 @@ export class AttachmentUploadService {
 
     let headers = new HttpHeaders()
       // .set('content-type', ['multipart/form-data', 'boundary'])
-      .set('Content-Type', 'multipart/form-data;boundary=--')
+      // .set('Content-Type', 'multipart/form-data;boundary=--')
+      .set('enctype', 'multipart/form-data')
       .set('Authorization', 'Bearer ' + '{"isMinistry":true,"isForestClient":true,"clientIds":' +
         '[1011, 1012],"userName":"mmedeir@idir","displayName":"Medeiros, Marcelo IIT:EX"}')
       // .set('Access-Control-Allow-Origin', '*')
-      .set('Accept', '*');
+      .set('Accept', '*/*');
 
     // let formParams: { append(param: string, value: any): any; };
     // use FormData to transmit files using content-type "multipart/form-data"
@@ -58,7 +59,7 @@ export class AttachmentUploadService {
     responseType = 'text';
     // }
     console.log('headersAttachment: ', JSON.stringify(headers));
-    console.log('formParams: ', formParams.toString());
+    console.log('formParams: ', formParams.get('file'));
 
     // return  new Observable<any>();
     return this.httpClient.post<any>(`${this.basePath}/api/attachment`,
