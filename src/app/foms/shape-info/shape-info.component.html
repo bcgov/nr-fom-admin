@@ -69,11 +69,11 @@
             <div class="key">Submission Type:</div>
             <div class="value">{{feature.submissionType.description}}</div>
           </li>
-          <li *ngIf="feature['geometry'].type === 'Polygon'">
+          <li *ngIf="feature['geometry']['type'] === 'Polygon'">
             <div class="key">Area (ha):</div>
             <div class="value">{{feature.plannedAreaHa | number }} {{feature.plannedAreaHa? ' ha' : ''}}</div>
           </li>           
-          <li *ngIf="feature['geometry'].type === 'LineString'">
+          <li *ngIf="feature['geometry']['type'] === 'LineString'">
             <div class="key">Length (km):</div>
             <div class="value">{{feature.plannedLengthKm | number }} {{feature.plannedLengthKm? ' km' : ''}}</div>
           </li>     
