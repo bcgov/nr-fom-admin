@@ -186,7 +186,8 @@ objects:
     metadata:
       name: ${NAME}${SUFFIX}
     spec:
-      host: ${HOSTNAME}.apps.silver.devops.gov.bc.ca
+      host: ${HOSTNAME}
+      path: /admin
       to:
         kind: Service
         name: ${NAME}${SUFFIX}
