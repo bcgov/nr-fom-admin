@@ -181,28 +181,16 @@
                   <h2>Legal Description</h2>
                   <p [innerHTML]="(project.description | newlines) || '-'"></p>
                 </section>
+                
                 <section class="m-3">
                   <h2>Geographic Shape Information</h2>
-                  <ul class="shapefile-list">
-                    <li class="interest-id">
-                      <span class="title">Shape ID: TEST</span>
-                      <ul class="nv-list">
-                        <li>
-                          <span class="name">Type / Subtype:</span>
-                          <span class="value">-</span>
-                        </li>
-                        <li>
-                          <span class="name">Area (hectares):</span>
-                          <span class="value"></span>
-                        </li>
-                        <li>
-                          <span class="name">Legal Description:</span>
-                          <span class="value"></span>
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
+                  <app-shape-info
+                    [spatialDetail]="spatialDetail"
+                    [showAsTable]=true
+                    [disableToggle]=true>
+                  </app-shape-info>
                 </section>
+
               </ng-template>
             </li>
           </ul>

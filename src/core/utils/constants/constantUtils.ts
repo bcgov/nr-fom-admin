@@ -1,6 +1,7 @@
 import {LandUseTypeCodes, ReasonCodes, RegionCodes, StatusCodes} from './application';
 import {ICodeGroup, ICodeSet} from './interfaces';
 import {CommentCodes} from './comment';
+import { SpatialObjectCodeEnum } from 'core/api';
 
 /**
  * Enum of supported code sets.
@@ -16,6 +17,24 @@ export enum CodeType {
   COMMENT
 }
 
+export const SpatialTypeMap = new Map<SpatialObjectCodeEnum, object>([
+  [SpatialObjectCodeEnum.CutBlock, {
+    source: 'cut_block',
+    type: 'Polygon',
+    desc: 'Cut Block'
+  }],
+  [SpatialObjectCodeEnum.RoadSection, {
+    source: 'road_section',
+    type: 'LineString',
+    desc: 'Road Section'
+  }],
+  [SpatialObjectCodeEnum.Wtra, {
+    source: 'retention_area',
+    type: 'Polygon',
+    desc: 'Retention Area'
+  }],
+]);
+
 /**
  * Util methods for fetching codes and their various pieces of related information.
  *
@@ -23,6 +42,9 @@ export enum CodeType {
  * @class ConstantUtils
  */
 export class ConstantUtils {
+
+  public static PROJECT_ID_PARAM_KEY: string = 'appId';
+
   /**
    * Returns the code set that matches the given code type, or null if no match found.
    *
