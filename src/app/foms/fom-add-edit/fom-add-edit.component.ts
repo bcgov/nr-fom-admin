@@ -1,3 +1,4 @@
+// import {AfterViewInit, Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 
 import {MatSnackBar, MatSnackBarRef, SimpleSnackBar} from '@angular/material/snack-bar';
@@ -55,7 +56,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   files: any[] = [];
   publicNoticeContent: any;
   public isSubmitSaveClicked = false;
-  public descriptionIsEmpty: string = null;
+  public descriptionValue: string = null;
   public fileTypesParentInitial: string[] =
     ['image/png', 'image/jpeg', 'image/jpg', 'image/tiff',
       'image/x-tiff', 'application/pdf']
@@ -138,9 +139,8 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
       this.fg.get('commentingClosedDate').setValue(datePipe);
 
       this.fg.get('district').setValue(this.districtIdSelect);
-
-      if(data.description) {
-        this.descriptionIsEmpty = data.description;
+        if(data.description) {
+        this.descriptionValue = data.description;
       }
 
       this.loadForestClients().then( (result) => {
@@ -240,22 +240,37 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
+
   async saveApplication() {
     this.isSubmitSaveClicked = true;
+    if(!this.descriptionValue){
+      this.fg.get('description').setErrors({incorrect: true})
+      console.log('saving desc: ', this.descriptionValue)
+    }
     this.validate();
     const {id, forestClient, workflowState, ...rest} = this.originalProjectResponse;
     let projectUpdateRequest = {...rest, ...this.fg.value}
     projectUpdateRequest['districtId'] = projectUpdateRequest.district;
 
+    // console.log('Trying to save projectUpdateRequest: ', JSON.stringify(projectUpdateRequest))
+
+    //
     if (!this.fg.valid) return;
     try {
-      // const result = await this.projectSvc.projectControllerUpdate(id, projectUpdateRequest).pipe(tap(obs => console.log(obs))).toPromise();
-      const file = this.files[0];
-      const fileContent = new Blob([this.publicNoticeContent], {type: file[0].type});
-      const resultAttachment = await this.attachmentUploadSvc.attachmentCreate(file, fileContent, 3, 'PUBLIC_NOTICE').pipe(tap(obs => console.log(obs))).toPromise();
+      const result = await this.projectSvc.projectControllerUpdate(id, projectUpdateRequest).pipe(tap(obs => console.log(obs))).toPromise();
+      const fileAsBlob = new Blob([this.publicNoticeContent]);
+      // const file = this.files[0];
+      // const fileContent = new Blob([this.publicNoticeContent], {type: file[0].type});
+      // const resultAttachment = await this.attachmentUploadSvc.attachmentCreate(file, fileContent, 3, 'PUBLIC_NOTICE').pipe(tap(obs => console.log(obs))).toPromise();
+      // console.log('file: ', file);
+      // const resultAttachment = await this.attachmentSvc.attachmentControllerCreate(fileBlob, 3, 'PUBLIC_NOTICE').pipe(tap(obs => console.log(obs))).toPromise();
+
+      // This service was created by Marcelo but it also fails to transmit the 'body'
+      //
+      // const resultAttachment = await this.attachmentUploadSvc.attachmentCreate(file, 3, 'PUBLIC_NOTICE').pipe(tap(obs => console.log(obs))).toPromise();
       // if (result && resultAttachment) {
-      // if (result) {
-      if (resultAttachment) {
+      if (result) {
+      // if (resultAttachment) {
         return this.onSuccess(id);
       }
       this.modalSvc.openDialog({
@@ -284,8 +299,8 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   changeDescription(e) {
-    this.descriptionIsEmpty = e.target.value;
-    if(!this.descriptionIsEmpty && !this.isCreate){
+    this.descriptionValue = e.target.value;
+    if(!this.descriptionValue && !this.isCreate){
       this.fg.get('description').setErrors({incorrect: true})
     }
   }
