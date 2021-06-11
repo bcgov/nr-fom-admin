@@ -3,7 +3,7 @@ import {RouterModule, Routes} from '@angular/router';
 
 import {FomDetailComponent} from './fom-detail/fom-detail.component';
 import {FomAddEditComponent} from './fom-add-edit/fom-add-edit.component';
-import {ApplicationDetailResolver} from './fom-resolver.service';
+import {ApplicationDetailResolver, ProjectSpatialDetailResolver} from './fom-resolver.service';
 import {ReviewCommentsComponent} from './review-comments/review-comments.component';
 import {FomSubmissionComponent} from "./fom-submission/fom-submission.component";
 
@@ -16,7 +16,8 @@ const routes: Routes = [
     path: 'a/:appId',
     component: FomDetailComponent,
     resolve: {
-      application: ApplicationDetailResolver
+      application: ApplicationDetailResolver,
+      spatialDetail: ProjectSpatialDetailResolver
     }
   },
   {
@@ -41,7 +42,7 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
-  providers: [ApplicationDetailResolver]
+  providers: [ApplicationDetailResolver, ProjectSpatialDetailResolver]
 })
 export class FomRoutingModule {
 }

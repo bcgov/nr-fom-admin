@@ -7,6 +7,8 @@ import {NgxPaginationModule} from 'ngx-pagination';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {FomRoutingModule} from './fom-routing.module';
 import {InlineSVGModule} from 'ng-inline-svg';
+import { MatTableModule } from '@angular/material/table'
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 // components
 import {FomDetailComponent} from './fom-detail/fom-detail.component';
@@ -19,6 +21,7 @@ import { FomSubmissionComponent } from './fom-submission/fom-submission.componen
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { AttachmentUploadService } from '../../core/utils/attachmentUploadService';
+import { ShapeInfoComponent } from './shape-info/shape-info.component';
 // services
 // import { ExportService } from 'core/services/export.service';
 
@@ -35,7 +38,8 @@ import { AttachmentUploadService } from '../../core/utils/attachmentUploadServic
         LeafletModule,
         BrowserAnimationsModule,
         BsDatepickerModule.forRoot(),
-
+        MatTableModule, 
+        MatSlideToggleModule
     ],
   declarations: [
     FomDetailComponent,
@@ -43,7 +47,8 @@ import { AttachmentUploadService } from '../../core/utils/attachmentUploadServic
     FomAddEditComponent,
     ReviewCommentsComponent,
     CommentDetailComponent,
-    FomSubmissionComponent
+    FomSubmissionComponent,
+    ShapeInfoComponent
   ],
   exports: [
     FomDetailComponent,
@@ -51,7 +56,8 @@ import { AttachmentUploadService } from '../../core/utils/attachmentUploadServic
     FomAddEditComponent,
     ReviewCommentsComponent,
     CommentDetailComponent,
-    FomSubmissionComponent
+    FomSubmissionComponent,
+    ShapeInfoComponent
   ],
   providers: [
     AttachmentUploadService
