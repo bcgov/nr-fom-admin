@@ -42,7 +42,6 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log("initing...")
     // get data from route resolver
     this.route.data
         .pipe(takeUntil(this.ngUnsubscribe))

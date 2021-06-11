@@ -17,7 +17,6 @@ export class ApplicationDetailResolver implements Resolve<ProjectResponse> {
 
   resolve(route: ActivatedRouteSnapshot): Observable<ProjectResponse> {
     const projectId = parseInt(route.paramMap.get(ConstantUtils.PROJECT_ID_PARAM_KEY));
-    console.log('valued projectId: ' + projectId);
 
     if (isNaN(projectId)) {
       // create new application
