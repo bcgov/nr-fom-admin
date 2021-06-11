@@ -26,7 +26,7 @@
 
               <ng-container>
                 <div class="comment-item" *ngFor="let item of result" [class.active]="item?.id === selectedItem?.id"
-                     (click)="onReviewItemClicked(item)">
+                     (click)="onReviewItemClicked(item, null)">
                   <div class="comment-item-header">
                     <div class="comment-author">
                       {{item.name || 'Anonymous'}}
