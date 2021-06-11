@@ -10,6 +10,7 @@ import {
 import {ModalService} from 'core/services/modal.service';
 import {StateService} from 'core/services/state.service';
 import { CommentDetailComponent } from './comment-detail/comment-detail.component';
+import { takeUntil } from 'rxjs/operators';
 
 // TODO: Not sure why we use this for error message...
 export const ERROR_DIALOG = {
@@ -61,7 +62,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     this.projectId = this.route.snapshot.params.appId;
     this.data$ = this.getProjectComments();
 
-    this.commentSaved$.subscribe(() => {
+    this.commentSaved$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
       this.data$ = this.getProjectComments();
     });
   }
