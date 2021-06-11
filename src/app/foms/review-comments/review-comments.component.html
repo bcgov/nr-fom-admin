@@ -25,8 +25,8 @@
             <ng-container *ngIf="data$  | async as result">
 
               <ng-container>
-                <div class="comment-item" *ngFor="let item of result" [class.active]="item?.id === commentDetailForm?.comment?.id"
-                     (click)="commentDetailForm.selectedComment = item">
+                <div class="comment-item" *ngFor="let item of result" [class.active]="item?.id === selectedItem?.id"
+                     (click)="onReviewItemClicked(item)">
                   <div class="comment-item-header">
                     <div class="comment-author">
                       {{item.name || 'Anonymous'}}
