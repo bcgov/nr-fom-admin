@@ -1,5 +1,5 @@
 . ./create-admin-function.ps1
 
-#DeleteAdminFrontEnd -Suffix "-experiment-dev" -Env "dev"
+DeleteAdminFrontEnd -Suffix "-experiment-dev" -Env "dev"
 
-CreateAdminFrontEnd -Suffix "-experiment-dev" -Env "dev" -ApiVersion "dev" -ReplicaCount 1
+#CreateAdminFrontEnd -Suffix "-experiment-dev" -Env "dev" -ApiVersion "dev" -ReplicaCount 1
