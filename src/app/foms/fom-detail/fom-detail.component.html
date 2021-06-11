@@ -112,22 +112,6 @@
 <!--                        {{district ? district.name : ' - '}}-->
                       </span>
                     </li>
-                    <li>
-                      <span class="name">Blocks:</span>
-                      <span class="value">5321 45 Ha</span>
-                    </li>
-                    <li>
-                      <span class="name"></span>
-                      <span class="value">5322 035 Ha</span>
-                    </li>
-                    <li>
-                      <span class="name">Road Sections:</span>
-                      <span class="value">1445 1.265km</span>
-                    </li>
-                    <li>
-                      <span class="name"></span>
-                      <span class="value">1448 0.268</span>
-                    </li>
                     <!-- <li>
                       <span class="name">Total Area (hectares):</span>
                       <span class="value">{{application.areaHectares ? (application.areaHectares | number:'1.2-2') : '-'}}</span>
@@ -138,31 +122,23 @@
                     </li> -->
                   </ul>
                 </section>
-                <section>
-                  <h2>Initial Public Notice</h2>
-                  <ul class="doc-list">
-                    <!-- <li *ngFor="let doc of application.meta.documents">
-                      <span class="cell icon">
-                        <i class="material-icons link" (click)="api.openDocument(doc)">
-                          insert_drive_file
+                <section *ngIf="attachments.length > 0">
+                  <h2>Attachments</h2>
+                  <div class="doc-list" style="width: 25rem;">
+                    <a class="doc-list__item"
+                       *ngFor="let attachment of attachments"
+                       [href]="getAttachmentUrl(attachment.id)"
+                       [title]="attachment.fileName || ''"
+                       target="_blank" rel="noopener">
+                      <div class="cell doc-list__item-icon">
+                        <i class="material-icons">
+                          <!-- insert_drive_file -->
                         </i>
-                      </span>
-                      <span class="cell name" [title]="doc.displayName || ''">
-                        <span class="cell__txt-content">
-                          <a (click)="api.openDocument(doc)">{{doc.documentFileName}}</a>
-                        </span>
-                      </span>
-                      <span class="cell actions">
-                      <button class="btn btn-icon" type="button" title="Download this document" (click)="api.downloadDocument(doc)">
-                          <i class="material-icons">file_download</i>
-                        </button>
-                      </span>
-                    </li> -->
-                    <!-- <li class="no-results" *ngIf="application.meta.documents.length === 0"> -->
-                    <li class="no-results">
-                      <em>FOM document goes here</em>
-                    </li>
-                  </ul>
+                      </div>
+                      <div class="cell doc-list__item-name">{{attachment.fileName}}</div>
+                      <div style="text-align: right;margin-right: 5px;">({{attachment.attachmentType.description}})</div>
+                    </a>
+                  </div>
                 </section>
               </ng-template>
             </li>
