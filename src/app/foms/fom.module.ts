@@ -12,7 +12,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 // components
 import {FomDetailComponent} from './fom-detail/fom-detail.component';
-import {FomAsideComponent} from './fom-aside/fom-aside.component';
 import {FomAddEditComponent} from './fom-add-edit/fom-add-edit.component';
 import {ReviewCommentsComponent} from './review-comments/review-comments.component';
 import {CommentDetailComponent} from './review-comments/comment-detail/comment-detail.component';
@@ -22,6 +21,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { AttachmentUploadService } from '../../core/utils/attachmentUploadService';
 import { ShapeInfoComponent } from './shape-info/shape-info.component';
+import { DetailsMapComponent } from './details-map/details-map.component';
 // services
 // import { ExportService } from 'core/services/export.service';
 
@@ -43,7 +43,7 @@ import { ShapeInfoComponent } from './shape-info/shape-info.component';
     ],
   declarations: [
     FomDetailComponent,
-    FomAsideComponent,
+    DetailsMapComponent,
     FomAddEditComponent,
     ReviewCommentsComponent,
     CommentDetailComponent,
@@ -52,7 +52,7 @@ import { ShapeInfoComponent } from './shape-info/shape-info.component';
   ],
   exports: [
     FomDetailComponent,
-    FomAsideComponent,
+    DetailsMapComponent,
     FomAddEditComponent,
     ReviewCommentsComponent,
     CommentDetailComponent,
