@@ -152,18 +152,16 @@
               </a>
 
               <ng-template ngbNavContent>
-                <section class="m-3">
+                <h2>Geographic Shape Information</h2>
+
                   <app-details-map
                     [projectSpatialDetail]="spatialDetail">
                   </app-details-map>
-                </section>
 
-                <section class="m-3">
-                  <h2>Geographic Shape Information</h2>
                   <app-shape-info
                     [spatialDetail]="spatialDetail">
                   </app-shape-info>
-                </section>
+
               </ng-template>
 
             </li>
