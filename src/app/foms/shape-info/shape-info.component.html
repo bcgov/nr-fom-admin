@@ -1,17 +1,9 @@
 
-  <!-- Slide toggle to show feature deatails as Table -->
-  <section class="slide-toggle-section" [hidden]="disableToggle">
-      <mat-slide-toggle
-      class="slide-toggle-margin"
-      [color]="slideColor"
-      [(ngModel)]="showAsTable">
-      Show Details as Table
-      </mat-slide-toggle>
-  </section>
-
-  <!-- Feature details as table -->
-  <div id="featureTable" [hidden]="!showAsTable">
-    <mat-table [dataSource]="projectSpatialDetail" class="mat-elevation-z8">
+  <!-- Note, This component is showing feature shape information either as table (normal screen) or as list (small devices)-->
+  <!-- Do no remove the div 'id' as it is a selector for media query -->
+  <!-- Feature details as table (normal screen) -->
+  <div id="si-featureTable">
+    <mat-table [dataSource]="projectSpatialDetail" >
       <!--- Note that these columns can be defined in any order.
             The actual rendered columns are set as a property on the row definition" -->
       <ng-container matColumnDef="shape_id">
@@ -51,8 +43,8 @@
     </mat-table>
   </div>
 
-  <!-- Feature details as list -->
-  <div id="featureSection" [hidden]="showAsTable">
+  <!-- Feature details as list (small devices) -->
+  <div id="sifeatureList">
     <ul class="shapefile-list">
       <li class="shapefile-list__item" *ngFor="let feature of projectSpatialDetail">
         <label class="shapefile-list__id">Shape ID: {{feature.featureId}}</label>

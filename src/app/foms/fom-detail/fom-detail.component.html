@@ -167,26 +167,29 @@
               </ng-template>
             </li>
             <li ngbNavItem>
+
               <a ngbNavLink>
                 <i class="material-icons">
                   pin_drop
                 </i>
                 Location
               </a>
+
               <ng-template ngbNavContent>
                 <section class="m-3">
-                  <app-application-aside [project]="project"></app-application-aside>
+                  <app-details-map
+                    [projectSpatialDetail]="spatialDetail">
+                  </app-details-map>
                 </section>
+
                 <section class="m-3">
                   <h2>Geographic Shape Information</h2>
                   <app-shape-info
-                    [spatialDetail]="spatialDetail"
-                    [showAsTable]=true
-                    [disableToggle]=true>
+                    [spatialDetail]="spatialDetail">
                   </app-shape-info>
                 </section>
-
               </ng-template>
+
             </li>
           </ul>
           <div [ngbNavOutlet]="nav"></div>

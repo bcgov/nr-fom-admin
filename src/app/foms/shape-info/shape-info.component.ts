@@ -11,21 +11,17 @@ import { SpatialTypeMap } from 'core/utils/constants/constantUtils';
 export class ShapeInfoComponent implements OnInit {
 
   slideColor: ThemePalette = 'primary';
-  public displayedColumns: string[] = ['shape_id', 'type', 'name', 'submission_type', 'area_length'];
+  displayedColumns: string[] = ['shape_id', 'type', 'name', 'submission_type', 'area_length'];
 
   @Input('spatialDetail')
   projectSpatialDetail: SpatialFeaturePublicResponse[];
-  @Input()
-  showAsTable: boolean = false;
-  @Input()
-  disableToggle: boolean = false;
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
-  public getFomSpatialTypeDesc(source: string) {
+  getFomSpatialTypeDesc(source: string) {
     switch(source) {
       case SpatialTypeMap.get(SpatialObjectCodeEnum.CutBlock)['source'].toLowerCase():
         return SpatialTypeMap.get(SpatialObjectCodeEnum.CutBlock)['desc'];

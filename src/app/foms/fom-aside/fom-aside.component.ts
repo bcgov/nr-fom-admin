@@ -4,7 +4,8 @@ import * as L from 'leaflet';
 import * as _ from 'lodash';
 
 import {ProjectResponse} from 'core/api/';
-
+/** Note!!! This componente is not being used anymore. Replaced with new component @ 
+ * 'details-map' in synce with public one for map operations specific. */
 @Component({
   selector: 'app-application-aside',
   templateUrl: './fom-aside.component.html',

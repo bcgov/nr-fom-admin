@@ -67,6 +67,10 @@ table {
   width: 100%;
 }
 
+mat-table {
+  margin-top: 2em;
+}
+
 .mat-row:nth-child(even){
   background-color: #e4f0ec;
 }
@@ -75,12 +79,16 @@ table {
   background-color:#ffffff;
 }
 
-.slide-toggle-section {
-  display: flex;
-  align-content: center;
-  align-items: center;
-  height: 60px;
-  .slide-toggle-margin {
-    margin: 10px;
+// switching to list
+@media screen and (max-width: 600px) {
+  #si-featureTable {
+    display: none;
+  }
+}
+
+// switching to table
+@media screen and (min-width: 601px) {
+  #sifeatureList {
+    display: none;
   }
 }
