@@ -164,10 +164,11 @@
           <app-upload-box [multipleFiles]="false" [files]="initialPublicDocument"
                           [isBlob]="true"
                           [fileTypes]="fileTypesParentInitial"
-                          (fileUploaded)="addNewFiles($event)"
+                          (fileUploaded)="addNewFileInitialPublic($event)"
                           (outputFileContent)="getContentFileFromUpload($event)"
           ></app-upload-box>
           <!--          <app-upload-box [multipleFiles]="true" [files]="applicationFiles" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>-->
+          <div class="fileTypes"> <em>png, jpeg, jpg, tif, pdf </em></div>
         </div>
       </fieldset>
 
@@ -175,10 +176,13 @@
         <div class="form-group mb-0"  >
           <legend>FOM Supporting Documents</legend>
 
-          <app-upload-box [multipleFiles]="true" [files]="fomSupportingDocuments"
+          <app-upload-box [multipleFiles]="false" [files]="supportingDocuments"
                           [isBlob]="true"
                           [fileTypes]="fileTypesParentSupporting"
-                          (fileUploaded)="addNewFiles($event)"></app-upload-box>
+                          (fileUploaded)="addNewFileSupporting($event)">
+                          (outputFileContent)="getContentFileSupportingDoc($event)"
+          </app-upload-box>
+          <div class="fileTypes"> <em>png, jpeg, jpg, tif, pdf, txt, csv, doc, docx, xls, xlsx </em></div>
         </div>
       </fieldset>
     </form>

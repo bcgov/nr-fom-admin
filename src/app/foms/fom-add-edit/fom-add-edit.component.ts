@@ -21,8 +21,8 @@ import { DatePipe } from '@angular/common';
 import {FomAddEditForm} from './fom-add-edit.form';
 import {StateService} from 'core/services/state.service';
 import {ModalService} from 'core/services/modal.service';
-import {convertElementSourceSpanToLoc} from "@angular-eslint/template-parser/dist/convert-source-span-to-loc";
 import {AttachmentUploadService} from "../../../core/utils/attachmentUploadService";
+import { AttachmentTypeEnum } from "../../../core/models/attachmentTypeEnum";
 
 export type ApplicationPageType = 'create' | 'edit';
 
@@ -46,8 +46,8 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   public project: ProjectResponse = null;
   public startDate: NgbDateStruct = null;
   public endDate: NgbDateStruct = null;
-  public fomSupportingDocuments: File[] = [];
-  public initialPublicDocument: File[] = [];
+  public supportingDocuments: any[] = [];
+  public initialPublicDocument: any[] = [];
   private scrollToFragment: string = null;
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
@@ -55,6 +55,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   public forestClientSelect: any = null;
   files: any[] = [];
   publicNoticeContent: any;
+  supportingDocContent: any;
   public isSubmitSaveClicked = false;
   public descriptionValue: string = null;
   public fileTypesParentInitial: string[] =
@@ -155,14 +156,37 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
    return await this.forestSvc.forestClientControllerFind().toPromise()
 }
 
-  addNewFiles(newFiles: any[]) {
-    this.files.push(newFiles);
+  addNewFileInitialPublic(newFiles: any[]) {
+    this.initialPublicDocument.push(newFiles);
+  }
+
+  addNewFileSupporting(newFiles: any[]) {
+    this.supportingDocuments.push(newFiles);
   }
 
 
 
   getContentFileFromUpload(fileContent: any) {
     this.publicNoticeContent = fileContent;
+    try {
+      // this.originalSubmissionRequest.jsonSpatialSubmission = JSON.parse(this.contentFile);
+      console.log('inside getContenFileParent: ', this.publicNoticeContent)
+    }catch (e) {
+      this.modalSvc.openDialog({
+        data: {
+          message: 'Your file is broken. Please review the Geo Spatial data',
+          title: '',
+          width: '340px',
+          height: '200px',
+          buttons: {confirm: {text: 'OK'}}
+        }
+      })
+    }
+    // this.fg.get('jsonSpatialSubmission').setValue(this.originalSubmissionRequest.jsonSpatialSubmission);
+  }
+
+  getContentFileSupportingDoc(fileContent: any) {
+    this.supportingDocContent = fileContent;
     try {
       // this.originalSubmissionRequest.jsonSpatialSubmission = JSON.parse(this.contentFile);
       console.log('inside getContenFileParent: ', this.publicNoticeContent)
@@ -258,11 +282,29 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.fg.valid) return;
     try {
       const result = await this.projectSvc.projectControllerUpdate(id, projectUpdateRequest).pipe(tap(obs => console.log(obs))).toPromise();
-      const fileAsBlob = new Blob([this.publicNoticeContent]);
-      // const file = this.files[0];
-      // const fileContent = new Blob([this.publicNoticeContent], {type: file[0].type});
-      // const resultAttachment = await this.attachmentUploadSvc.attachmentCreate(file, fileContent, 3, 'PUBLIC_NOTICE').pipe(tap(obs => console.log(obs))).toPromise();
-      // console.log('file: ', file);
+      // const fileAsBlob = new Blob([this.publicNoticeContent]);
+      let resultAttachment: Observable<any>;
+      let file: any = null;
+      let fileContent: any = null;
+
+      if(this.initialPublicDocument.length > 0){
+        file = this.initialPublicDocument[0];
+        fileContent = new Blob([this.publicNoticeContent], {type: file.type});
+
+        resultAttachment = await this.attachmentUploadSvc
+          .attachmentCreate(file, fileContent, id,
+            AttachmentTypeEnum.PUBLIC_NOTICE).pipe(tap(obs => console.log(obs))).toPromise();
+
+      }
+
+      if (this.supportingDocuments.length > 0){
+        file = this.supportingDocuments[0];
+        fileContent = new Blob([this.supportingDocContent], {type: file.type});
+        resultAttachment = await this.attachmentUploadSvc
+          .attachmentCreate(file, fileContent, id,
+            AttachmentTypeEnum.SUPPORTING_DOC).pipe(tap(obs => console.log(obs))).toPromise();
+      }
+
       // const resultAttachment = await this.attachmentSvc.attachmentControllerCreate(fileBlob, 3, 'PUBLIC_NOTICE').pipe(tap(obs => console.log(obs))).toPromise();
 
       // This service was created by Marcelo but it also fails to transmit the 'body'

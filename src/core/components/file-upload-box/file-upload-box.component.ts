@@ -153,9 +153,7 @@ export class UploadBoxComponent implements OnInit {
       this.onRemove(event);
     }
     if (event.addedFiles.length > 0 ) {
-      // console.log('inside')
       if( this.isBlob){
-        console.log('isBlob')
         this.readFileContentAsBlob(this.files[0])
       } else {
         this.readFileContent(this.files[0]);
@@ -174,7 +172,6 @@ export class UploadBoxComponent implements OnInit {
   }
 
   readFileContentAsBlob(file: Blob) {
-    console.log('readAsBlob');
     let reader = new FileReader();
     reader.addEventListener('load', (event) => {
       this.fileContentArrayBuffer = event.target.result;
@@ -185,7 +182,6 @@ export class UploadBoxComponent implements OnInit {
   }
 
   onRemove(event) {
-    console.log('inside onRemove');
     this.files.splice(this.files.indexOf(event), 1);
     this.fileUploaded.emit(this.files);
   }
