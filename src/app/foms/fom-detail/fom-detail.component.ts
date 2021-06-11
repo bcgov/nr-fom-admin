@@ -5,10 +5,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {of, Subject, throwError} from 'rxjs';
 // @ts-ignore
 import {concat, mergeMap, takeUntil} from 'rxjs/operators';
-
-import {ConfirmComponent} from 'app/confirm/confirm.component';
-// import {Application} from 'core/models/application';
-import {PublicComment} from 'core/models/publiccomment';
+import { AttachmentService, AttachmentResponse} from "core/api";
+import {ConfigService} from "../../../core/services/config.service";
 
 import {ProjectResponse, ProjectService, SpatialFeaturePublicResponse} from 'core/api';
 
@@ -24,20 +22,22 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   public isDeleting = false;
   public isRefreshing = false;
   public application: ProjectResponse = null;
-  public publicComment: PublicComment = null;
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
   public project: ProjectResponse = null;
   public spatialDetail: SpatialFeaturePublicResponse[];
   public isProjectActive = false;
   public numberComments = null;
+  public attachments: AttachmentResponse[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     public snackBar: MatSnackBar,
     // private dialogService: DialogService,
-    public projectService: ProjectService // also used in template
+    public projectService: ProjectService, // also used in template
+    public attachmentService: AttachmentService,
+    public configSvc: ConfigService
   ) {
   }
 
@@ -62,6 +62,12 @@ export class FomDetailComponent implements OnInit, OnDestroy {
       }
 
       this.spatialDetail = data.spatialDetail;
+      this.getAttachments()
+        .then( (result) => {
+          this.attachments = result;
+        }).catch((error) => {
+          console.log('Error: ', error);
+      });
     });
   }
 
@@ -73,6 +79,14 @@ export class FomDetailComponent implements OnInit, OnDestroy {
 
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+  }
+
+  public async getAttachments() {
+    return await this.attachmentService.attachmentControllerFind(this.project.id).toPromise()
+  }
+
+  getAttachmentUrl(id: number): string {
+    return id ? this.configSvc.getApiBasePath()+ '/api/attachment/file/' + id : '';
   }
 
   public deleteApplication() {
