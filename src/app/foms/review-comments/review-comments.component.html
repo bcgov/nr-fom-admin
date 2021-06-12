@@ -20,6 +20,7 @@
       <div class="review-comments">
         <div class="review-comments__list panel">
           <div class="panel-header">
+            <h2 style="margin: 0;">Comments ({{(data$ | async)?.length}})</h2>
           </div>
           <div class="panel-scroll" #commentListScrollContainer>
             <ng-container *ngIf="data$  | async as result">
