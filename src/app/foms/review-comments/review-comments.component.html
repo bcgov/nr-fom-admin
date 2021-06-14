@@ -20,13 +20,14 @@
       <div class="review-comments">
         <div class="review-comments__list panel">
           <div class="panel-header">
+            <h2 style="margin: 0;">Comments ({{(data$ | async)?.length}})</h2>
           </div>
           <div class="panel-scroll" #commentListScrollContainer>
             <ng-container *ngIf="data$  | async as result">
 
               <ng-container>
-                <div class="comment-item" *ngFor="let item of result" [class.active]="item?.id === commentDetailForm?.comment?.id"
-                     (click)="commentDetailForm.selectedComment = item">
+                <div class="comment-item" *ngFor="let item of result" [class.active]="item?.id === selectedItem?.id"
+                     (click)="onReviewItemClicked(item, null)">
                   <div class="comment-item-header">
                     <div class="comment-author">
                       {{item.name || 'Anonymous'}}
