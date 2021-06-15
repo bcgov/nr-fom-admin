@@ -83,9 +83,9 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     this.commentDetailForm.selectedComment = item;
     if (pos) {
       // !! important to wait or will not see the effect.
-      setTimeout(() => { 
+      setTimeout(() => {
         this.commentListScrollContainer.nativeElement.scrollTop = pos;
-      }, 100);
+      }, 150);
     }
   }
 
@@ -111,9 +111,9 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
         this.commentSaved$.next();
         this.selectedItem = result; // updated selected.
         this.loading = false;
-        setTimeout(() => {     
+        setTimeout(() => {
           this.onReviewItemClicked(this.selectedItem, pos);
-        }, 100);
+        }, 300);
 
       } else {
         this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Failed to update', title: ''}})
