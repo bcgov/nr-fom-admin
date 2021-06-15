@@ -3,6 +3,8 @@
 /tmp
 /out-tsc
 
+/openshift/node-server/nr-fom-admin
+
 # dependencies
 node_modules
 
