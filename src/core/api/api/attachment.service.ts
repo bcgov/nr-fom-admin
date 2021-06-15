@@ -44,7 +44,6 @@ export class AttachmentService {
                 basePath = this.basePath;
             }
             this.configuration.basePath = basePath;
-            console.log('basePath: ', this.configuration.basePath);
         }
         this.encoder = this.configuration.encoder || new CustomHttpParameterCodec();
     }
@@ -151,7 +150,6 @@ export class AttachmentService {
         }
 
         if (file !== undefined) {
-          console.log('from API: ', file);
             formParams = formParams.append('file', <any>file) as any || formParams;
         }
         if (projectId !== undefined) {
@@ -165,86 +163,18 @@ export class AttachmentService {
         if(httpHeaderAcceptSelected && httpHeaderAcceptSelected.startsWith('text')) {
             responseType = 'text';
         }
-      headers = headers.set('Authorization', 'Bearer ' + '{"isMinistry":true,"isForestClient":true,"clientIds":' +
-        '[1011, 1012],"userName":"mmedeir@idir","displayName":"Medeiros, Marcelo IIT:EX"}');
-      console.log('headersAttachment: ', JSON.stringify(headers));
-      console.log('formParams: ', JSON.stringify(formParams));
 
-      return  new Observable<any>();
-        // return this.httpClient.post<any>(`${this.configuration.basePath}/api/attachment`,
-        //     convertFormParamsToString ? formParams.toString() : formParams,
-        //     {
-        //         responseType: <any>responseType,
-        //         withCredentials: this.configuration.withCredentials,
-        //         headers: headers,
-        //         observe: observe,
-        //         reportProgress: reportProgress
-        //     }
-        // );
+        return this.httpClient.post<any>(`${this.configuration.basePath}/api/attachment`,
+            convertFormParamsToString ? formParams.toString() : formParams,
+            {
+                responseType: <any>responseType,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
     }
-
-  /**
-   * @param file
-   * @param projectId
-   * @param attachmentTypeCode
-   * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-   * @param reportProgress flag to report request and response progress.
-   */
-  public attachmentCreate(file?: Blob, projectId?: number, attachmentTypeCode?: string, observe: any = 'body',
-                          reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined}): Observable<any> {
-
-
-    let headers = new HttpHeaders()
-      // .set('content-type', ['multipart/form-data', 'boundary'])
-      .set('Content-Type', 'multipart/form-data;boundary=--')
-      .set('Authorization', 'Bearer ' + '{"isMinistry":true,"isForestClient":true,"clientIds":' +
-        '[1011, 1012],"userName":"mmedeir@idir","displayName":"Medeiros, Marcelo IIT:EX"}')
-      // .set('Access-Control-Allow-Origin', '*')
-      .set('Accept', '*');
-
-    // let formParams: { append(param: string, value: any): any; };
-    let convertFormParamsToString = true;
-    let useForm = false;
-    // use FormData to transmit files using content-type "multipart/form-data"
-    // see https://stackoverflow.com/questions/4007969/application-x-www-form-urlencoded-or-multipart-form-data
-    useForm = true;
-    // if (useForm) {
-      const formParams: FormData = new FormData();
-    // } else {
-    //   formParams = new HttpParams({encoder: this.encoder});
-    // }
-
-    // if (file !== undefined) {
-      console.log('from API: ', file);
-      formParams.append('file', <any>file);
-    // }
-    // if (projectId !== undefined) {
-    console.log('projectId: ', projectId)
-      formParams.append('projectId', <any>projectId);
-    // }
-    // if (attachmentTypeCode !== undefined) {
-    console.log('attachmentTypeCode: ', attachmentTypeCode)
-      formParams.append('attachmentTypeCode', <any>attachmentTypeCode);
-    // }
-
-    let responseType: 'text' | 'json' = 'json';
-    // if(httpHeaderAcceptSelected && httpHeaderAcceptSelected.startsWith('text')) {
-      responseType = 'text';
-    // }
-    console.log('headersAttachment: ', JSON.stringify(headers));
-    console.log('formParams: ',formParams.toString());
-
-    // return  new Observable<any>();
-    return this.httpClient.post<any>(`${this.configuration.basePath}/api/attachment`,
-      formParams,
-        {
-            responseType: <any>responseType,
-            headers: headers,
-            observe: observe,
-            reportProgress: reportProgress
-        }
-    );
-  }
 
     /**
      * @param projectId
@@ -443,7 +373,6 @@ export class AttachmentService {
         if(httpHeaderAcceptSelected && httpHeaderAcceptSelected.startsWith('text')) {
             responseType = 'text';
         }
-
         return this.httpClient.delete<any>(`${this.configuration.basePath}/api/attachment/${encodeURIComponent(String(id))}`,
             {
                 responseType: <any>responseType,

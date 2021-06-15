@@ -39,6 +39,7 @@ export class FomDetailComponent implements OnInit, OnDestroy {
     public attachmentService: AttachmentService,
     public configSvc: ConfigService
   ) {
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
   }
 
   ngOnInit() {
@@ -87,6 +88,21 @@ export class FomDetailComponent implements OnInit, OnDestroy {
 
   getAttachmentUrl(id: number): string {
     return id ? this.configSvc.getApiBasePath()+ '/api/attachment/file/' + id : '';
+  }
+
+  public deleteAttachment(id: number) {
+    let result = this.attachmentService.attachmentControllerRemove(id).toPromise();
+
+    if (result) {
+      return this.onSuccess();
+    }
+  }
+
+  onSuccess() {
+    this.router.navigate([`a/${this.project.id}`])
+      .then( () => {
+        window.location.reload();
+      })
   }
 
   public deleteApplication() {
