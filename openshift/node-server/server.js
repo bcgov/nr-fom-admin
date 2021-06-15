@@ -16,7 +16,7 @@ app.use(helmet({
     useDefaults: true,
     directives: {
       frameSrc: ["'self'", "https://*.gov.bc.ca"], // gov.bc.ca is for keycloak.
-      connectSrc: ["'self'"],  // Add "*" if testing locally, will also need to bypass CORS in the API. 
+      connectSrc: ["'self'", "https://*.gov.bc.ca"],  // Add "*" if testing locally, will also need to bypass CORS in the API. 
     },
   },
   }));
