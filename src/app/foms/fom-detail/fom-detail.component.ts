@@ -47,6 +47,7 @@ export class FomDetailComponent implements OnInit, OnDestroy {
     private keycloakService: KeycloakService
   ) {
     this.user = this.keycloakService.getUser();
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
   }
 
   ngOnInit() {
@@ -95,6 +96,21 @@ export class FomDetailComponent implements OnInit, OnDestroy {
 
   getAttachmentUrl(id: number): string {
     return id ? this.configSvc.getApiBasePath()+ '/api/attachment/file/' + id : '';
+  }
+
+  public deleteAttachment(id: number) {
+    let result = this.attachmentService.attachmentControllerRemove(id).toPromise();
+
+    if (result) {
+      return this.onSuccess();
+    }
+  }
+
+  onSuccess() {
+    this.router.navigate([`a/${this.project.id}`])
+      .then( () => {
+        window.location.reload();
+      })
   }
 
   deleteFOM() {
@@ -498,12 +514,10 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   public canWithdraw() {
     const workflowStateCode = this.project.workflowState.code;
     const userCanModify = this.user.clientIds.includes(this.project.forestClient.id);
-    const isMinistry = this.user.isMinistry;
-
     if (WorkflowStateEnum.Initial === workflowStateCode) {
-      return !isMinistry && userCanModify;
+      return this.user.isForestClient && userCanModify;
     } 
-    else if (!isMinistry) {
+    else if (!this.user.isMinistry) {
       return false;
     }
 

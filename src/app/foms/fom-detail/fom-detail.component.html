@@ -127,20 +127,27 @@
                 </section>
                 <section *ngIf="attachments.length > 0">
                   <h2>Attachments</h2>
-                  <div class="doc-list" style="width: 25rem;">
+                  <div class="doc-list row" *ngFor="let attachment of attachments" style="width: 25rem;">
                     <a class="doc-list__item"
-                       *ngFor="let attachment of attachments"
                        [href]="getAttachmentUrl(attachment.id)"
                        [title]="attachment.fileName || ''"
                        target="_blank" rel="noopener">
                       <div class="cell doc-list__item-icon">
                         <i class="material-icons">
-                          <!-- insert_drive_file -->
+                           insert_drive_file
                         </i>
                       </div>
                       <div class="cell doc-list__item-name">{{attachment.fileName}}</div>
                       <div style="text-align: right;margin-right: 5px;">({{attachment.attachmentType.description}})</div>
                     </a>
+                    <span class="vert-pipe">&nbsp;</span>
+                    <button class="btn btn-icon row doc-list__item" title="Delete this attachment"
+                            (click)="deleteAttachment(attachment.id)"
+                            [disabled]="isDeleting">
+                      <i class="material-icons">
+                        delete
+                      </i>
+                    </button>
                   </div>
                 </section>
               </ng-template>
@@ -220,49 +227,8 @@
               <button class="cta-btn btn btn-sm btn-outline-primary" type="button" title="Review comments"
                       [disabled]="isDeleting"
                       [routerLink]="['/comments', project.id]">
-                Review Comments<span>&nbsp;({{numberComments}})</span>
+                Review Comments
               </button>
-            </div>
-          </div>
-        </div>
-        <div class="aside-card">
-          <h3 class="title">FOM Attachments</h3>
-          <div class="body">
-            <!-- <div *ngIf="!application.meta.decision">
-              <p class="mb-0">No decision documents have been added to this application.</p>
-            </div> -->
-            <div>Attachment file goes here</div>
-            <div>
-              <ul class="doc-list">
-                <li *ngFor="let doc of (project['attachments'] || [])">
-                  <span class="cell icon">
-                    <!--<i class="material-icons link" (click)="api.openDocument(doc)">
-                      insert_drive_file
-                    </i>-->
-                  </span>
-                  <span class="cell name" [title]="doc.displayName || ''">
-                      <!--<span class="cell__txt-content">
-                        <a (click)="api.openDocument(doc)">{{doc.documentFileName}}</a>
-                      </span>-->
-                  </span>
-                  <span class="cell actions">
-                    <!--<button class="btn btn-icon" title="Download this document" (click)="api.downloadDocument(doc)">
-                      <i class="material-icons">file_download</i>
-                    </button>-->
-                  </span>
-                </li>
-                <li class="no-results" *ngIf="(project['attachments'] || []) === 0">
-                  <em>No decision documents</em>
-                </li>
-              </ul>
-            </div>
-            <div class="btn-container">
-              <button class="cta-btn btn btn-sm btn-outline-primary" type="button" title="Edit fom documents"
-                      [disabled]="isDeleting"
-                      [routerLink]="['/a', project.id, 'edit']">
-                Edit FOM Attachments
-              </button>
-              <span title="You cannot edit the decision of a retired application"></span>
             </div>
           </div>
         </div>
