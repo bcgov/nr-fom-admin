@@ -12,7 +12,8 @@
             Edit
           </button> -->
           <button class="btn btn-light" type="button" title="Edit FOM"
-                  [routerLink]="['/a', project.id, 'edit']">
+                  [routerLink]="['/a', project.id, 'edit']"
+                  [disabled]="isDeleting">
             Edit
           </button>
           <span title="You cannot edit a finalized/expired project"></span>
@@ -55,11 +56,13 @@
              [inlineSVG]="'assets/images/baseline-refresh-24px.svg'">
           </i>
         </button>
-        <span class="vert-pipe">&nbsp;</span>
-        <button class="btn btn-icon" title="Remove this application from ACRFD"
-                (click)="deleteApplication()"
+        <span class="vert-pipe" *ngIf="canWithdraw()">&nbsp;</span>
+        <button class="btn btn-icon" title="Remove this FOM"
+                *ngIf="canWithdraw()"
+                (click)="deleteFOM()"
                 [disabled]="isDeleting">
-          <i class="material-icons">
+          <i class="spinner-border" [hidden]="!isDeleting"></i>
+          <i class="material-icons" [hidden]="isDeleting" >
             delete
           </i>
         </button>
@@ -75,7 +78,7 @@
         <section class="main-card">
           <!-- Tabs -->
           <ul ngbNav #nav="ngbNav" class="nav-tabs">
-            <li ngbNavItem>
+            <li ngbNavItem [disabled]="isDeleting">
               <a ngbNavLink>
                 <i class="material-icons">
                   info
@@ -149,7 +152,7 @@
                 </section>
               </ng-template>
             </li>
-            <li ngbNavItem>
+            <li ngbNavItem [disabled]="isDeleting">
 
               <a ngbNavLink>
                 <i class="material-icons">
@@ -222,6 +225,7 @@
             </ul>
             <div class="btn-container" *ngIf="project">
               <button class="cta-btn btn btn-sm btn-outline-primary" type="button" title="Review comments"
+                      [disabled]="isDeleting"
                       [routerLink]="['/comments', project.id]">
                 Review Comments
               </button>
@@ -236,6 +240,7 @@
             </div> -->
            <div class="btn-container">
               <button class="cta-btn btn btn-sm btn-outline-primary" type="button" title="Edit fom documents"
+                      [disabled]="isDeleting"
                       [routerLink]="['/a', project.id, 'upload']">
                 Upload FOM Spatial File
               </button>

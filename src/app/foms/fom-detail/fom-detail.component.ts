@@ -5,10 +5,14 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {of, Subject, throwError} from 'rxjs';
 // @ts-ignore
 import {concat, mergeMap, takeUntil} from 'rxjs/operators';
-import { AttachmentService, AttachmentResponse} from "core/api";
+import { AttachmentService, AttachmentResponse, WorkflowStateEnum} from "core/api";
 import {ConfigService} from "../../../core/services/config.service";
 
 import {ProjectResponse, ProjectService, SpatialFeaturePublicResponse} from 'core/api';
+import { KeycloakService } from 'core/services/keycloak.service';
+import { User } from 'core/services/user';
+import { templateJitUrl } from '@angular/compiler';
+import { ModalService } from 'core/services/modal.service';
 
 
 @Component({
@@ -29,16 +33,20 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   public isProjectActive = false;
   public numberComments = null;
   public attachments: AttachmentResponse[] = [];
+  public user: User;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     public snackBar: MatSnackBar,
+    private modalSvc: ModalService,
     // private dialogService: DialogService,
     public projectService: ProjectService, // also used in template
     public attachmentService: AttachmentService,
-    public configSvc: ConfigService
+    public configSvc: ConfigService,
+    private keycloakService: KeycloakService
   ) {
+    this.user = this.keycloakService.getUser();
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
   }
 
@@ -103,6 +111,27 @@ export class FomDetailComponent implements OnInit, OnDestroy {
       .then( () => {
         window.location.reload();
       })
+  }
+
+  deleteFOM() {
+    const dialogRef = this.modalSvc.openDialog({
+      data: {
+        message: `You are about to withdraw FOM with id ${this.project.id}. Are you sure?`,
+        title: 'Withdraw FOM',
+        width: '340px',
+        height: '200px',
+        buttons: {confirm: {text: 'OK'}, cancel: { text: 'cancel' }}
+      }
+    });
+    dialogRef.afterClosed().subscribe((confirm) => {
+      if (confirm) {
+        this.isDeleting = true;
+        this.projectService.projectControllerRemove(this.project.id).subscribe(()=> {
+          this.isDeleting = false;
+          this.router.navigate(['/search']); // Delete successfully, back to search. 
+        });
+      }
+    })
   }
 
   public deleteApplication() {
@@ -476,4 +505,24 @@ export class FomDetailComponent implements OnInit, OnDestroy {
         console.log('error =', error);
       }); */
   }
+
+  /** 
+    INITIAL: holder can withdraw.
+    PUBLISH/COMMENT_OPEN: no actions.
+    COMMENT_CLOSED/FINALIZED/EXPIRED: gov
+  */
+  public canWithdraw() {
+    const workflowStateCode = this.project.workflowState.code;
+    const userCanModify = this.user.clientIds.includes(this.project.forestClient.id);
+    if (WorkflowStateEnum.Initial === workflowStateCode) {
+      return this.user.isForestClient && userCanModify;
+    } 
+    else if (!this.user.isMinistry) {
+      return false;
+    }
+
+    return [WorkflowStateEnum.CommentClosed, WorkflowStateEnum.Finalized, WorkflowStateEnum.Expired]
+            .includes(workflowStateCode as WorkflowStateEnum);
+  }
+
 }
