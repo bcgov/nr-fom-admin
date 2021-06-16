@@ -92,10 +92,11 @@ export class FomDetailComponent implements OnInit, OnDestroy {
 
   public deleteAttachment(id: number) {
     let result = this.attachmentService.attachmentControllerRemove(id).toPromise();
-
-    if (result) {
+    result.then( () => {
       return this.onSuccess();
-    }
+    }).catch( (error) => {
+      console.log('Error:', error);
+    })
   }
 
   onSuccess() {
