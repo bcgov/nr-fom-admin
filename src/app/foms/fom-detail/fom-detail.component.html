@@ -182,12 +182,12 @@
 
       <div class="col-md-4">
         <div class="aside-card">
-          <h3 class="title">Application Status</h3>
+          <h3 class="title">FOM Status</h3>
           <div class="body">
             <div
               class="app-status">
 <!--              {{project.workflowState && project.workflowStateCode ? project.workflowStateCode: '-'}}-->
-              {{project.workflowState ? project.workflowState.code: '-'}}
+              {{project.workflowState ? project.workflowState.description: '-'}}
             </div>
           </div>
         </div>
@@ -220,7 +220,7 @@
               </li> -->
               <li>
                 <span class="name">Days Remaining:</span>
-                <span class="value">Some days in the future TBD</span>
+                <span class="value">{{daysRemaining}}</span>
               </li>
             </ul>
             <div class="btn-container" *ngIf="project">
