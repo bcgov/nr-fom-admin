@@ -99,12 +99,26 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   }
 
   public deleteAttachment(id: number) {
-    let result = this.attachmentService.attachmentControllerRemove(id).toPromise();
-    result.then( () => {
-      return this.onSuccess();
-    }).catch( (error) => {
-      console.log('Error:', error);
+    const dialogRef = this.modalSvc.openDialog({
+      data: {
+        message: `You are about to delete this attachment. Are you sure?`,
+        title: 'Delete Attachment',
+        width: '340px',
+        height: '200px',
+        buttons: {confirm: {text: 'OK'}, cancel: { text: 'cancel' }}
+      }
+    });
+    dialogRef.afterClosed().subscribe((confirm) => {
+      if (confirm) {
+        let result = this.attachmentService.attachmentControllerRemove(id).toPromise();
+        result.then( () => {
+          return this.onSuccess();
+        }).catch( (error) => {
+          console.log('Error:', error);
+        })
+      }
     })
+
   }
 
   onSuccess() {
@@ -129,7 +143,7 @@ export class FomDetailComponent implements OnInit, OnDestroy {
         this.isDeleting = true;
         this.projectService.projectControllerRemove(this.project.id).subscribe(()=> {
           this.isDeleting = false;
-          this.router.navigate(['/search']); // Delete successfully, back to search. 
+          this.router.navigate(['/search']); // Delete successfully, back to search.
         });
       }
     })
@@ -507,7 +521,7 @@ export class FomDetailComponent implements OnInit, OnDestroy {
       }); */
   }
 
-  /** 
+  /**
     INITIAL: holder can withdraw.
     PUBLISH/COMMENT_OPEN: no actions.
     COMMENT_CLOSED/FINALIZED/EXPIRED: gov
@@ -517,7 +531,7 @@ export class FomDetailComponent implements OnInit, OnDestroy {
     const userCanModify = this.user.clientIds.includes(this.project.forestClient.id);
     if (WorkflowStateEnum.Initial === workflowStateCode) {
       return this.user.isForestClient && userCanModify;
-    } 
+    }
     else if (!this.user.isMinistry) {
       return false;
     }

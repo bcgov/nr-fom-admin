@@ -164,8 +164,6 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.supportingDocuments.push(newFiles);
   }
 
-
-
   getContentFileFromUpload(fileContent: any) {
     this.publicNoticeContent = fileContent;
     try {
