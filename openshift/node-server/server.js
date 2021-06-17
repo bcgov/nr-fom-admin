@@ -6,6 +6,7 @@ const path = require('path');
 const port = 4200;
 const app = express();
 
+app.disable("x-powered-by");
 app.use(helmet({ 
   // Cannot use these new HTTP policies as it requires opt-in by the mapping resources (tile servers) and Keycloak, which as third parties we don't have control over.
   crossOriginResourcePolicy: false, 
@@ -17,6 +18,7 @@ app.use(helmet({
     directives: {
       frameSrc: ["'self'", "https://*.gov.bc.ca"], // gov.bc.ca is for keycloak.
       connectSrc: ["'self'", "https://*.gov.bc.ca"],  // Add "*" if testing locally, will also need to bypass CORS in the API. 
+      formAction: ["'self'"],
     },
   },
   }));
