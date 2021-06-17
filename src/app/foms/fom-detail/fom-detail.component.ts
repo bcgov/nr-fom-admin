@@ -13,6 +13,7 @@ import { KeycloakService } from 'core/services/keycloak.service';
 import { User } from 'core/services/user';
 import { templateJitUrl } from '@angular/compiler';
 import { ModalService } from 'core/services/modal.service';
+import * as moment from 'moment';
 
 
 @Component({
@@ -34,6 +35,7 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   public numberComments = null;
   public attachments: AttachmentResponse[] = [];
   public user: User;
+  public daysRemaining: number = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -71,6 +73,8 @@ export class FomDetailComponent implements OnInit, OnDestroy {
       }
 
       this.spatialDetail = data.spatialDetail;
+      this.calculateDaysRemaining();
+
       this.getAttachments()
         .then( (result) => {
           this.attachments = result;
@@ -149,6 +153,15 @@ export class FomDetailComponent implements OnInit, OnDestroy {
     })
   }
 
+private calculateDaysRemaining(){
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  this.daysRemaining =
+    moment(this.project.commentingClosedDate).diff(moment(today), 'days');
+  if(this.daysRemaining < 0){
+    this.daysRemaining = 0;
+  }
+}
   public deleteApplication() {
     /* if (this.application.meta.numComments > 0) {
       this.dialogService
