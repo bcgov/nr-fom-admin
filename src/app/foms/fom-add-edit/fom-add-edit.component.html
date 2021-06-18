@@ -13,9 +13,15 @@
         >
           Cancel
         </button>
-        <app-button *ngIf="isCreate; else saveButton" title="Save your changes" (click)="submit()"
-                    [disabled]="!fg.isModified">{{ isLoading ? "Submitting" : "Submit" }}</app-button>
-
+        <button *ngIf="isCreate; else saveButton"
+          class="btn btn-primary ml-1"
+          type="button"
+          title="Create FOM"
+          (click)="submit()"
+          [disabled]="!fg.isModified"
+        >{{ isLoading ? "Submitting" : "Submit" }}
+          <i class="spinner rotating" [hidden]="!stateSvc.loading"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -172,8 +178,8 @@
         </div>
       </fieldset>
 
-      <fieldset>
-        <div class="form-group mb-0"  *ngIf="!this.isCreate">
+      <fieldset *ngIf="!this.isCreate">
+        <div class="form-group mb-0" >
           <legend>FOM Supporting Documents</legend>
 
           <app-upload-box [multipleFiles]="false" [files]="supportingDocuments"
@@ -190,8 +196,6 @@
 </div>
 
 <ng-template #saveButton>
-
-
   <app-button
     title="Save your changes"
     (click)="saveApplication()">{{ isLoading ? "Saving" : "Save" }}</app-button>

@@ -19,19 +19,13 @@
           <span title="You cannot edit a finalized/expired project"></span>
         </div>
         <div class="btn-container">
-          <button class="btn btn-primary ml-1" type="button" title="Publish FOM">
+          <button class="btn btn-primary ml-1" type="button" title="Publish FOM"
+                  [disabled]="!verifyPublishingReady()"
+                  (click)="publishFOM()">
             <i class="spinner rotating" [hidden]="!isPublishing"></i>
             <span>{{isPublishing ? 'Publishing' : 'Publish'}}</span>
           </button>
-          <!-- <button class="btn btn-primary ml-1" type="button" title="Publish application"
-            *ngIf="!application.meta.isPublished"
-            (click)="publishApplication()"
-            [disabled]="isPublishing || application.meta.isRetired">
-            <i class="spinner rotating" [hidden]="!isPublishing"></i>
-            <span>{{isPublishing ? 'Publishing' : 'Publish'}}</span>
-          </button> -->
-          <span title="You cannot publish a retired application"></span>
-        </div>
+         </div>
         <!-- NB: you CAN unpublish a retired application -->
         <!-- <button class="btn btn-primary ml-1" type="button" title="Unpublish application">
           <i class="spinner rotating" [hidden]="!isUnpublishing"></i>
@@ -44,18 +38,18 @@
           <i class="spinner rotating" [hidden]="!isUnpublishing"></i>
           <span>{{isUnpublishing ? 'Unpublishing' : 'Unpublish'}}</span>
         </button> -->
-        <span class="vert-pipe first-pipe">&nbsp;</span>
+<!--        <span class="vert-pipe first-pipe">&nbsp;</span>-->
         <!-- <button class="btn btn-icon" title="Refresh this FOM"
           (click)="refreshApplication()"
           [disabled]="isRefreshing">
           <i class="material-icons refresh-spinner" [ngClass]="{'rotating': isRefreshing}" [inlineSVG]="'assets/images/baseline-refresh-24px.svg'">
           </i>
         </button> -->
-        <button class="btn btn-icon" title="Refresh this FOM">
-          <i class="material-icons refresh-spinner" [ngClass]="{'rotating': isRefreshing}"
-             [inlineSVG]="'assets/images/baseline-refresh-24px.svg'">
-          </i>
-        </button>
+<!--        <button class="btn btn-icon" title="Refresh this FOM">-->
+<!--          <i class="material-icons refresh-spinner" [ngClass]="{'rotating': isRefreshing}"-->
+<!--             [inlineSVG]="'assets/images/baseline-refresh-24px.svg'">-->
+<!--          </i>-->
+<!--        </button>-->
         <span class="vert-pipe" *ngIf="canWithdraw()">&nbsp;</span>
         <button class="btn btn-icon" title="Remove this FOM"
                 *ngIf="canWithdraw()"
@@ -125,9 +119,11 @@
                     </li> -->
                   </ul>
                 </section>
+                <br />
+                <h2>Attachments</h2>
+                <span  *ngIf="attachments.length === 0" class="invalid-type-msg"> Must have one attachment </span>
                 <section *ngIf="attachments.length > 0">
-                  <h2>Attachments</h2>
-                  <div class="doc-list row" *ngFor="let attachment of attachments" style="width: 25rem;">
+                 <div class="doc-list row" *ngFor="let attachment of attachments" style="width: 25rem;">
                     <a class="doc-list__item"
                        [href]="getAttachmentUrl(attachment.id)"
                        [title]="attachment.fileName || ''"
@@ -208,16 +204,16 @@
               </li>
               <li>
                 <span class="name">Start Date:</span>
-                <span class="value">{{project.commentingOpenDate | date:'longDate'}}</span>
+<!--                <span class="value">{{project.commentingOpenDate | date:'longDate'}}</span>-->
+                <span class="value" [ngClass]="{'invalid-type-msg': !project.commentingOpenDate }">
+                  {{project.commentingOpenDate ?
+                  ( project.commentingOpenDate | date:'longDate') :
+                    'Must be defined'}}</span>
               </li>
               <li>
                 <span class="name">End Date:</span>
                 <span class="value">{{project.commentingClosedDate| date:'longDate'}}</span>
               </li>
-              <!-- <li *ngIf="application.meta.currentPeriod.meta.daysRemaining">
-                <span class="name">Days Remaining:</span>
-                <span class="value">{{application.meta.currentPeriod.meta.daysRemaining}}</span>
-              </li> -->
               <li>
                 <span class="name">Days Remaining:</span>
                 <span class="value">{{daysRemaining}}</span>
