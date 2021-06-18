@@ -22,6 +22,8 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { AttachmentUploadService } from '../../core/utils/attachmentUploadService';
 import { ShapeInfoComponent } from './shape-info/shape-info.component';
 import { DetailsMapComponent } from './details-map/details-map.component';
+import { InteractionsComponent } from './interactions/interactions.component';
+import { InteractionDetailComponent } from './interactions/interaction-detail/interaction-detail.component';
 // services
 // import { ExportService } from 'core/services/export.service';
 
@@ -48,7 +50,9 @@ import { DetailsMapComponent } from './details-map/details-map.component';
     ReviewCommentsComponent,
     CommentDetailComponent,
     FomSubmissionComponent,
-    ShapeInfoComponent
+    ShapeInfoComponent,
+    InteractionsComponent,
+    InteractionDetailComponent
   ],
   exports: [
     FomDetailComponent,
