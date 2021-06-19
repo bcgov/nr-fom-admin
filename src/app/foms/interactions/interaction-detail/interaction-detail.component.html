@@ -1,0 +1,65 @@
+
+<div class="interaction-detail-container" *ngIf="!interaction">
+    <em>No engagement selected</em>
+</div>
+  
+<div class="interaction-detail-container" *ngIf="interaction">
+  <div class="title-container__title">
+    <h2>&nbsp;</h2>
+    <div class="interaction-detail__date">
+      {{interaction.createTimestamp || today | date:'medium'}}
+    </div>
+  </div>
+  <hr>
+
+  <form [formGroup]="interactionFormGroup">
+    <div class="form-group col-md">
+      <label>Engagement Date</label>
+      <div class="input-group">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="YYYY-MM-DD"
+          bsDatepicker
+          #communicationDate="bsDatepicker"
+          id="communicationDate"
+          name="communicationDate"
+          formControlName="communicationDate"
+          [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD', adaptivePosition: true,
+          containerClass: 'theme-dark-blue', showWeekNumbers: false  }"
+        />
+        <div class="input-group-append">
+          <button class="btn btn-icon"  type="button" tabindex="-1" (click)="communicationDate.show()"
+                  [attr.aria-expanded]="communicationDate.isOpen">
+            <i class="material-icons">date_range</i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="stakeholderDiv" class="form-group col-md">
+      <label for="stakeholder">Stakeholder</label>
+      <input id="stakeholder" type="text" 
+            name="stakeholder"
+            class="form-control col-md-6"
+            formControlName="stakeholder"/>
+    </div>
+
+    <div id="communicationDetailsDiv" class="form-group col-md">
+      <label for="description">Description</label>
+      <textarea id="description"
+            name="description"
+            class="form-control col-md-12"
+            rows="5"
+            formControlName="communicationDetails">
+      </textarea>       
+    </div>
+
+    &nbsp;
+    <ng-content>
+    </ng-content>
+  </form>
+
+</div>
+
+  

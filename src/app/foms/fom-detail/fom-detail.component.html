@@ -232,6 +232,24 @@
             </div>
           </div>
         </div>
+
+        <div class="aside-card">
+          <h3 class="title">Stakeholder Engagement</h3>
+          <div class="body">
+            <div>
+              <p class="mb-0">Record and edit stakeholder engagements</p>
+            </div>
+           <div class="btn-container">
+              <button class="cta-btn btn btn-sm btn-outline-primary" type="button"
+                      title="Record and edit stakeholder engagements"
+                      [disabled]="isDeleting"
+                      [routerLink]="['/interactions', project.id]">
+                Stakeholder Engagements
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div class="aside-card">
           <h3 class="title">FOM Spatial Upload</h3>
           <div class="body">
