@@ -82,49 +82,53 @@ export class InteractionsComponent implements OnInit {
     this.interactionDetailForm.selectedInteraction = {} as InteractionResponse;
   }
 
-  async saveInteraction(update: InteractionRequest, selectedInteraction: InteractionResponse) {
+  async saveInteraction(saveReq: InteractionRequest, selectedInteraction: InteractionResponse) {
     const {id} = selectedInteraction;
-    let resultPromise: Promise<InteractionResponse>;
-    //TODO include attachment (if any)
+    const resultPromise = this.prepareSaveRequest(id, this.projectId, saveReq, selectedInteraction);
+    resultPromise
+      .then((result) => this.handelSaveSuccess(result))
+      .catch((err) => this.handelSaveError(err));
+  }
 
+  private prepareSaveRequest(id: number, projectId: number, saveReq: InteractionRequest, selectedInteraction: InteractionResponse)
+          : Promise<InteractionResponse> {
+    let resultPromise: Promise<InteractionResponse>;
     if (!id) {
-      resultPromise = this.interactionSvc.interactionControllerCreate(null, this.projectId,
-                    update.stakeholder, 
-                    update.communicationDate, 
-                    update.communicationDetails).toPromise();
+      resultPromise = this.interactionSvc.interactionControllerCreate(saveReq.fileContent, projectId,
+        saveReq.stakeholder,
+        saveReq.communicationDate,
+        saveReq.communicationDetails,
+        saveReq.filename).toPromise();
     }
     else {
-      update.revisionCount = selectedInteraction.revisionCount;
+      saveReq.revisionCount = selectedInteraction.revisionCount;
       const id = selectedInteraction.id;
-      resultPromise = this.interactionSvc.interactionControllerUpdate(id, null,
-                    this.projectId,
-                    update.stakeholder, 
-                    update.communicationDate, 
-                    update.communicationDetails,
-                    update.revisionCount).toPromise();
+      resultPromise = this.interactionSvc.interactionControllerUpdate(id, saveReq.fileContent,
+        this.projectId,
+        saveReq.stakeholder,
+        saveReq.communicationDate,
+        saveReq.communicationDetails,
+        saveReq.revisionCount,
+        saveReq.filename).toPromise();
     }
+    return resultPromise;
+  }
 
-    try {
-      const result = await resultPromise;
-      if (result) {
-        const pos = this.interactionListScrollContainer.nativeElement.scrollTop;
-        this.interactionSaved$.next();
-        this.selectedItem = result; // updated selected.
-        this.loading = false;
-        setTimeout(() => {
-          this.onInteractionItemClicked(this.selectedItem, pos);
-        }, 300);
-      }
-      else {
-        this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Failed to save engagement.', title: ''}})
-        this.loading = false;
-      }
-    }
-    catch (err) {
-      this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Failed to update', title: ''}})
-      this.loading = false;
-    }
+  private handelSaveSuccess(result: any) {
+    const pos = this.interactionListScrollContainer.nativeElement.scrollTop;
+    this.interactionSaved$.next();
+    this.selectedItem = result; // updated selected.
+    this.loading = false;
+    setTimeout(() => {
+      this.onInteractionItemClicked(this.selectedItem, pos);
+    }, 300);
+  }
 
-  } // end saveInteraction
+  private handelSaveError(err: any) {
+    // disable below, let interceptor to show error for now.
+    // this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Failed to update', title: ''}})
+    console.error('Failed to save', err);
+    this.loading = false;
+  }
 
 }

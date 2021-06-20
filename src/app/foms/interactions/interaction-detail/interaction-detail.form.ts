@@ -1,4 +1,4 @@
-import {prop, required} from "@rxweb/reactive-form-validators"
+import { prop } from "@rxweb/reactive-form-validators"
 import { InteractionResponse } from "core/api";
 import * as R from 'remeda';
 
@@ -14,6 +14,12 @@ export class InteractionDetailForm implements Pick<InteractionRequest, typeof UP
   @prop()
   communicationDetails: string = '';
 
+  @prop()
+  filename: string = null;
+
+  @prop()
+  fileContent: any = null;
+
   constructor(interaction: InteractionResponse) {
     if (interaction) {
       Object.assign(this, R.pick(interaction, UPDATE_FIELDS));
@@ -28,4 +34,7 @@ export interface InteractionRequest {
   communicationDate: string;
   communicationDetails: string;
   revisionCount: number;
+
+  filename: string;
+  fileContent: any;
 }
