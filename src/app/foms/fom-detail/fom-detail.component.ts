@@ -4,8 +4,14 @@ import {ActivatedRoute, Router} from '@angular/router';
 // @ts-ignore
 import {of, Subject, throwError} from 'rxjs';
 // @ts-ignore
-import {concat, mergeMap, takeUntil} from 'rxjs/operators';
-import { AttachmentService, AttachmentResponse, WorkflowStateEnum} from "core/api";
+import {concat, mergeMap, takeUntil, tap} from 'rxjs/operators';
+import {
+  AttachmentService,
+  AttachmentResponse,
+  WorkflowStateEnum,
+  ProjectCreateRequest,
+  ProjectWorkflowStateChangeRequest
+} from "core/api";
 import {ConfigService} from "../../../core/services/config.service";
 
 import {ProjectResponse, ProjectService, SpatialFeaturePublicResponse} from 'core/api';
@@ -36,6 +42,8 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   public attachments: AttachmentResponse[] = [];
   public user: User;
   public daysRemaining: number = null;
+  public isPublishingReady = false;
+  private workflowStateChangeRequest: ProjectWorkflowStateChangeRequest = <ProjectWorkflowStateChangeRequest>{};
 
   constructor(
     private route: ActivatedRoute,
@@ -82,6 +90,8 @@ export class FomDetailComponent implements OnInit, OnDestroy {
           console.log('Error: ', error);
       });
     });
+
+    this.verifyPublishingReady();
   }
 
   ngOnDestroy() {
@@ -153,15 +163,34 @@ export class FomDetailComponent implements OnInit, OnDestroy {
     })
   }
 
-private calculateDaysRemaining(){
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  this.daysRemaining =
-    moment(this.project.commentingClosedDate).diff(moment(today), 'days');
-  if(this.daysRemaining < 0){
-    this.daysRemaining = 0;
+  private calculateDaysRemaining(){
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    this.daysRemaining =
+      moment(this.project.commentingClosedDate).diff(moment(today), 'days');
+    if(this.daysRemaining < 0){
+      this.daysRemaining = 0;
+    }
   }
-}
+
+  public verifyPublishingReady(){
+      return this.project.commentingOpenDate && this.spatialDetail
+        && this.attachments.length > 0
+        && this.project.workflowState.code === WorkflowStateEnum.Initial;
+
+  }
+
+  public async publishFOM(){
+      this.workflowStateChangeRequest.workflowStateCode = WorkflowStateEnum.Published;
+      this.workflowStateChangeRequest.revisionCount = this.project.revisionCount;
+
+    const result = await this.projectService.projectControllerStateChange(this.project.id, this.workflowStateChangeRequest).pipe(tap(obs => console.log(obs))).toPromise()
+    const {id} = result;
+    if (!id) {
+    }
+    this.onSuccess()
+
+  }
   public deleteApplication() {
     /* if (this.application.meta.numComments > 0) {
       this.dialogService

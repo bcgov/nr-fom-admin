@@ -86,7 +86,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     private attachmentSvc: AttachmentService,
     private attachmentUploadSvc: AttachmentUploadService,
     private formBuilder: RxFormBuilder,
-    private stateSvc: StateService,
+    public stateSvc: StateService,
     private modalSvc: ModalService,
     private datePipe: DatePipe,
     private  forestSvc: ForestClientService
@@ -274,9 +274,6 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     let projectUpdateRequest = {...rest, ...this.fg.value}
     projectUpdateRequest['districtId'] = projectUpdateRequest.district;
 
-    // console.log('Trying to save projectUpdateRequest: ', JSON.stringify(projectUpdateRequest))
-
-    //
     if (!this.fg.valid) return;
     try {
       const result = await this.projectSvc.projectControllerUpdate(id, projectUpdateRequest).pipe(tap(obs => console.log(obs))).toPromise();
@@ -303,12 +300,6 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
             AttachmentTypeEnum.SUPPORTING_DOC).pipe(tap(obs => console.log(obs))).toPromise();
       }
 
-      // const resultAttachment = await this.attachmentSvc.attachmentControllerCreate(fileBlob, 3, 'PUBLIC_NOTICE').pipe(tap(obs => console.log(obs))).toPromise();
-
-      // This service was created by Marcelo but it also fails to transmit the 'body'
-      //
-      // const resultAttachment = await this.attachmentUploadSvc.attachmentCreate(file, 3, 'PUBLIC_NOTICE').pipe(tap(obs => console.log(obs))).toPromise();
-      // if (result && resultAttachment) {
       if (result) {
       // if (resultAttachment) {
         return this.onSuccess(id);
