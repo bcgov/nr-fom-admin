@@ -45,7 +45,9 @@ export class InteractionDetailComponent implements OnInit {
     if (!this.editMode) {
       this.interactionFormGroup.disable();
     }
-    if (this.interaction.attachmentId) this.retrieveAttachment(this.interaction.attachmentId);
+    
+    this.interaction.attachmentId? this.retrieveAttachment(this.interaction.attachmentId)
+                                 : this.attachment = null;
   };
   
   addNewFile(newFiles: any[]) {
