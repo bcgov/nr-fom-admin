@@ -45,7 +45,7 @@
                         <button class="btn btn-icon" title="Remove this engagement"
                                 [disabled]="loading"
                                 (click)="deleteInteraction(item)">
-                          <i class="spinner-border" [hidden]="!loading"></i>
+                          <i class="spinner-border" [hidden]="!(loading && item?.id === selectedItem?.id)"></i>
                           <i class="material-icons" [hidden]="loading">
                             delete
                           </i>

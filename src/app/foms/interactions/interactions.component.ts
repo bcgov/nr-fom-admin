@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { InteractionResponse, InteractionService, ProjectResponse, WorkflowStateEnum } from 'core/api';
 import { KeycloakService } from 'core/services/keycloak.service';
@@ -26,7 +26,7 @@ export const ERROR_DIALOG = {
   templateUrl: './interactions.component.html',
   styleUrls: ['./interactions.component.scss']
 })
-export class InteractionsComponent implements OnInit {
+export class InteractionsComponent implements OnInit, OnDestroy {
 
   @ViewChild('interactionDetailForm') 
   interactionDetailForm: InteractionDetailComponent;
@@ -64,6 +64,11 @@ export class InteractionsComponent implements OnInit {
         .subscribe((data: { project: ProjectResponse}) => {
           this.project = data.project;
         });
+  }
+
+  ngOnDestroy(): void {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   getProjectInteractions() {
@@ -120,8 +125,11 @@ export class InteractionsComponent implements OnInit {
         this.loading = true;
         this.interactionSvc.interactionControllerRemove(selectedInteraction.id).subscribe(()=> {
           this.selectedItem = null;
+          setTimeout(() => {
           this.loading = false;
-          this.interactionSaved$.next();// trigger list retrieving.
+            this.interactionSaved$.next();// trigger list retrieving.
+          }, 100);
+
         });
       }
     })
