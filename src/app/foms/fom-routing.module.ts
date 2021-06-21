@@ -6,6 +6,7 @@ import {FomAddEditComponent} from './fom-add-edit/fom-add-edit.component';
 import {ApplicationDetailResolver, ProjectSpatialDetailResolver} from './fom-resolver.service';
 import {ReviewCommentsComponent} from './review-comments/review-comments.component';
 import {FomSubmissionComponent} from "./fom-submission/fom-submission.component";
+import { InteractionsComponent } from './interactions/interactions.component';
 
 const routes: Routes = [
   {
@@ -23,19 +24,21 @@ const routes: Routes = [
   {
     path: 'a/:appId/edit',
     component: FomAddEditComponent
-
   },
   {
     path: 'comments/:appId',
     component: ReviewCommentsComponent
-
-
+  },
+  {
+    path: 'interactions/:appId',
+    component: InteractionsComponent,
+    resolve: {
+      project: ApplicationDetailResolver
+    }
   },
   {
     path: 'a/:appId/upload',
     component: FomSubmissionComponent
-
-
   }
 ];
 
