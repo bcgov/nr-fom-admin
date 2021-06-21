@@ -14,6 +14,7 @@ import { InteractionDetailForm } from './interaction-detail.form';
 export class InteractionDetailComponent implements OnInit {
 
   today = new Date();
+  maxDate = this.today;
   interaction: InteractionResponse;
   interactionFormGroup: FormGroup;
   files: any[] = []; // Array type, but only 1 attachment for Interaction.

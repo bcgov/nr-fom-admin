@@ -25,6 +25,7 @@
           id="communicationDate"
           name="communicationDate"
           formControlName="communicationDate"
+          [maxDate]="maxDate"
           [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD', adaptivePosition: true,
           containerClass: 'theme-dark-blue', showWeekNumbers: false  }"
         />
@@ -42,6 +43,7 @@
       <input id="stakeholder" type="text" 
             name="stakeholder"
             class="form-control col-md-6"
+            maxlength="55"
             formControlName="stakeholder"/>
     </div>
 
@@ -51,6 +53,7 @@
             name="description"
             class="form-control col-md-12"
             rows="5"
+            maxlength="4000"
             formControlName="communicationDetails">
       </textarea>       
     </div>
