@@ -58,7 +58,6 @@ export class InteractionDetailComponent implements OnInit {
   getFileContent(fileContent: any) {
     this.fileContent = fileContent;
     this.interactionFormGroup.get('fileContent').setValue(fileContent);
-    console.log(this.interactionFormGroup);
   }
 
   private async retrieveAttachment(attachmentId: number) {
