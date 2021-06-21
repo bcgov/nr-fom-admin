@@ -14,7 +14,7 @@ import {
   ForestClientResponse,
   ForestClientService,
   AttachmentService,
-  ProjectCreateRequest, ProjectUpdateRequest
+  ProjectCreateRequest
 } from 'core/api';
 import {RxFormBuilder, RxFormGroup} from '@rxweb/reactive-form-validators';
 import { DatePipe } from '@angular/common';
@@ -34,7 +34,6 @@ export type ApplicationPageType = 'create' | 'edit';
 })
 export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   fg: RxFormGroup;
-// test = this.fg.get('')
   state: ApplicationPageType;
   originalProjectResponse: ProjectResponse;
 
@@ -90,7 +89,8 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     private modalSvc: ModalService,
     private datePipe: DatePipe,
     private  forestSvc: ForestClientService
-  ) { }
+  ) {
+  }
 
   // check for unsaved changes before navigating away from current route (ie, this page)
   public canDeactivate(): Observable<boolean> | boolean {
@@ -277,7 +277,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.fg.valid) return;
     try {
       const result = await this.projectSvc.projectControllerUpdate(id, projectUpdateRequest).pipe(tap(obs => console.log(obs))).toPromise();
-      // const fileAsBlob = new Blob([this.publicNoticeContent]);
+
       let resultAttachment: Observable<any>;
       let file: any = null;
       let fileContent: any = null;

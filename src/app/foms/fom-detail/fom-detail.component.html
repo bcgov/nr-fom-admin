@@ -6,11 +6,6 @@
       </div>
       <div class="title-container__actions">
         <div class="btn-container">
-          <!-- <button class="btn btn-light" type="button" title="Edit application"
-            [routerLink]="['/a', project.id, 'edit']"
-            [disabled]="application.meta.isRetired">
-            Edit
-          </button> -->
           <button class="btn btn-light" type="button" title="Edit FOM"
                   [routerLink]="['/a', project.id, 'edit']"
                   [disabled]="isDeleting">
@@ -97,7 +92,6 @@
                       <span class="name">FOM Holder:</span>
                       <span
                         class="value">
-<!--                        class="value">{{project.forestClient ? project.forestClient.name : 'No applicant on this file'}}-->
                         {{project.forestClient.name}}
                       </span>
                     </li>
@@ -106,22 +100,12 @@
                       <span
                         class="value">
                         {{project.district ? project.district?.name : 'A district has not been specified'}}
-<!--                        {{district ? district.name : ' - '}}-->
                       </span>
                     </li>
-                    <!-- <li>
-                      <span class="name">Total Area (hectares):</span>
-                      <span class="value">{{application.areaHectares ? (application.areaHectares | number:'1.2-2') : '-'}}</span>
-                    </li> -->
-                    <!-- <li *ngIf="application.publishDate">
-                      <span class="name">Initial Publish Date:</span>
-                      <span class="value">{{application.publishDate | date:'longDate'}}</span>
-                    </li> -->
                   </ul>
                 </section>
                 <br />
                 <h2>Attachments</h2>
-                <span  *ngIf="attachments.length === 0" class="invalid-type-msg"> Must have one attachment </span>
                 <section *ngIf="attachments.length > 0">
                  <div class="doc-list row" *ngFor="let attachment of attachments" style="width: 25rem;">
                     <a class="doc-list__item"
@@ -182,7 +166,6 @@
           <div class="body">
             <div
               class="app-status">
-<!--              {{project.workflowState && project.workflowStateCode ? project.workflowStateCode: '-'}}-->
               {{project.workflowState ? project.workflowState.description: '-'}}
             </div>
           </div>
@@ -190,21 +173,13 @@
 
         <div class="aside-card">
           <h3 class="title">Comment Period Details</h3>
-          <!-- <div class="body" *ngIf="!application.meta.currentPeriod">
-            Not Open For Commenting
-          </div> -->
-          <!-- <div class="body" *ngIf="application.meta.currentPeriod"> -->
           <div class="body">
             <ul class="nv-list">
               <li>
                 <span class="name">Status:</span>
-                <span class="value">
-<!--                  {{project.workflowState && project.workflowState?.description}}-->
-                </span>
               </li>
               <li>
                 <span class="name">Start Date:</span>
-<!--                <span class="value">{{project.commentingOpenDate | date:'longDate'}}</span>-->
                 <span class="value" [ngClass]="{'invalid-type-msg': !project.commentingOpenDate }">
                   {{project.commentingOpenDate ?
                   ( project.commentingOpenDate | date:'longDate') :
@@ -249,16 +224,13 @@
         <div class="aside-card">
           <h3 class="title">FOM Spatial Upload</h3>
           <div class="body">
-            <!-- <div *ngIf="!application.meta.decision">
-              <p class="mb-0">No decision documents have been added to this application.</p>
-            </div> -->
+            <span  *ngIf="spatialDetail.length === 0" class="invalid-type-msg"> Proposed FOM Spatial Upload Required </span>
            <div class="btn-container">
               <button class="cta-btn btn btn-sm btn-outline-primary" type="button" title="Edit fom documents"
                       [disabled]="isDeleting"
                       [routerLink]="['/a', project.id, 'upload']">
                 Upload FOM Spatial File
               </button>
-              <span title="You cannot edit the decision of a retired application"></span>
             </div>
           </div>
 
