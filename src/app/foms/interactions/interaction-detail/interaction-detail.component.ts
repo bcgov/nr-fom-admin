@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { file, RxFormBuilder } from '@rxweb/reactive-form-validators';
+import { RxFormBuilder } from '@rxweb/reactive-form-validators';
 import { AttachmentResponse, AttachmentService, InteractionResponse } from 'core/api';
 import { ConfigService } from 'core/services/config.service';
 import { InteractionDetailForm } from './interaction-detail.form';
@@ -16,6 +16,8 @@ export class InteractionDetailComponent implements OnInit {
   today = new Date();
   maxDate = this.today;
   interaction: InteractionResponse;
+  @Input()
+  editMode: boolean;
   interactionFormGroup: FormGroup;
   files: any[] = []; // Array type, but only 1 attachment for Interaction.
   fileContent: any;
@@ -40,6 +42,9 @@ export class InteractionDetailComponent implements OnInit {
     this.interaction = interaction;
     const interactionForm = new InteractionDetailForm(interaction)
     this.interactionFormGroup = this.formBuilder.group(interactionForm);
+    if (!this.editMode) {
+      this.interactionFormGroup.disable();
+    }
     if (this.interaction.attachmentId) this.retrieveAttachment(this.interaction.attachmentId);
   };
   

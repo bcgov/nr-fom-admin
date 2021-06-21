@@ -30,7 +30,9 @@
           containerClass: 'theme-dark-blue', showWeekNumbers: false  }"
         />
         <div class="input-group-append">
-          <button class="btn btn-icon"  type="button" tabindex="-1" (click)="communicationDate.show()"
+          <button class="btn btn-icon"  type="button" tabindex="-1" 
+                  (click)="communicationDate.show()"
+                  [disabled]="!editMode"
                   [attr.aria-expanded]="communicationDate.isOpen">
             <i class="material-icons">date_range</i>
           </button>
@@ -58,7 +60,8 @@
       </textarea>       
     </div>
 
-    <div id="communicationDetailsDiv" class="form-group col-md">
+    <div id="communicationDetailsDiv" class="form-group col-md"
+        *ngIf="editMode">
       <label for="upload">Engagement Attachment</label>
       <app-upload-box id="upload"
                       [multipleFiles]="false" 

@@ -1,8 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { InteractionResponse, InteractionService, ProjectResponse } from 'core/api';
-import { ModalService } from 'core/services/modal.service';
-import { StateService } from 'core/services/state.service';
+import { InteractionResponse, InteractionService, ProjectResponse, WorkflowStateEnum } from 'core/api';
+import { KeycloakService } from 'core/services/keycloak.service';
+import { User } from 'core/services/user';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { InteractionDetailComponent } from './interaction-detail/interaction-detail.component';
@@ -36,6 +36,7 @@ export class InteractionsComponent implements OnInit {
   project: ProjectResponse;
   selectedItem: InteractionResponse;
   loading = false;
+  private user: User;
 
   data$: Observable<InteractionResponse[]>;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
@@ -44,9 +45,10 @@ export class InteractionsComponent implements OnInit {
   constructor(    
     private route: ActivatedRoute,
     private interactionSvc: InteractionService,
-    private modalSvc: ModalService,
-    private stateSvc: StateService) 
-  { }
+    private keycloakService: KeycloakService) 
+  { 
+    this.user = this.keycloakService.getUser();
+  }
 
   ngOnInit(): void {
     this.projectId = this.route.snapshot.params.appId;
@@ -68,6 +70,7 @@ export class InteractionsComponent implements OnInit {
 
   onInteractionItemClicked(item: InteractionResponse, pos: number) {
     this.selectedItem = item;
+    this.interactionDetailForm.editMode = this.canModifyInteraction(); // set this first.
     this.interactionDetailForm.selectedInteraction = item;
     if (pos) {
       // !! important to wait or will not see the effect.
@@ -75,6 +78,15 @@ export class InteractionsComponent implements OnInit {
         this.interactionListScrollContainer.nativeElement.scrollTop = pos;
       }, 150);
     }
+  }
+
+  // Verify if condition is met to allow user modifying this Interaction.
+  canModifyInteraction() {
+    return this.user.isAuthorizedForClientId(this.project.forestClient.id) &&
+          (
+            (this.project.workflowState.code == WorkflowStateEnum.CommentOpen)
+            || (this.project.workflowState.code == WorkflowStateEnum.CommentClosed)
+          );
   }
 
   addEmptyInteractionDetail() {

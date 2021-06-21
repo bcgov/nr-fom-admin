@@ -9,6 +9,7 @@
                 *ngIf="project.workflowState.code == 'COMMENT_OPEN' || project.workflowState.code == 'COMMENT_CLOSED'">
             <button type="button" class="filter-btn-search btn btn-primary" 
                     title="Add"
+                    *ngIf="canModifyInteraction()"
                     (click)="addEmptyInteractionDetail()">
                     Add New
             </button>
@@ -53,6 +54,7 @@
                 <div class="row">
                   <button type="button" title="Save this engagement"
                           class="btn btn-sm btn-primary btn-container"
+                          *ngIf="canModifyInteraction()"
                           [disabled]="loading"
                           (click)="saveInteraction(interactionDetailForm.interactionFormGroup.value, interactionDetailForm.interaction)">
                     Save interaction
