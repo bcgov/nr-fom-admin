@@ -18,18 +18,22 @@
       <div class="input-group">
         <input
           type="text"
-          class="form-control"
+          class="form-control col-md-6"
           placeholder="YYYY-MM-DD"
           bsDatepicker
           #communicationDate="bsDatepicker"
           id="communicationDate"
           name="communicationDate"
           formControlName="communicationDate"
+          [maxDate]="maxDate"
+          readonly
           [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD', adaptivePosition: true,
           containerClass: 'theme-dark-blue', showWeekNumbers: false  }"
         />
         <div class="input-group-append">
-          <button class="btn btn-icon"  type="button" tabindex="-1" (click)="communicationDate.show()"
+          <button class="btn btn-icon"  type="button" tabindex="-1" 
+                  (click)="communicationDate.show()"
+                  [disabled]="!editMode"
                   [attr.aria-expanded]="communicationDate.isOpen">
             <i class="material-icons">date_range</i>
           </button>
@@ -42,6 +46,7 @@
       <input id="stakeholder" type="text" 
             name="stakeholder"
             class="form-control col-md-6"
+            maxlength="55"
             formControlName="stakeholder"/>
     </div>
 
@@ -51,11 +56,13 @@
             name="description"
             class="form-control col-md-12"
             rows="5"
+            maxlength="4000"
             formControlName="communicationDetails">
       </textarea>       
     </div>
 
-    <div id="communicationDetailsDiv" class="form-group col-md">
+    <div id="communicationDetailsDiv" class="form-group col-md"
+        *ngIf="editMode">
       <label for="upload">Engagement Attachment</label>
       <app-upload-box id="upload"
                       [multipleFiles]="false" 
