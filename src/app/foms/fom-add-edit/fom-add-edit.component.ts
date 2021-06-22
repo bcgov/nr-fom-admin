@@ -13,14 +13,16 @@ import {
   ProjectService,
   ForestClientResponse,
   ForestClientService,
-  ProjectCreateRequest, ProjectUpdateRequest
+  AttachmentService,
+  ProjectCreateRequest
 } from 'core/api';
 import {RxFormBuilder, RxFormGroup} from '@rxweb/reactive-form-validators';
 import { DatePipe } from '@angular/common';
 import {FomAddEditForm} from './fom-add-edit.form';
 import {StateService} from 'core/services/state.service';
 import {ModalService} from 'core/services/modal.service';
-import {toNumber} from "ngx-bootstrap/timepicker/timepicker.utils";
+import {AttachmentUploadService} from "../../../core/utils/attachmentUploadService";
+import { AttachmentTypeEnum } from "../../../core/models/attachmentTypeEnum";
 
 export type ApplicationPageType = 'create' | 'edit';
 
@@ -32,9 +34,8 @@ export type ApplicationPageType = 'create' | 'edit';
 })
 export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   fg: RxFormGroup;
-// test = this.fg.get('')
   state: ApplicationPageType;
-  originalProject: ProjectResponse;
+  originalProjectResponse: ProjectResponse;
 
   get isCreate() {
     return this.state === 'create';
@@ -44,15 +45,28 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   public project: ProjectResponse = null;
   public startDate: NgbDateStruct = null;
   public endDate: NgbDateStruct = null;
-  public fomSupportingDocuments: File[] = [];
-  public initialPublicDocument: File[] = [];
+  public supportingDocuments: any[] = [];
+  public initialPublicDocument: any[] = [];
   private scrollToFragment: string = null;
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
   public districtIdSelect: any = null;
   public forestClientSelect: any = null;
   files: any[] = [];
-  publicNoticeDocument: any;
+  publicNoticeContent: any;
+  supportingDocContent: any;
+  public isSubmitSaveClicked = false;
+  public descriptionValue: string = null;
+  public fileTypesParentInitial: string[] =
+    ['image/png', 'image/jpeg', 'image/jpg', 'image/tiff',
+      'image/x-tiff', 'application/pdf']
+
+  public fileTypesParentSupporting: string[] =
+    ['application/pdf', 'image/jpg', 'image/jpeg', 'text/csv', 'image/png', 'text/plain',
+     'application/rtf', 'image/tiff', 'application/msword',
+     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+     'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    ]
 
   get isLoading() {
     return this.stateSvc.loading;
@@ -65,15 +79,18 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    // private location: Location,
+
     public snackBar: MatSnackBar,
     private projectSvc: ProjectService,
+    private attachmentSvc: AttachmentService,
+    private attachmentUploadSvc: AttachmentUploadService,
     private formBuilder: RxFormBuilder,
-    private stateSvc: StateService,
+    public stateSvc: StateService,
     private modalSvc: ModalService,
     private datePipe: DatePipe,
     private  forestSvc: ForestClientService
-  ) { }
+  ) {
+  }
 
   // check for unsaved changes before navigating away from current route (ie, this page)
   public canDeactivate(): Observable<boolean> | boolean {
@@ -91,7 +108,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public cancelChanges() {
     // this.location.back(); // FAILS WHEN CANCEL IS CANCELLED (DUE TO DIRTY FORM OR UNSAVED DOCUMENTS) MULTIPLE TIMES
-    const routerFragment = this.isCreate ? ['/search'] : ['/a', this.originalProject.id]
+    const routerFragment = this.isCreate ? ['/search'] : ['/a', this.originalProjectResponse.id]
 
     this.router.navigate(routerFragment);
 
@@ -105,19 +122,15 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     )).subscribe((data: ProjectResponse) => {
       if (!this.isCreate) {
-        this.originalProject = data as ProjectResponse;
-
-
-        if (data.district){
-          this.districtIdSelect = this.originalProject.district.id;
+        this.originalProjectResponse = data as ProjectResponse;
+        if (data.district) {
+          this.districtIdSelect = this.originalProjectResponse.district.id;
         }
 
-        this.forestClientSelect = this.originalProject.forestClient.id;
+        this.forestClientSelect = this.originalProjectResponse.forestClient.id;
       }
-
       const form = new FomAddEditForm(data);
       this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
-      // console.log('ProjectResponse: ', this.fg.value as ProjectResponse);
 
       // Converting commentingOpenDate date to 'yyyy-MM-dd'
       let datePipe = this.datePipe.transform(this.fg.value.commentingOpenDate,'yyyy-MM-dd');
@@ -125,6 +138,11 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
       // Converting commentingClosedDate date to 'yyyy-MM-dd'
       datePipe = this.datePipe.transform(this.fg.value.commentingClosedDate,'yyyy-MM-dd');
       this.fg.get('commentingClosedDate').setValue(datePipe);
+
+      this.fg.get('district').setValue(this.districtIdSelect);
+        if(data.description) {
+        this.descriptionValue = data.description;
+      }
 
       this.loadForestClients().then( (result) => {
         this.forestClients = result;
@@ -138,14 +156,50 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
    return await this.forestSvc.forestClientControllerFind().toPromise()
 }
 
-  addNewFiles(newFiles: any[]) {
-    this.files.push(newFiles);
-    // console.log('Inserted files on parent: ' + this.files.length);
+  addNewFileInitialPublic(newFiles: any[]) {
+    this.initialPublicDocument.push(newFiles);
   }
 
-  addNewPublicNoticeDocument(newDocument: any) {
-    this.publicNoticeDocument = newDocument;
-    // console.log('public notice', this.publicNoticeDocument);
+  addNewFileSupporting(newFiles: any[]) {
+    this.supportingDocuments.push(newFiles);
+  }
+
+  getContentFileFromUpload(fileContent: any) {
+    this.publicNoticeContent = fileContent;
+    try {
+      // this.originalSubmissionRequest.jsonSpatialSubmission = JSON.parse(this.contentFile);
+      console.log('inside getContenFileParent: ', this.publicNoticeContent)
+    }catch (e) {
+      this.modalSvc.openDialog({
+        data: {
+          message: 'Your file is broken. Please review the Geo Spatial data',
+          title: '',
+          width: '340px',
+          height: '200px',
+          buttons: {confirm: {text: 'OK'}}
+        }
+      })
+    }
+    // this.fg.get('jsonSpatialSubmission').setValue(this.originalSubmissionRequest.jsonSpatialSubmission);
+  }
+
+  getContentFileSupportingDoc(fileContent: any) {
+    this.supportingDocContent = fileContent;
+    try {
+      // this.originalSubmissionRequest.jsonSpatialSubmission = JSON.parse(this.contentFile);
+      console.log('inside getContenFileParent: ', this.publicNoticeContent)
+    }catch (e) {
+      this.modalSvc.openDialog({
+        data: {
+          message: 'Your file is broken. Please review the Geo Spatial data',
+          title: '',
+          width: '340px',
+          height: '200px',
+          buttons: {confirm: {text: 'OK'}}
+        }
+      })
+    }
+    // this.fg.get('jsonSpatialSubmission').setValue(this.originalSubmissionRequest.jsonSpatialSubmission);
   }
 
   ngAfterViewInit() {
@@ -169,28 +223,13 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  // @ts-ignore
-  private static dateToNgbDate(date: Date): NgbDateStruct {
-    return date ? {year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate()} : null;
-  }
-
-  // @ts-ignore
-  private static ngbDateToDate(date: NgbDateStruct): Date {
-    return new Date(date.year, date.month - 1, date.day);
-  }
-
-  // used in template
-  public isValidDate(date: NgbDateStruct): boolean {
-    return date && !isNaN(date.year) && !isNaN(date.month) && !isNaN(date.day);
-  }
-
   validate() {
     if (!this.fg.valid) {
       this.fg.markAllAsTouched();
       this.fg.updateValueAndValidity({onlySelf: false, emitEvent: true});
       this.modalSvc.openDialog({
         data: {
-          message: 'Invalid inputs',
+          message: 'Please review the highlighted fields ',
           title: '',
           width: '340px',
           height: '200px',
@@ -199,15 +238,19 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
       })
 
     }
-    console.log('inside validate: ', this.fg)
     return this.fg.valid;
   }
 
   async submit() {
+    this.isSubmitSaveClicked = true;
     this.validate();
     if (!this.fg.valid) return;
     if (this.stateSvc.loading) return;
-    const result = await this.projectSvc.projectControllerCreate(this.fg.value as ProjectCreateRequest).pipe(tap(obs => console.log(obs))).toPromise()
+    let projectCreate = this.fg.value as ProjectCreateRequest
+    projectCreate['districtId'] = this.districtIdSelect;
+    projectCreate.forestClientNumber = this.fg.get('forestClient').value;
+
+    const result = await this.projectSvc.projectControllerCreate(projectCreate).pipe(tap(obs => console.log(obs))).toPromise()
     const {id} = result;
     if (!id) {
     }
@@ -221,14 +264,46 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   async saveApplication() {
-    const {id, district, forestClient, workflowState, ...rest} = this.originalProject;
-    console.log('inside save: ', this.fg)
-    const projectUpdateRequest = {...rest, ...this.fg.value}
-    console.log('Trying to save projectUpdateRequest: ', projectUpdateRequest)
+    this.isSubmitSaveClicked = true;
+    if(!this.descriptionValue){
+      this.fg.get('description').setErrors({incorrect: true})
+      console.log('saving desc: ', this.descriptionValue)
+    }
+    this.validate();
+    const {id, forestClient, workflowState, ...rest} = this.originalProjectResponse;
+    let projectUpdateRequest = {...rest, ...this.fg.value}
+    projectUpdateRequest['districtId'] = projectUpdateRequest.district;
+
+    if (!this.fg.valid) return;
     try {
-      const result = await this.projectSvc.projectControllerUpdate(id, projectUpdateRequest as ProjectUpdateRequest).pipe(tap(obs => console.log(obs))).toPromise();
-      console.log('result: ', result);
-      if (result) return this.onSuccess(id);
+      const result = await this.projectSvc.projectControllerUpdate(id, projectUpdateRequest).pipe(tap(obs => console.log(obs))).toPromise();
+
+      let resultAttachment: Observable<any>;
+      let file: any = null;
+      let fileContent: any = null;
+
+      if(this.initialPublicDocument.length > 0){
+        file = this.initialPublicDocument[0];
+        fileContent = new Blob([this.publicNoticeContent], {type: file.type});
+
+        resultAttachment = await this.attachmentUploadSvc
+          .attachmentCreate(file, fileContent, id,
+            AttachmentTypeEnum.PUBLIC_NOTICE).pipe(tap(obs => console.log(obs))).toPromise();
+
+      }
+
+      if (this.supportingDocuments.length > 0){
+        file = this.supportingDocuments[0];
+        fileContent = new Blob([this.supportingDocContent], {type: file.type});
+        resultAttachment = await this.attachmentUploadSvc
+          .attachmentCreate(file, fileContent, id,
+            AttachmentTypeEnum.SUPPORTING_DOC).pipe(tap(obs => console.log(obs))).toPromise();
+      }
+
+      if (result) {
+      // if (resultAttachment) {
+        return this.onSuccess(id);
+      }
       this.modalSvc.openDialog({
         data: {
           message: 'There was an error with the request please try again',
@@ -238,21 +313,26 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
           buttons: {confirm: {text: 'OK'}}
         }
       })
-
-
-      // this.onSuccess( id )
-      // console.log( this.application );
     } catch (err) {
-
+      // console.log(err)
     }
 
   }
 
   changeDistrictId(e) {
     this.fg.get('district').setValue(parseInt(e.target.value));
+    this.districtIdSelect = parseInt(e.target.value);
   }
 
   changeForestClientId(e) {
     this.fg.get('forestClient').setValue(e.target.value);
+    this.forestClientSelect = parseInt(e.target.value);
+  }
+
+  changeDescription(e) {
+    this.descriptionValue = e.target.value;
+    if(!this.descriptionValue && !this.isCreate){
+      this.fg.get('description').setErrors({incorrect: true})
+    }
   }
 }

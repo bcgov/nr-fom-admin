@@ -23,15 +23,13 @@ export class FomAddEditForm implements Pick<ProjectResponse,
 
 
   @prop()
-  @required()
-  @minLength({value: 25})
   description: string;
 
   @prop()
-  commentingOpenDate: string = new Date().toISOString();
+  commentingOpenDate: string = null; //new Date().toISOString();
 
   @prop({})
-  commentingClosedDate: string = new Date().toISOString();
+  commentingClosedDate: string = null; //new Date().toISOString();
 
   @prop()
   @required()
@@ -42,18 +40,14 @@ export class FomAddEditForm implements Pick<ProjectResponse,
   @prop()
   @required()
   @minLength({value: 1})
-
   district: DistrictResponse;
 
   @prop()
   @required()
-
   @minLength({value: 1})
   forestClient: ForestClientResponse;
 
   @prop()
-  @required()
-
   workflowState: WorkflowStateCode;
 
   constructor(project?: Partial<ProjectResponse>) {

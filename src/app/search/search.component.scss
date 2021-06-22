@@ -1,8 +1,15 @@
-// Move somewhere global
-h1 {
-  font-size: 2.5rem;
-  font-weight: 400;
-  letter-spacing: -0.05rem;
+@import "assets/styles/base/base.scss";
+
+:host {
+  @include flex-box();
+  @include flex-direction(column);
+  @include flex(1 1 auto);
+
+  overflow:hidden;
+}
+
+.bottom-container.scroll {
+  height: 32em; // Need to set height for scroll (but won't be good for mobile device). However admin does not support mobile.
 }
 
 h2 {
@@ -21,15 +28,76 @@ h2 {
   }
 }
 
+.grid-container {
+  display: grid;
+  grid-auto-rows: minmax(0, auto);
+}
+
 // Search Container
 .search-container {
-  padding-top: 2.5rem;
-  padding-bottom: 3rem;
+  padding-top: 2rem;
+  padding-bottom: 1.5rem;
   background: #f7f8fa;
 }
 
-form {
+.filter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 2rem;
   margin-top: 2rem;
+
+  .filter-select,
+  .filter-input {
+    margin-bottom: 1rem;
+  }
+
+  .filter-input {
+    @include placeholder {
+      color: $gray7;
+    }
+  }
+
+  .filter-buttons {
+    .filter-btn-clear {
+      margin-right: 1rem;
+      padding: 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 700;
+    }
+
+    .filter-btn-search {
+      margin-right: 1rem;
+      padding: 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 700;
+      width: 7rem;
+    }
+
+    .filter-btn-export {
+      padding: 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 700;
+
+      i {
+        &.material-icons {
+          font-size: 1.1rem;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+
+  .filter-count {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-end;
+  }
+
+  .spinner-border {
+    font-size: 0.7rem;
+    height: 0.95rem;
+    width: 0.95rem;
+  }
 }
 
 .main-search-field {
@@ -101,21 +169,21 @@ $sr-table-row-bg: #f7f8fa;
 }
 
 .disp {
-  width: 5.5rem;
+  width: 5.0rem;
 }
 
 .status {
-  max-width: 13rem;
+  width: 11rem;
 }
 
 .actions {
-  width: 9rem;
+  width: 7rem;
   text-align: right;
   padding-top: 0;
   padding-bottom: 0;
 
   .btn {
-    margin-top: -0.35rem;
+    margin-top: 1rem;
     width: 6rem;
     border-width: 2px;
     font-weight: 700;
@@ -227,3 +295,4 @@ $cl-arrow-font-color: #fff;
     height: 100%;
   }
 }
+

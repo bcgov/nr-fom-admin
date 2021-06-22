@@ -1,7 +1,7 @@
 <!--- NOTE: This is a template for your project README. Edit the content according to the comments provided.--->
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
-[![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-339999)](<Redirect-URL>)
+[![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)](<Redirect-URL>)
 
 # bcgov/nr-fom-admin
 Administrative front-end for the FOM application.

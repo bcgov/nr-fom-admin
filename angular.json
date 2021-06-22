@@ -57,7 +57,7 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "deployUrl": "/admin/",
+            "baseHref": "/admin/",
             "browserTarget": "nr-fom-admin:build",
             "port": 4200
           },

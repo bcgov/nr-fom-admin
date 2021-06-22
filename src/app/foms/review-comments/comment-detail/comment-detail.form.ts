@@ -1,22 +1,19 @@
-import {prop} from "@rxweb/reactive-form-validators"
-import {PublicCommentAdminResponse, ResponseCode} from "../../../../core/api";
+import {prop, required} from "@rxweb/reactive-form-validators"
+import {PublicCommentAdminResponse, PublicCommentAdminUpdateRequest, ResponseCodeEnum} from "../../../../core/api";
 
-const UPDATE_FIELDS = ['responseDetails', 'response'] as const;
+const UPDATE_FIELDS = ['responseDetails', 'responseCode'] as const;
 
-export class CommentDetailForm implements Pick<PublicCommentAdminResponse, typeof UPDATE_FIELDS[number]> {
+export class CommentDetailForm implements Pick<PublicCommentAdminUpdateRequest, typeof UPDATE_FIELDS[number]> {
   @prop()
   responseDetails: string = '';
 
   @prop()
-  response: ResponseCode;
+  @required()
+  responseCode: ResponseCodeEnum;
 
   constructor(comment: PublicCommentAdminResponse) {
-    const {response, responseDetails} = comment || {}
-    if (comment) {
-      this.response = response;
-      this.responseDetails = responseDetails;
-    }
-
+    this.responseCode = comment.response?.code as ResponseCodeEnum;
+    this.responseDetails = comment.responseDetails;
   }
 
 }

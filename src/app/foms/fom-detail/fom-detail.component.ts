@@ -4,13 +4,20 @@ import {ActivatedRoute, Router} from '@angular/router';
 // @ts-ignore
 import {of, Subject, throwError} from 'rxjs';
 // @ts-ignore
-import {concat, mergeMap, takeUntil} from 'rxjs/operators';
+import {concat, mergeMap, takeUntil, tap} from 'rxjs/operators';
+import {
+  AttachmentService,
+  AttachmentResponse,
+  WorkflowStateEnum,
+  ProjectWorkflowStateChangeRequest, SubmissionService
+} from "core/api";
+import {ConfigService} from "../../../core/services/config.service";
 
-import {ConfirmComponent} from 'app/confirm/confirm.component';
-// import {Application} from 'core/models/application';
-import {PublicComment} from 'core/models/publiccomment';
-
-import {ProjectResponse, ProjectService} from 'core/api';
+import {ProjectResponse, ProjectService, SpatialFeaturePublicResponse} from 'core/api';
+import { KeycloakService } from 'core/services/keycloak.service';
+import { User } from 'core/services/user';
+import { ModalService } from 'core/services/modal.service';
+import * as moment from 'moment';
 
 
 @Component({
@@ -24,41 +31,60 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   public isDeleting = false;
   public isRefreshing = false;
   public application: ProjectResponse = null;
-  public publicComment: PublicComment = null;
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
   public project: ProjectResponse = null;
+  public spatialDetail: SpatialFeaturePublicResponse[];
   public isProjectActive = false;
-  public numberComments = null;
+  public attachments: AttachmentResponse[] = [];
+  public user: User;
+  public daysRemaining: number = null;
+  public isPublishingReady = false;
+  private workflowStateChangeRequest: ProjectWorkflowStateChangeRequest = <ProjectWorkflowStateChangeRequest>{};
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     public snackBar: MatSnackBar,
-    // private dialogService: DialogService,
-    public projectService: ProjectService // also used in template
+    private modalSvc: ModalService,
+    public projectService: ProjectService, // also used in template
+    public attachmentService: AttachmentService,
+    private submissionSvc: SubmissionService,
+    public configSvc: ConfigService,
+    private keycloakService: KeycloakService
   ) {
+    this.user = this.keycloakService.getUser();
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
   }
 
   ngOnInit() {
     // get data from route resolver
-    this.route.data.pipe(takeUntil(this.ngUnsubscribe)).subscribe((data: { application: ProjectResponse }) => {
+    this.route.data
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe((data: { application: ProjectResponse, spatialDetail: Array<SpatialFeaturePublicResponse> }) => {
       if (data.application) {
         this.project = data.application;
-        // console.log('ProjectResponse: '+ JSON.stringify(data.application));
-        // console.log('projecForestClien: '+ JSON.stringify(data.application.district));
-        // this.forestClient = data.application.forestClient;
-        // this.district = data.application.district;
         if (this.project.workflowState['code'] === 'INITIAL') {
           this.isProjectActive = true;
         }
-        this.fetchingAllPublicComments();
       } else {
         alert("Uh-oh, couldn't load fom");
         // application not found --> navigate back to search
         this.router.navigate(['/search']);
       }
+
+      this.spatialDetail = data.spatialDetail;
+      this.calculateDaysRemaining();
+
+      this.getAttachments()
+        .then( (result) => {
+          this.attachments = result;
+        }).catch((error) => {
+          console.log('Error: ', error);
+      });
     });
+
+    this.verifyPublishingReady();
   }
 
   ngOnDestroy() {
@@ -71,287 +97,94 @@ export class FomDetailComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  public deleteApplication() {
-    /* if (this.application.meta.numComments > 0) {
-      this.dialogService
-        .addDialog(
-          ConfirmComponent,
-          {
-            title: 'Cannot Delete Application',
-            message: 'An application with submitted comments cannot be deleted.',
-            okOnly: true
-          },
-          {
-            backdropColor: 'rgba(0, 0, 0, 0.5)'
-          }
-        )
-        .pipe(takeUntil(this.ngUnsubscribe));
-      return;
-    }
-
-    if (this.application.meta.isPublished) {
-      this.dialogService
-        .addDialog(
-          ConfirmComponent,
-          {
-            title: 'Cannot Delete Application',
-            message: 'Please unpublish application first.',
-            okOnly: true
-          },
-          {
-            backdropColor: 'rgba(0, 0, 0, 0.5)'
-          }
-        )
-        .pipe(takeUntil(this.ngUnsubscribe));
-      return;
-    } */
-
-    // this.dialogService
-    //   .addDialog(
-    //     ConfirmComponent,
-    //     {
-    //       title: 'Confirm Deletion',
-    //       message: 'Do you really want to delete this application?',
-    //       okOnly: false
-    //     },
-    //     {
-    //       backdropColor: 'rgba(0, 0, 0, 0.5)'
-    //     }
-    //   )
-    //   .pipe(takeUntil(this.ngUnsubscribe))
-    //   .subscribe(isConfirmed => {
-    //     if (isConfirmed) {
-    //       this.internalDeleteApplication();
-    //     }
-    //   });
+  public async getAttachments() {
+    return await this.attachmentService.attachmentControllerFind(this.project.id).toPromise()
   }
 
-  private internalDeleteApplication() {
-    this.isDeleting = true;
-
-    let observables = of(null);
-
-    /*
-    // delete comment period
-    if (this.application.meta.currentPeriod) {
-      observables = observables.pipe(concat(this.commentPeriodService.delete(this.application.meta.currentPeriod)));
-    }
-
-    // delete decision documents
-    if (this.application.meta.decision && this.application.meta.decision.meta.documents) {
-      for (const doc of this.application.meta.decision.meta.documents) {
-        observables = observables.pipe(concat(this.documentService.delete(doc)));
-      }
-    }
-
-    // delete decision
-    if (this.application.meta.decision) {
-      observables = observables.pipe(concat(this.decisionService.delete(this.application.meta.decision)));
-    }
-
-    // delete application documents
-    if (this.application.meta.documents) {
-      for (const doc of this.application.meta.documents) {
-        observables = observables.pipe(concat(this.documentService.delete(doc)));
-      }
-    }
-
-    // delete features
-    observables = observables.pipe(concat(this.featureService.deleteByApplicationId(this.application._id)));
-
-    // delete application
-    // do this last in case of prior failures
-    observables = observables.pipe(concat(this.projectService.delete(this.application)));
-    */
-
-    observables.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-      () => {
-        // onNext
-        // do nothing here - see onCompleted() function below
-      },
-      error => {
-        this.isDeleting = false;
-        console.log('error =', error);
-        alert("Uh-oh, couldn't delete application");
-        // TODO: should fully reload application here so we have latest non-deleted objects
-      },
-      () => {
-        // onCompleted
-        this.isDeleting = false;
-        // delete succeeded --> navigate back to search
-        this.router.navigate(['/search']);
-      }
-    );
+  getAttachmentUrl(id: number): string {
+    return id ? this.configSvc.getApiBasePath()+ '/api/attachment/file/' + id : '';
   }
 
-  /**
-   * Refreshes the application meta and features with the latest data from Tantalis.
-   *
-   * @memberof ApplicationDetailComponent
-   */
-  public refreshApplication() {
-    this.isRefreshing = true;
-    /* this.api
-      .refreshApplication(this.application)
-      .pipe(
-        // Now that the application is refreshed, fetch it with all of its new data and features.
-        // Also fetch the documents, comment periods, and decisions so we don't have to manually merge them over from
-        // the current this.application.
-        mergeMap(updatedApplicationAndFeatures => {
-          if (updatedApplicationAndFeatures) {
-            return this.projectService.getById(updatedApplicationAndFeatures.application._id, {
-              getFeatures: true,
-              getDocuments: true,
-              getCurrentPeriod: true,
-              getDecision: true
-            });
-          } else {
-            return throwError('Refresh application request returned invalid response.');
-          }
-        }),
-        takeUntil(this.ngUnsubscribe)
-      )
-      .subscribe(
-        refreshedApplication => {
-          if (refreshedApplication) {
-            // update the application with the latest data
-            this.application = refreshedApplication;
-          }
-        },
-        error => {
-          this.isRefreshing = false;
-          console.log('error =', error);
-          alert("Uh-oh, couldn't update application");
-        },
-        () => {
-          this.isRefreshing = false;
-          this.snackBarRef = this.snackBar.open('Application refreshed...', null, { duration: 2000 });
-        }
-      ); */
+  public deleteAttachment(id: number) {
+    const dialogRef = this.modalSvc.openDialog({
+      data: {
+        message: `You are about to delete this attachment. Are you sure?`,
+        title: 'Delete Attachment',
+        width: '340px',
+        height: '200px',
+        buttons: {confirm: {text: 'OK'}, cancel: { text: 'cancel' }}
+      }
+    });
+    dialogRef.afterClosed().subscribe((confirm) => {
+      if (confirm) {
+        let result = this.attachmentService.attachmentControllerRemove(id).toPromise();
+        result.then( () => {
+          return this.onSuccess();
+        }).catch( (error) => {
+          console.log('Error:', error);
+        })
+      }
+    })
+
   }
 
-  public publishApplication() {
-    if (!this.application.description) {
-      // this.dialogService
-      //   .addDialog(
-      //     ConfirmComponent,
-      //     {
-      //       title: 'Cannot Publish Application',
-      //       message: 'A description for this application is required to publish.',
-      //       okOnly: true
-      //     },
-      //     {
-      //       backdropColor: 'rgba(0, 0, 0, 0.5)'
-      //     }
-      //   )
-      //   .pipe(takeUntil(this.ngUnsubscribe));
-      // return;
-    }
-
-    // this.dialogService
-    //   .addDialog(
-    //     ConfirmComponent,
-    //     {
-    //       title: 'Confirm Publish',
-    //       message: 'Publishing this application will make it visible to the public. Are you sure you want to proceed?',
-    //       okOnly: false
-    //     },
-    //     {
-    //       backdropColor: 'rgba(0, 0, 0, 0.5)'
-    //     }
-    //   )
-    //   .pipe(takeUntil(this.ngUnsubscribe))
-    //   .subscribe(isConfirmed => {
-    //     if (isConfirmed) {
-    //       this.internalPublishApplication();
-    //     }
-    //   });
-
-    return; // TODO - Marcelo
+  onSuccess() {
+    this.router.navigate([`a/${this.project.id}`])
+      .then( () => {
+        window.location.reload();
+      })
   }
 
-  private internalPublishApplication() {
-    this.isPublishing = true;
-
-    let observables = of(null);
-
-    // publish comment period
-    /* if (this.application.meta.currentPeriod && !this.application.meta.currentPeriod.meta.isPublished) {
-      observables = observables.pipe(concat(this.commentPeriodService.publish(this.application.meta.currentPeriod)));
-    }
-
-    // publish decision documents
-    if (this.application.meta.decision && this.application.meta.decision.meta.documents) {
-      for (const doc of this.application.meta.decision.meta.documents) {
-        if (!doc.meta.isPublished) {
-          observables = observables.pipe(concat(this.documentService.publish(doc)));
-        }
+  deleteFOM() {
+    const dialogRef = this.modalSvc.openDialog({
+      data: {
+        message: `You are about to withdraw FOM with id ${this.project.id}. Are you sure?`,
+        title: 'Withdraw FOM',
+        width: '340px',
+        height: '200px',
+        buttons: {confirm: {text: 'OK'}, cancel: { text: 'cancel' }}
       }
-    }
-
-    // publish decision
-    if (this.application.meta.decision && !this.application.meta.decision.meta.isPublished) {
-      observables = observables.pipe(concat(this.decisionService.publish(this.application.meta.decision)));
-    }
-
-    // publish application documents
-    if (this.application.meta.documents) {
-      for (const doc of this.application.meta.documents) {
-        if (!doc.meta.isPublished) {
-          observables = observables.pipe(concat(this.documentService.publish(doc)));
-        }
+    });
+    dialogRef.afterClosed().subscribe((confirm) => {
+      if (confirm) {
+        this.isDeleting = true;
+        this.projectService.projectControllerRemove(this.project.id).subscribe(()=> {
+          this.isDeleting = false;
+          this.router.navigate(['/search']); // Delete successfully, back to search.
+        });
       }
-    }
-
-    // publish application
-    // do this last in case of prior failures
-    if (!this.application.meta.isPublished) {
-      observables = observables.pipe(concat(this.projectService.publish(this.application)));
-    }
-
-    // finally, save publish date (first time only)
-    if (!this.application.publishDate) {
-      this.application.publishDate = new Date(); // now
-      observables = observables.pipe(concat(this.projectService.save(this.application)));
-    } */
-
-    observables.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-      () => {
-        // onNext
-        // do nothing here - see onCompleted() function below
-      },
-      error => {
-        this.isPublishing = false;
-        console.log('error =', error);
-        alert("Uh-oh, couldn't publish application");
-        // TODO: should fully reload application here so we have latest isPublished flags for objects
-      },
-      () => {
-        // onCompleted
-        this.snackBarRef = this.snackBar.open('Application published...', null, {duration: 2000});
-        // reload all data
-        /* this.projectService
-          .getById(this.application.id, {
-            getFeatures: true,
-            getDocuments: true,
-            getCurrentPeriod: true,
-            getDecision: true
-          })
-          .pipe(takeUntil(this.ngUnsubscribe))
-          .subscribe(
-            (application: ProjectResponse) => {
-              this.isPublishing = false;
-              this.application = application;
-            },
-            error => {
-              this.isPublishing = false;
-              console.log('error =', error);
-              alert("Uh-oh, couldn't reload application");
-            }
-          ); */
-      }
-    );
+    })
   }
+
+  private calculateDaysRemaining(){
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    this.daysRemaining =
+      moment(this.project.commentingClosedDate).diff(moment(today), 'days');
+    if(this.daysRemaining < 0){
+      this.daysRemaining = 0;
+    }
+  }
+
+  public verifyPublishingReady(){
+      return this.project.commentingOpenDate && this.spatialDetail
+        && this.spatialDetail.length > 0
+        && this.project.workflowState.code === WorkflowStateEnum.Initial;
+
+  }
+
+  public async publishFOM(){
+      this.workflowStateChangeRequest.workflowStateCode = WorkflowStateEnum.Published;
+      this.workflowStateChangeRequest.revisionCount = this.project.revisionCount;
+
+    const result = await this.projectService.projectControllerStateChange(this.project.id, this.workflowStateChangeRequest).pipe(tap(obs => console.log(obs))).toPromise()
+    const {id} = result;
+    if (!id) {
+    }
+    this.onSuccess()
+
+  }
+
 
   public unPublishApplication() {
     this.isUnpublishing = true;
@@ -428,18 +261,23 @@ export class FomDetailComponent implements OnInit, OnDestroy {
     );
   }
 
-  public fetchingAllPublicComments() {
-    /* this.searchPublicCommentService.getPublicCommentsByProjectId(this.project.id)
-    .subscribe(
-      publicComments => {
-        publicComments.forEach(publicComment => {
-          this.numberComments ++;
-          this.publicComment = publicComment;
-        });
+  /**
+    INITIAL: holder can withdraw.
+    PUBLISH/COMMENT_OPEN: no actions.
+    COMMENT_CLOSED/FINALIZED/EXPIRED: gov
+  */
+  public canWithdraw() {
+    const workflowStateCode = this.project.workflowState.code;
+    const userCanModify = this.user.clientIds.includes(this.project.forestClient.id);
+    if (WorkflowStateEnum.Initial === workflowStateCode) {
+      return this.user.isForestClient && userCanModify;
+    }
+    else if (!this.user.isMinistry) {
+      return false;
+    }
 
-      },
-      error => {
-        console.log('error =', error);
-      }); */
+    return [WorkflowStateEnum.CommentClosed, WorkflowStateEnum.Finalized, WorkflowStateEnum.Expired]
+            .includes(workflowStateCode as WorkflowStateEnum);
   }
+
 }

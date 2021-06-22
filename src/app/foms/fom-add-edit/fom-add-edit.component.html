@@ -13,9 +13,15 @@
         >
           Cancel
         </button>
-        <app-button *ngIf="isCreate; else saveButton" title="Save your changes" (click)="submit()"
-                    [disabled]="!fg.isModified">{{ isLoading ? "Submitting" : "Submit" }}</app-button>
-
+        <button *ngIf="isCreate; else saveButton"
+          class="btn btn-primary ml-1"
+          type="button"
+          title="Create FOM"
+          (click)="submit()"
+          [disabled]="!fg.isModified"
+        >{{ isLoading ? "Submitting" : "Submit" }}
+          <i class="spinner rotating" [hidden]="!stateSvc.loading"></i>
+        </button>
       </div>
     </div>
   </div>
@@ -39,7 +45,7 @@
               id="id"
               name="name"
               disabled
-              [value]="originalProject.id"
+              [value]="originalProjectResponse.id"
             />
           </div>
           <div class="form-group col-md">
@@ -104,18 +110,19 @@
               name="fsp-id"
               formControlName="fspId"
               [appFormControl]="fg.get('fspId')"
-
             />
           </div>
           <div class="col">
             <label for="fsp-id" style="white-space: nowrap;">District</label>
-            <select class="sort-comments form-control" (change)="changeDistrictId($event)" id="district-list">
-              <option *ngIf="this.isCreate">  </option>
-              <option  [value]="district.id" *ngFor="let district of districts" [selected]="district.id === districtIdSelect" [innerHTML]=" district.name"> </option>
-               </select>
+            <select class="sort-comments form-control" [ngClass]="{'is-invalid': !districtIdSelect && isSubmitSaveClicked}" (change)="changeDistrictId($event)" id="district-list">
+              <option *ngIf="this.isCreate || !districtIdSelect">  </option>
+              <option  [value]="district.id" *ngFor="let district of districts" [selected]="district.id === districtIdSelect" [innerHTML]=" district.name "> </option>
+            </select>
           </div>
         </div>
         <!-- <legend>Application Details</legend> -->
+        <div class="form-row">
+        </div>
         <div class="form-row">
           <div class="form-group col">
             <label>FOM Name</label>
@@ -130,41 +137,58 @@
           </div>
           <div class="form-group col">
             <label>FOM Holder</label>
-            <select class="sort-comments form-control"  (change)="changeForestClientId($event)" id="forestClient-list">
+            <select *ngIf="this.isCreate" class="sort-comments form-control" [ngClass]="{'is-invalid': !forestClientSelect && isSubmitSaveClicked}" (change)="changeForestClientId($event)" id="forestClient-list">
               <option *ngIf="this.isCreate">  </option>
               <option  [value]="client.id" *ngFor="let client of forestClients" [selected]="client.id === forestClientSelect" [innerHTML]=" client.name"> </option>
             </select>
+            <input *ngIf="!this.isCreate"
+                   type="text"
+              class="form-control"
+              id="forestId"
+              name="forestName"
+              disabled
+              [value]="originalProjectResponse.forestClient.name"
+            />
           </div>
 
         </div>
         <div class="form-group">
           <label>Description</label>
-          <textarea
-            class="form-control"
+          <textarea (keyup)="changeDescription($event)"
+            class="form-control" [ngClass]="{'is-invalid': !descriptionValue && isSubmitSaveClicked && !isCreate}"
             rows="3"
             id="description"
             name="description"
             formControlName="description"
             [appFormControl]="fg.get('description')"
-
           >
           </textarea>
         </div>
-        <div class="form-group mb-0">
-          <legend>FOM Supporting Documents</legend>
-
-          <app-upload-box [multipleFiles]="true" [files]="fomSupportingDocuments" (fileUploaded)="addNewFiles($event)"></app-upload-box>
-<!--          <app-upload-box [multipleFiles]="true" [files]="applicationFiles" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>-->
-        </div>
-      </fieldset>
-
-      <fieldset name="decisionForm" id="appDecision">
-        <div class="form-group mb-0">
+        <div class="form-group mb-0" *ngIf="!this.isCreate">
           <legend>Initial Public Notice</legend>
 
           <app-upload-box [multipleFiles]="false" [files]="initialPublicDocument"
-                          (fileUploaded)="addNewPublicNoticeDocument($event)"></app-upload-box>
+                          [isBlob]="true"
+                          [fileTypes]="fileTypesParentInitial"
+                          (fileUploaded)="addNewFileInitialPublic($event)"
+                          (outputFileContent)="getContentFileFromUpload($event)"
+          ></app-upload-box>
           <!--          <app-upload-box [multipleFiles]="true" [files]="applicationFiles" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>-->
+          <div class="fileTypes"> <em>png, jpeg, jpg, tif, pdf </em></div>
+        </div>
+      </fieldset>
+
+      <fieldset *ngIf="!this.isCreate">
+        <div class="form-group mb-0" >
+          <legend>FOM Supporting Documents</legend>
+
+          <app-upload-box [multipleFiles]="false" [files]="supportingDocuments"
+                          [isBlob]="true"
+                          [fileTypes]="fileTypesParentSupporting"
+                          (fileUploaded)="addNewFileSupporting($event)"
+                          (outputFileContent)="getContentFileSupportingDoc($event)">
+          </app-upload-box>
+          <div class="fileTypes"> <em>png, jpeg, jpg, tif, pdf, txt, csv, doc, docx, xls, xlsx </em></div>
         </div>
       </fieldset>
     </form>
@@ -172,8 +196,6 @@
 </div>
 
 <ng-template #saveButton>
-
-
   <app-button
     title="Save your changes"
     (click)="saveApplication()">{{ isLoading ? "Saving" : "Save" }}</app-button>

@@ -6,31 +6,21 @@
       </div>
       <div class="title-container__actions">
         <div class="btn-container">
-          <!-- <button class="btn btn-light" type="button" title="Edit application"
-            [routerLink]="['/a', project.id, 'edit']"
-            [disabled]="application.meta.isRetired">
-            Edit
-          </button> -->
           <button class="btn btn-light" type="button" title="Edit FOM"
-                  [routerLink]="['/a', project.id, 'edit']">
+                  [routerLink]="['/a', project.id, 'edit']"
+                  [disabled]="isDeleting">
             Edit
           </button>
           <span title="You cannot edit a finalized/expired project"></span>
         </div>
         <div class="btn-container">
-          <button class="btn btn-primary ml-1" type="button" title="Publish FOM">
+          <button class="btn btn-primary ml-1" type="button" title="Publish FOM"
+                  [disabled]="!verifyPublishingReady()"
+                  (click)="publishFOM()">
             <i class="spinner rotating" [hidden]="!isPublishing"></i>
             <span>{{isPublishing ? 'Publishing' : 'Publish'}}</span>
           </button>
-          <!-- <button class="btn btn-primary ml-1" type="button" title="Publish application"
-            *ngIf="!application.meta.isPublished"
-            (click)="publishApplication()"
-            [disabled]="isPublishing || application.meta.isRetired">
-            <i class="spinner rotating" [hidden]="!isPublishing"></i>
-            <span>{{isPublishing ? 'Publishing' : 'Publish'}}</span>
-          </button> -->
-          <span title="You cannot publish a retired application"></span>
-        </div>
+         </div>
         <!-- NB: you CAN unpublish a retired application -->
         <!-- <button class="btn btn-primary ml-1" type="button" title="Unpublish application">
           <i class="spinner rotating" [hidden]="!isUnpublishing"></i>
@@ -43,23 +33,25 @@
           <i class="spinner rotating" [hidden]="!isUnpublishing"></i>
           <span>{{isUnpublishing ? 'Unpublishing' : 'Unpublish'}}</span>
         </button> -->
-        <span class="vert-pipe first-pipe">&nbsp;</span>
+<!--        <span class="vert-pipe first-pipe">&nbsp;</span>-->
         <!-- <button class="btn btn-icon" title="Refresh this FOM"
           (click)="refreshApplication()"
           [disabled]="isRefreshing">
           <i class="material-icons refresh-spinner" [ngClass]="{'rotating': isRefreshing}" [inlineSVG]="'assets/images/baseline-refresh-24px.svg'">
           </i>
         </button> -->
-        <button class="btn btn-icon" title="Refresh this FOM">
-          <i class="material-icons refresh-spinner" [ngClass]="{'rotating': isRefreshing}"
-             [inlineSVG]="'assets/images/baseline-refresh-24px.svg'">
-          </i>
-        </button>
-        <span class="vert-pipe">&nbsp;</span>
-        <button class="btn btn-icon" title="Remove this application from ACRFD"
-                (click)="deleteApplication()"
+<!--        <button class="btn btn-icon" title="Refresh this FOM">-->
+<!--          <i class="material-icons refresh-spinner" [ngClass]="{'rotating': isRefreshing}"-->
+<!--             [inlineSVG]="'assets/images/baseline-refresh-24px.svg'">-->
+<!--          </i>-->
+<!--        </button>-->
+        <span class="vert-pipe" *ngIf="canWithdraw()">&nbsp;</span>
+        <button class="btn btn-icon" title="Remove this FOM"
+                *ngIf="canWithdraw()"
+                (click)="deleteFOM()"
                 [disabled]="isDeleting">
-          <i class="material-icons">
+          <i class="spinner-border" [hidden]="!isDeleting"></i>
+          <i class="material-icons" [hidden]="isDeleting" >
             delete
           </i>
         </button>
@@ -75,12 +67,12 @@
         <section class="main-card">
           <!-- Tabs -->
           <ul ngbNav #nav="ngbNav" class="nav-tabs">
-            <li ngbNavItem>
+            <li ngbNavItem [disabled]="isDeleting">
               <a ngbNavLink>
                 <i class="material-icons">
                   info
                 </i>
-                Applications Information
+                FOM Information
               </a>
               <ng-template ngbNavContent>
                 <section>
@@ -100,7 +92,6 @@
                       <span class="name">FOM Holder:</span>
                       <span
                         class="value">
-<!--                        class="value">{{project.forestClient ? project.forestClient.name : 'No applicant on this file'}}-->
                         {{project.forestClient.name}}
                       </span>
                     </li>
@@ -109,101 +100,60 @@
                       <span
                         class="value">
                         {{project.district ? project.district?.name : 'A district has not been specified'}}
-<!--                        {{district ? district.name : ' - '}}-->
                       </span>
                     </li>
-                    <li>
-                      <span class="name">Blocks:</span>
-                      <span class="value">5321 45 Ha</span>
-                    </li>
-                    <li>
-                      <span class="name"></span>
-                      <span class="value">5322 035 Ha</span>
-                    </li>
-                    <li>
-                      <span class="name">Road Sections:</span>
-                      <span class="value">1445 1.265km</span>
-                    </li>
-                    <li>
-                      <span class="name"></span>
-                      <span class="value">1448 0.268</span>
-                    </li>
-                    <!-- <li>
-                      <span class="name">Total Area (hectares):</span>
-                      <span class="value">{{application.areaHectares ? (application.areaHectares | number:'1.2-2') : '-'}}</span>
-                    </li> -->
-                    <!-- <li *ngIf="application.publishDate">
-                      <span class="name">Initial Publish Date:</span>
-                      <span class="value">{{application.publishDate | date:'longDate'}}</span>
-                    </li> -->
                   </ul>
                 </section>
-                <section>
-                  <h2>Initial Public Notice</h2>
-                  <ul class="doc-list">
-                    <!-- <li *ngFor="let doc of application.meta.documents">
-                      <span class="cell icon">
-                        <i class="material-icons link" (click)="api.openDocument(doc)">
-                          insert_drive_file
+                <br />
+                <h2>Attachments</h2>
+                <section *ngIf="attachments.length > 0">
+                 <div class="doc-list row" *ngFor="let attachment of attachments" style="width: 25rem;">
+                    <a class="doc-list__item"
+                       [href]="getAttachmentUrl(attachment.id)"
+                       [title]="attachment.fileName || ''"
+                       target="_blank" rel="noopener">
+                      <div class="cell doc-list__item-icon">
+                        <i class="material-icons">
+                           insert_drive_file
                         </i>
-                      </span>
-                      <span class="cell name" [title]="doc.displayName || ''">
-                        <span class="cell__txt-content">
-                          <a (click)="api.openDocument(doc)">{{doc.documentFileName}}</a>
-                        </span>
-                      </span>
-                      <span class="cell actions">
-                      <button class="btn btn-icon" type="button" title="Download this document" (click)="api.downloadDocument(doc)">
-                          <i class="material-icons">file_download</i>
-                        </button>
-                      </span>
-                    </li> -->
-                    <!-- <li class="no-results" *ngIf="application.meta.documents.length === 0"> -->
-                    <li class="no-results">
-                      <em>FOM document goes here</em>
-                    </li>
-                  </ul>
+                      </div>
+                      <div class="cell doc-list__item-name">{{attachment.fileName}}</div>
+                      <div style="text-align: right;margin-right: 5px;">({{attachment.attachmentType.description}})</div>
+                    </a>
+                    <span class="vert-pipe">&nbsp;</span>
+                    <button class="btn btn-icon row doc-list__item" title="Delete this attachment"
+                            (click)="deleteAttachment(attachment.id)"
+                            [disabled]="isDeleting">
+                      <i class="material-icons">
+                        delete
+                      </i>
+                    </button>
+                  </div>
                 </section>
               </ng-template>
             </li>
-            <li ngbNavItem>
+            <li ngbNavItem [disabled]="isDeleting">
+
               <a ngbNavLink>
                 <i class="material-icons">
                   pin_drop
                 </i>
                 Location
               </a>
+
               <ng-template ngbNavContent>
-                <section class="m-3">
-                  <app-application-aside [project]="project"></app-application-aside>
-                </section>
-                <section class="m-3">
-                  <h2>Legal Description</h2>
-                  <p [innerHTML]="(project.description | newlines) || '-'"></p>
-                </section>
-                <section class="m-3">
-                  <h2>Geographic Shape Information</h2>
-                  <ul class="shapefile-list">
-                    <li class="interest-id">
-                      <span class="title">Shape ID: TEST</span>
-                      <ul class="nv-list">
-                        <li>
-                          <span class="name">Type / Subtype:</span>
-                          <span class="value">-</span>
-                        </li>
-                        <li>
-                          <span class="name">Area (hectares):</span>
-                          <span class="value"></span>
-                        </li>
-                        <li>
-                          <span class="name">Legal Description:</span>
-                          <span class="value"></span>
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
-                </section>
+                <h2>Geographic Shape Information</h2>
+
+                  <app-details-map
+                    [projectSpatialDetail]="spatialDetail">
+                  </app-details-map>
+
+                  <app-shape-info
+                    [spatialDetail]="spatialDetail">
+                  </app-shape-info>
+
               </ng-template>
+
             </li>
           </ul>
           <div [ngbNavOutlet]="nav"></div>
@@ -212,109 +162,75 @@
 
       <div class="col-md-4">
         <div class="aside-card">
-          <h3 class="title">Application Status</h3>
+          <h3 class="title">FOM Status</h3>
           <div class="body">
             <div
               class="app-status">
-<!--              {{project.workflowState && project.workflowStateCode ? project.workflowStateCode: '-'}}-->
-              {{project.workflowState ? project.workflowState.code: '-'}}
+              {{project.workflowState ? project.workflowState.description: '-'}}
             </div>
           </div>
         </div>
 
         <div class="aside-card">
           <h3 class="title">Comment Period Details</h3>
-          <!-- <div class="body" *ngIf="!application.meta.currentPeriod">
-            Not Open For Commenting
-          </div> -->
-          <!-- <div class="body" *ngIf="application.meta.currentPeriod"> -->
           <div class="body">
             <ul class="nv-list">
               <li>
                 <span class="name">Status:</span>
-                <span class="value">
-<!--                  {{project.workflowState && project.workflowState?.description}}-->
-                </span>
               </li>
               <li>
                 <span class="name">Start Date:</span>
-                <span class="value">{{project.commentingOpenDate | date:'longDate'}}</span>
+                <span class="value" [ngClass]="{'invalid-type-msg': !project.commentingOpenDate }">
+                  {{project.commentingOpenDate ?
+                  ( project.commentingOpenDate | date:'longDate') :
+                    'Must be defined'}}</span>
               </li>
               <li>
                 <span class="name">End Date:</span>
                 <span class="value">{{project.commentingClosedDate| date:'longDate'}}</span>
               </li>
-              <!-- <li *ngIf="application.meta.currentPeriod.meta.daysRemaining">
-                <span class="name">Days Remaining:</span>
-                <span class="value">{{application.meta.currentPeriod.meta.daysRemaining}}</span>
-              </li> -->
               <li>
                 <span class="name">Days Remaining:</span>
-                <span class="value">Some days in the future TBD</span>
+                <span class="value">{{daysRemaining}}</span>
               </li>
             </ul>
             <div class="btn-container" *ngIf="project">
               <button class="cta-btn btn btn-sm btn-outline-primary" type="button" title="Review comments"
+                      [disabled]="isDeleting"
                       [routerLink]="['/comments', project.id]">
-                Review Comments<span>&nbsp;({{numberComments}})</span>
+                Review Comments
               </button>
             </div>
           </div>
         </div>
+
         <div class="aside-card">
-          <h3 class="title">FOM Attachments</h3>
+          <h3 class="title">Stakeholder Engagement</h3>
           <div class="body">
-            <!-- <div *ngIf="!application.meta.decision">
-              <p class="mb-0">No decision documents have been added to this application.</p>
-            </div> -->
-            <div>Attachment file goes here</div>
             <div>
-              <ul class="doc-list">
-                <li *ngFor="let doc of (project['attachments'] || [])">
-                  <span class="cell icon">
-                    <!--<i class="material-icons link" (click)="api.openDocument(doc)">
-                      insert_drive_file
-                    </i>-->
-                  </span>
-                  <span class="cell name" [title]="doc.displayName || ''">
-                      <!--<span class="cell__txt-content">
-                        <a (click)="api.openDocument(doc)">{{doc.documentFileName}}</a>
-                      </span>-->
-                  </span>
-                  <span class="cell actions">
-                    <!--<button class="btn btn-icon" title="Download this document" (click)="api.downloadDocument(doc)">
-                      <i class="material-icons">file_download</i>
-                    </button>-->
-                  </span>
-                </li>
-                <li class="no-results" *ngIf="(project['attachments'] || []) === 0">
-                  <em>No decision documents</em>
-                </li>
-              </ul>
+              <p class="mb-0">Record and edit stakeholder engagements</p>
             </div>
-            <div class="btn-container">
-              <button class="cta-btn btn btn-sm btn-outline-primary" type="button" title="Edit fom documents"
-                      [routerLink]="['/a', project.id, 'edit']"
-                      fragment="appDecision">
-                Edit FOM Attachments
+           <div class="btn-container">
+              <button class="cta-btn btn btn-sm btn-outline-primary" type="button"
+                      title="Record and edit stakeholder engagements"
+                      [disabled]="isDeleting"
+                      [routerLink]="['/interactions', project.id]">
+                Stakeholder Engagements
               </button>
-              <span title="You cannot edit the decision of a retired application"></span>
             </div>
           </div>
         </div>
+
         <div class="aside-card">
           <h3 class="title">FOM Spatial Upload</h3>
           <div class="body">
-            <!-- <div *ngIf="!application.meta.decision">
-              <p class="mb-0">No decision documents have been added to this application.</p>
-            </div> -->
+            <span  *ngIf="spatialDetail.length === 0" class="invalid-type-msg"> Proposed FOM Spatial Upload Required </span>
            <div class="btn-container">
               <button class="cta-btn btn btn-sm btn-outline-primary" type="button" title="Edit fom documents"
-                      [routerLink]="['/a', project.id, 'upload']"
-                      fragment="appDecision">
+                      [disabled]="isDeleting"
+                      [routerLink]="['/a', project.id, 'upload']">
                 Upload FOM Spatial File
               </button>
-              <span title="You cannot edit the decision of a retired application"></span>
             </div>
           </div>
 

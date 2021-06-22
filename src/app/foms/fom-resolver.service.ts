@@ -8,16 +8,15 @@ import {Observable} from 'rxjs';
 // import { Project } from 'core/models/project';
 // import { StatusCodes } from 'app/utils/constants/application';
 // import { ConstantUtils, CodeType } from 'app/utils/constants/constantUtils';
-import {ProjectResponse, ProjectService} from 'core/api';
-
+import {ProjectResponse, ProjectService, SpatialFeaturePublicResponse, SpatialFeatureService} from 'core/api';
+import { ConstantUtils } from 'core/utils/constants/constantUtils';
 @Injectable()
 export class ApplicationDetailResolver implements Resolve<ProjectResponse> {
   constructor(private projectService: ProjectService) {
   }
 
   resolve(route: ActivatedRouteSnapshot): Observable<ProjectResponse> {
-    const projectId = parseInt(route.paramMap.get('appId'));
-    console.log('valued projectId: ' + projectId);
+    const projectId = parseInt(route.paramMap.get(ConstantUtils.PROJECT_ID_PARAM_KEY));
 
     if (isNaN(projectId)) {
       // create new application
@@ -72,5 +71,16 @@ export class ApplicationDetailResolver implements Resolve<ProjectResponse> {
       // view/edit existing application
       return this.projectService.projectControllerFindOne(projectId);
     }
+  }
+}
+
+@Injectable()
+export class ProjectSpatialDetailResolver implements Resolve<Array<SpatialFeaturePublicResponse>> {
+  constructor(private spatialFeatureService: SpatialFeatureService) {
+  }
+
+  resolve(route: ActivatedRouteSnapshot): Observable<Array<SpatialFeaturePublicResponse>> {
+    const projectId = parseInt(route.paramMap.get(ConstantUtils.PROJECT_ID_PARAM_KEY));
+    return this.spatialFeatureService.spatialFeatureControllerGetForProject(projectId);
   }
 }

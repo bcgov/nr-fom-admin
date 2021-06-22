@@ -5,11 +5,13 @@ import {Location} from '@angular/common';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import * as _ from 'lodash';
-
 import {ProjectService} from "core/api";
-
-// Testing fetching Districts
 import {ProjectResponse} from 'core/api';
+import { StateService } from 'core/services/state.service';
+import { KeycloakService } from 'core/services/keycloak.service';
+import { User } from 'core/services/user'
+import { isNil } from 'lodash';
+import { ModalService } from 'core/services/modal.service';
 
 @Component({
   selector: 'app-search',
@@ -19,33 +21,39 @@ import {ProjectResponse} from 'core/api';
 export class SearchComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<boolean>();
   private paramMap: ParamMap = null;
-
-  public keywords: string;
-  public projects: ProjectResponse[] = [];
-  public count = 0; // used in template
-
   private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
-
+  public user: User;
+  public fFspId: number; // filter: FSP ID
+  public fStatus: string; // filter: workflowStateCode
+  public fDistrict: number; // filter: district id
+  public fHolder: string; // filter: part of FOM holder name
+  public projects: ProjectResponse[] = [];
+  public count = 0;
   public searching = false;
-  public ranSearch = false;
+  public statusCodes = this.stateSvc.getCodeTable('workflowResponseCode');
+  public districts = this.stateSvc.getCodeTable('district');
+  public searched = false;
 
   constructor(
     private location: Location,
+    private router: Router,
+    private route: ActivatedRoute,
+    private stateSvc: StateService,
+    private keycloakService: KeycloakService,
     public snackBar: MatSnackBar,
     public searchProjectService: ProjectService,
-    private router: Router,
-    private route: ActivatedRoute
-  ) {
+    private modalSvc: ModalService
+  ) { 
+    this.user = this.keycloakService.getUser();
   }
 
   ngOnInit() {
     // get search terms from route
     this.route.queryParamMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe(paramMap => {
       this.paramMap = paramMap;
-
       this.setInitialQueryParameters();
 
-      if (this.keywords) {
+      if (this.fFspId || this.fStatus || this.fDistrict || this.fHolder) {
         this.doSearch();
       }
     });
@@ -56,124 +64,55 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.projects = [];
     this.count = 0;
 
-    this.searchProjectService.projectControllerFind( parseInt(this.keywords))
+    const workFlowStateCodeArg = this.fStatus === 'undefined'? null: this.fStatus;
+    const districtArg = (isNaN(this.fDistrict) || isNil(this.fDistrict))? null : this.fDistrict.toString();
+    const fspIdArg = (isNaN(this.fFspId) || isNil(this.fFspId))? null : this.fFspId.toString();
+    this.searchProjectService.projectControllerFind(fspIdArg , districtArg, workFlowStateCodeArg, this.fHolder)
       .subscribe(
         projects => {
-          projects.forEach(project => {
-            // @ts-ignore
-            this.projects.push(project as Project);
-          });
+          this.projects = projects;
           this.count = this.projects.length;
+          const limit = 2500;
+          if (this.count >= limit) {
+            this.modalSvc.openSnackBar({message: `Warning: Maximum of ${limit} search results exceeded - 
+            not all results have been displayed. Please refine your search criteria.`, button: 'OK'});
+          }
         },
         error => {
-          console.log('error =', error);
-
+          console.error('error =', error);
+          this.searched = true;
           this.searching = false;
-          this.ranSearch = true;
-
-          this.snackBarRef = this.snackBar.open('Error searching foms ...', 'RETRY');
-          this.snackBarRef.onAction().subscribe(() => this.onSubmit());
+          this.snackBarRef = this.snackBar.open('Error searching foms ...', null, {duration: 3000});
+          // this.snackBarRef.onAction().subscribe(() => this.onSubmit()); // commenting out 'action' so user does not click again/and again.
         },
         () => {
+          this.searched = true;
           this.searching = false;
-          this.ranSearch = true;
         });
-
-    // this.fetchingAllDistricts();
-    // this.fetchingAllForestClients();
-    // this.fetchingAllWorkflowStateCodes();
-    // this.fetchingAllPublicComments();
   }
-
-  // private fetchingAllDistricts() {
-  //   this.searchDistrictService.getAll()
-  //   .subscribe(
-  //     districts => {
-  //       districts.forEach(district => {
-
-  //           console.log('districts: ' + JSON.stringify(district));
-  //       });
-
-  //     },
-  //     error => {
-  //       console.log('error =', error);
-  //     },
-  //     () => {
-  //       this.searching = false;
-  //       this.ranSearch = true;
-  //     });
-  // }
-
-  // private fetchingAllForestClients() {
-  //   this.searchForestClientService.getAll()
-  //   .subscribe(
-  //     forestClients => {
-  //       forestClients.forEach(forestClient => {
-
-  //           console.log('forestClients: ' + JSON.stringify(forestClient));
-  //       });
-
-  //     },
-  //     error => {
-  //       console.log('error =', error);
-  //     },
-  //     () => {
-  //       this.searching = false;
-  //       this.ranSearch = true;
-  //     });
-  // }
-
-  // private fetchingAllWorkflowStateCodes() {
-  //   this.searchWorkflowStateCodeService.getAll()
-  //   .subscribe(
-  //     workflowStateCodes => {
-  //       workflowStateCodes.forEach(workflowStateCode => {
-
-  //           console.log('workflowStateCodes: ' + JSON.stringify(workflowStateCode));
-  //       });
-
-  //     },
-  //     error => {
-  //       console.log('error =', error);
-  //     },
-  //     () => {
-  //       this.searching = false;
-  //       this.ranSearch = true;
-  //     });
-  // }
-
-  // private fetchingAllPublicComments() {
-  //   this.searchPublicCommentService.getAll()
-  //   .subscribe(
-  //     publicComments => {
-  //       publicComments.forEach(publicComment => {
-
-  //           console.log('publicComments: ' + JSON.stringify(publicComment));
-  //       });
-
-  //     },
-  //     error => {
-  //       console.log('error =', error);
-  //     },
-  //     () => {
-  //       this.searching = false;
-  //       this.ranSearch = true;
-  //     });
-  // }
 
   public setInitialQueryParameters() {
-    this.keywords = this.paramMap.get('keywords') || '';
-  }
-
-  public getQueryParameters() {
-    const queryParameters = _.uniq(_.compact(this.keywords.split(',')));
-    return queryParameters;
+    this.fFspId = this.paramMap.get('fFspId')? parseInt(this.paramMap.get('fFspId')): null;
+    this.fDistrict = this.paramMap.get('fDistrict')? parseInt(this.paramMap.get('fDistrict')): null;
+    this.fStatus = this.paramMap.get('fStatus') || undefined;
+    this.fHolder = this.paramMap.get('fHolder') || null;
   }
 
   public saveQueryParameters() {
     const params: Params = {};
 
-    params['keywords'] = this.keywords;
+    if (!isNaN(this.fFspId)) {
+      params['fFspId'] = this.fFspId;
+    }
+    if (!isNaN(this.fDistrict)) {
+      params['fDistrict'] = this.fDistrict;
+    }
+    if (this.fStatus !== 'undefined') {
+      params['fStatus'] = this.fStatus;
+    }
+    if (this.fHolder != null) {
+      params['fHolder'] = this.fHolder;
+    }
 
     // change browser URL without reloading page (so any query params are saved in history)
     this.location.go(this.router.createUrlTree([], {relativeTo: this.route, queryParams: params}).toString());
@@ -183,86 +122,20 @@ export class SearchComponent implements OnInit, OnDestroy {
     if (this.snackBarRef) {
       this.snackBarRef.dismiss();
     }
-
     this.saveQueryParameters();
     this.doSearch();
   }
 
-  public onImport() {
-    // try {
-    this.router.navigate(['/a/create']);
-    // } catch (err) {
-    // console.log('error, invalid application =', application);
-    // this.snackBarRef = this.snackBar.open('Error creating application ...', null, { duration: 3000 });
-    // }
+  public clearQueryParameters(): void {
+    this.fFspId = null;
+    this.fDistrict = null;
+    this.fStatus = undefined;
+    this.fHolder = null;
+    this.saveQueryParameters();
+    this.projects = [];
+    this.count = 0;
+    this.searched = false;
   }
-
-  // TODO - Marcelo
-  // public onImport(application: Application) {
-  //   if (application) {
-  //     // save application data from search results
-  //     const params = {
-  //       // initial data
-  //       type: application.type,
-  //       subtype: application.subtype,
-  //       status: application.status,
-  //       reason: application.reason,
-  //       tenureStage: application.tenureStage,
-  //       location: application.location,
-  //       businessUnit: application.businessUnit,
-  //       cl_file: application.cl_file,
-  //       tantalisID: application.tantalisID,
-  //       legalDescription: application.legalDescription,
-  //       client: application.client,
-  //       statusHistoryEffectiveDate: application.statusHistoryEffectiveDate
-  //     };
-  //     // go to add-edit page
-  //     this.router.navigate(['/a', 0, 'edit'], { queryParams: params });
-  //   } else {
-  //     console.log('error, invalid application =', application);
-  //     this.snackBarRef = this.snackBar.open('Error creating application ...', null, { duration: 3000 });
-  //   }
-  // }
-
-  /**
-   * Returns true if the application has an abandoned status AND an amendment reason.
-   *
-   * @param {Application} application
-   * @returns {boolean} true if the application has an abandoned status AND an amendment reason, false otherwise.
-   * @memberof SearchComponent
-   */
-  // isAmendment(application: Application): boolean {
-  //   return (
-  //     application &&
-  //     ConstantUtils.getCode(CodeType.STATUS, application.status) === StatusCodes.ABANDONED.code &&
-  //     (ConstantUtils.getCode(CodeType.REASON, application.reason) === ReasonCodes.AMENDMENT_APPROVED.code ||
-  //       ConstantUtils.getCode(CodeType.REASON, application.reason) === ReasonCodes.AMENDMENT_NOT_APPROVED.code)
-  //   );
-  // }
-
-  /**
-   * Given an application, returns a long user-friendly status string.
-   *
-   * @param {Application} application
-   * @returns {string}
-   * @memberof SearchComponent
-   */
-  // getStatusStringLong(application: Application): string {
-  //   if (!application) {
-  //     return StatusCodes.UNKNOWN.text.long;
-  //   }
-
-    // If the application was abandoned, but the reason is due to an amendment, then return an amendment string instead
-    // if (this.isAmendment(application)) {
-    //   console.log('isAmmendment: ' + application.reason);
-    //   return ConstantUtils.getTextLong(CodeType.REASON, application.reason);
-    // }
-    //
-    // console.log('status: ' + application.status);
-    // return (
-    //   (application && ConstantUtils.getTextLong(CodeType.STATUS, application.status)) || StatusCodes.UNKNOWN.text.long
-    // );
-  // }
 
   ngOnDestroy() {
     if (this.snackBarRef) {

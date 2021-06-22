@@ -122,6 +122,10 @@ section {
   }
 }
 
+.invalid-type-msg {
+  color: red;
+}
+
 .shapefile-list {
   margin: 0;
   padding: 0;
@@ -200,4 +204,10 @@ ngb-alert {
       fill: #808080;
     }
   }
+}
+
+.spinner-border {
+  font-size: 0.7rem;
+  height: 0.95rem;
+  width: 0.95rem;
 }
