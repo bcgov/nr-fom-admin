@@ -18,7 +18,7 @@
       <div class="input-group">
         <input
           type="text"
-          class="form-control"
+          class="form-control col-md-6"
           placeholder="YYYY-MM-DD"
           bsDatepicker
           #communicationDate="bsDatepicker"
@@ -26,6 +26,7 @@
           name="communicationDate"
           formControlName="communicationDate"
           [maxDate]="maxDate"
+          readonly
           [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD', adaptivePosition: true,
           containerClass: 'theme-dark-blue', showWeekNumbers: false  }"
         />
