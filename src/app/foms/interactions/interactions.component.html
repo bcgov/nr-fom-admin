@@ -9,6 +9,7 @@
                 *ngIf="project.workflowState.code == 'COMMENT_OPEN' || project.workflowState.code == 'COMMENT_CLOSED'">
             <button type="button" class="filter-btn-search btn btn-primary" 
                     title="Add"
+                    *ngIf="canModifyInteraction()"
                     (click)="addEmptyInteractionDetail()">
                     Add New
             </button>
@@ -29,15 +30,27 @@
               <ng-container *ngIf="data$  | async as result">
   
                 <ng-container>
-                  <div class="interaction-item" *ngFor="let item of result" [class.active]="item?.id === selectedItem?.id"
-                       (click)="onInteractionItemClicked(item, null)">
+                  <div class="interaction-item" *ngFor="let item of result"
+                        [class.active]="item?.id === selectedItem?.id"
+                        style="padding-right: 5px;"
+                        (click)="onInteractionItemClicked(item, null)">
                     <div class="interaction-item-header">
                       <div class="interaction-author">
                         {{item.stakeholder || 'Anonymous'}}
                       </div>
                       <div class="interaction-date">
                         {{(item.communicationDate | date)}}
-                        </div>
+                      </div>
+                      <div *ngIf="canModifyInteraction()">
+                        <button class="btn btn-icon" title="Remove this engagement"
+                                [disabled]="loading"
+                                (click)="deleteInteraction(item)">
+                          <i class="spinner-border" [hidden]="!(loading && item?.id === selectedItem?.id)"></i>
+                          <i class="material-icons" [hidden]="loading">
+                            delete
+                          </i>
+                        </button>
+                      </div>
                     </div>
                     <div class="interaction-body">{{item.communicationDetails}}</div>
                   </div>
@@ -53,6 +66,7 @@
                 <div class="row">
                   <button type="button" title="Save this engagement"
                           class="btn btn-sm btn-primary btn-container"
+                          *ngIf="canModifyInteraction()"
                           [disabled]="loading"
                           (click)="saveInteraction(interactionDetailForm.interactionFormGroup.value, interactionDetailForm.interaction)">
                     Save interaction
