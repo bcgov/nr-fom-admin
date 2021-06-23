@@ -41,6 +41,8 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   public daysRemaining: number = null;
   public isPublishingReady = false;
   private workflowStateChangeRequest: ProjectWorkflowStateChangeRequest = <ProjectWorkflowStateChangeRequest>{};
+  private now = new Date();
+  private today = new Date(this.now.getFullYear(), this.now.getMonth(), this.now.getDate());
 
   constructor(
     private route: ActivatedRoute,
@@ -157,10 +159,10 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   }
 
   private calculateDaysRemaining(){
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    console.log('now: ', this.now);
+    console.log('today: ',  moment(this.project.commentingOpenDate).diff(moment(this.today), 'days'));
     this.daysRemaining =
-      moment(this.project.commentingClosedDate).diff(moment(today), 'days');
+      moment(this.project.commentingClosedDate).diff(moment(this.today), 'days');
     if(this.daysRemaining < 0){
       this.daysRemaining = 0;
     }
@@ -174,14 +176,26 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   }
 
   public async publishFOM(){
+    if(moment(this.project.commentingOpenDate).diff(moment(this.today), 'days') < 1){
+      this.modalSvc.openDialog({
+        data: {
+          message: 'Comment Start Date must be at least one day after "Publish" is pushed ',
+          title: '',
+          width: '340px',
+          height: '200px',
+          buttons: {confirm: {text: 'OK'}}
+        }
+      })
+    }else {
       this.workflowStateChangeRequest.workflowStateCode = WorkflowStateEnum.Published;
       this.workflowStateChangeRequest.revisionCount = this.project.revisionCount;
 
-    const result = await this.projectService.projectControllerStateChange(this.project.id, this.workflowStateChangeRequest).pipe(tap(obs => console.log(obs))).toPromise()
-    const {id} = result;
-    if (!id) {
+      const result = await this.projectService.projectControllerStateChange(this.project.id, this.workflowStateChangeRequest).pipe(tap(obs => console.log(obs))).toPromise()
+      const {id} = result;
+      if (!id) {
+      }
+      this.onSuccess()
     }
-    this.onSuccess()
 
   }
 

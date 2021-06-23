@@ -176,9 +176,6 @@
           <div class="body">
             <ul class="nv-list">
               <li>
-                <span class="name">Status:</span>
-              </li>
-              <li>
                 <span class="name">Start Date:</span>
                 <span class="value" [ngClass]="{'invalid-type-msg': !project.commentingOpenDate }">
                   {{project.commentingOpenDate ?
@@ -191,7 +188,7 @@
               </li>
               <li>
                 <span class="name">Days Remaining:</span>
-                <span class="value">{{daysRemaining}}</span>
+                <span class="value">{{daysRemaining > 0? daysRemaining: ''}}</span>
               </li>
             </ul>
             <div class="btn-container" *ngIf="project">
