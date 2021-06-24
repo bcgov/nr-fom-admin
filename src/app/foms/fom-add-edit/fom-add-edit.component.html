@@ -196,7 +196,14 @@
 </div>
 
 <ng-template #saveButton>
-  <app-button
-    title="Save your changes"
-    (click)="saveApplication()">{{ isLoading ? "Saving" : "Save" }}</app-button>
+  <button
+          class="btn btn-primary ml-1"
+          type="button"
+          title="Save your changes"
+          (click)="saveApplication()"
+          [disabled]="isPublishState"
+  >{{ isLoading ? "Saving" : "Save" }}
+    <i class="spinner rotating" [hidden]="!stateSvc.loading"></i>
+  </button>
+
 </ng-template>
