@@ -1,5 +1,4 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatSnackBar, MatSnackBarRef, SimpleSnackBar} from '@angular/material/snack-bar';
 import {ActivatedRoute, Router} from '@angular/router';
 // @ts-ignore
 import {of, Subject, throwError} from 'rxjs';
@@ -27,11 +26,9 @@ import * as moment from 'moment';
 })
 export class FomDetailComponent implements OnInit, OnDestroy {
   public isPublishing = false;
-  public isUnpublishing = false;
   public isDeleting = false;
   public isRefreshing = false;
   public application: ProjectResponse = null;
-  private snackBarRef: MatSnackBarRef<SimpleSnackBar> = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
   public project: ProjectResponse = null;
   public spatialDetail: SpatialFeaturePublicResponse[];
@@ -47,7 +44,6 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    public snackBar: MatSnackBar,
     private modalSvc: ModalService,
     public projectService: ProjectService, // also used in template
     public attachmentService: AttachmentService,
@@ -90,11 +86,6 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // dismiss any open snackbar
-    if (this.snackBarRef) {
-      this.snackBarRef.dismiss();
-    }
-
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
@@ -159,8 +150,6 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   }
 
   private calculateDaysRemaining(){
-    console.log('now: ', this.now);
-    console.log('today: ',  moment(this.project.commentingOpenDate).diff(moment(this.today), 'days'));
     this.daysRemaining =
       moment(this.project.commentingClosedDate).diff(moment(this.today), 'days');
     if(this.daysRemaining < 0){
@@ -179,7 +168,7 @@ export class FomDetailComponent implements OnInit, OnDestroy {
     if(moment(this.project.commentingOpenDate).diff(moment(this.today), 'days') < 1){
       this.modalSvc.openDialog({
         data: {
-          message: 'Comment Start Date must be at least one day after "Publish" is pushed ',
+          message: 'Comment Start Date must be at least one day after "Publish" is pushed.',
           title: '',
           width: '340px',
           height: '200px',
@@ -199,81 +188,6 @@ export class FomDetailComponent implements OnInit, OnDestroy {
 
   }
 
-
-  public unPublishApplication() {
-    this.isUnpublishing = true;
-
-    let observables = of(null);
-
-    /*
-    // unpublish comment period
-    if (this.application.meta.currentPeriod && this.application.meta.currentPeriod.meta.isPublished) {
-      observables = observables.pipe(concat(this.commentPeriodService.unPublish(this.application.meta.currentPeriod)));
-    }
-
-    // unpublish decision documents
-    if (this.application.meta.decision && this.application.meta.decision.meta.documents) {
-      for (const doc of this.application.meta.decision.meta.documents) {
-        if (doc.meta.isPublished) {
-          observables = observables.pipe(concat(this.documentService.unPublish(doc)));
-        }
-      }
-    }
-
-    // unpublish decision
-    if (this.application.meta.decision && this.application.meta.decision.meta.isPublished) {
-      observables = observables.pipe(concat(this.decisionService.0unPublish(this.application.meta.decision)));
-    }
-
-    // unpublish application documents
-    if (this.application.meta.documents) {
-      for (const doc of this.application.meta.documents) {
-        if (doc.meta.isPublished) {
-          observables = observables.pipe(concat(this.documentService.unPublish(doc)));
-        }
-      }
-    }
-
-    // unpublish application
-    // do this last in case of prior failures
-    if (this.application.meta.isPublished) {
-      observables = observables.pipe(concat(this.projectService.unPublish(this.application)));
-    }
-    */
-
-    observables.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
-      () => {
-        // onNext
-        // do nothing here - see onCompleted() function below
-      },
-      error => {
-        this.isUnpublishing = false;
-        console.log('error =', error);
-        alert("Uh-oh, couldn't unpublish application");
-        // TODO: should fully reload application here so we have latest isPublished flags for objects
-      },
-      () => {
-        // onCompleted
-        this.snackBarRef = this.snackBar.open('Application unpublished...', null, {duration: 2000});
-        // reload all data
-        this.projectService
-          .projectControllerFindOne(this.application.id)
-          .pipe(takeUntil(this.ngUnsubscribe))
-          .subscribe(
-            // @ts-ignore
-            (application: Application) => {
-              this.isUnpublishing = false;
-              // this.application = application;
-            },
-            error => {
-              this.isUnpublishing = false;
-              console.log('error =', error);
-              alert("Uh-oh, couldn't reload application");
-            }
-          );
-      }
-    );
-  }
 
   /**
     INITIAL: holder can withdraw.
