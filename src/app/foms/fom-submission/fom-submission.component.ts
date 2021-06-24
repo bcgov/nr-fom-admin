@@ -16,8 +16,7 @@ import { DatePipe } from '@angular/common';
 import {FomSubmissionForm} from './fom-submission.form';
 import {StateService} from 'core/services/state.service';
 import {ModalService} from 'core/services/modal.service';
-import {SubmissionService} from 'core/api';
-import {WorkflowStateEnum} from "core/models/workflowStateEnum";
+import {SubmissionService, WorkflowStateEnum} from 'core/api';
 
 @Component({
   selector: 'app-fom-submission',
@@ -92,6 +91,7 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
         spatialObjectCode: SpatialObjectCodeEnum.CutBlock,
         jsonSpatialSubmission: Object
       }
+      // this.isSubmissionAllowed();
       const form = new FomSubmissionForm(this.originalSubmissionRequest);
       this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
       this.fg.get('projectId').setValue(this.originalSubmissionRequest.projectId);
@@ -184,5 +184,10 @@ export class FomSubmissionComponent implements OnInit, AfterViewInit, OnDestroy 
       return 'Road section'
     }
     return 'Wildlife/tree retention area'
+  }
+
+  public isSubmissionAllowed(){
+    return this.project.workflowState.code === WorkflowStateEnum.Initial
+      || this.project.workflowState.code === WorkflowStateEnum.CommentClosed ;
   }
 }

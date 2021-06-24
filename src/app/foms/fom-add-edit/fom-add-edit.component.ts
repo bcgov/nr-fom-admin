@@ -14,7 +14,7 @@ import {
   ForestClientResponse,
   ForestClientService,
   AttachmentService,
-  ProjectCreateRequest
+  ProjectCreateRequest, WorkflowStateEnum
 } from 'core/api';
 import {RxFormBuilder, RxFormGroup} from '@rxweb/reactive-form-validators';
 import { DatePipe } from '@angular/common';
@@ -43,8 +43,6 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   districts: DistrictResponse[] = this.stateSvc.getCodeTable('district');
   forestClients: ForestClientResponse[] = [];
   public project: ProjectResponse = null;
-  public startDate: NgbDateStruct = null;
-  public endDate: NgbDateStruct = null;
   public supportingDocuments: any[] = [];
   public initialPublicDocument: any[] = [];
   private scrollToFragment: string = null;
@@ -52,6 +50,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
   public districtIdSelect: any = null;
   public forestClientSelect: any = null;
+  public isPublishState: boolean = false;
   files: any[] = [];
   publicNoticeContent: any;
   supportingDocContent: any;
@@ -128,6 +127,8 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         this.forestClientSelect = this.originalProjectResponse.forestClient.id;
+
+        this.isPublishState = this.originalProjectResponse.workflowState.code === WorkflowStateEnum.Published;
       }
       const form = new FomAddEditForm(data);
       this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
