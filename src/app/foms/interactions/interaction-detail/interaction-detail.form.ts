@@ -1,4 +1,4 @@
-import { prop } from "@rxweb/reactive-form-validators"
+import { minLength, prop, required } from "@rxweb/reactive-form-validators"
 import { InteractionResponse } from "core/api";
 import * as R from 'remeda';
 
@@ -11,6 +11,8 @@ export class InteractionDetailForm implements Pick<InteractionRequest, typeof UP
   @prop()
   communicationDate: string = '';
 
+  @required()
+  @minLength({value: 1})
   @prop()
   communicationDetails: string = '';
 
