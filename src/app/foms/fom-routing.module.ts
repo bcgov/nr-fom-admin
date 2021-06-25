@@ -7,6 +7,7 @@ import {ApplicationDetailResolver, ProjectSpatialDetailResolver} from './fom-res
 import {ReviewCommentsComponent} from './review-comments/review-comments.component';
 import {FomSubmissionComponent} from "./fom-submission/fom-submission.component";
 import { InteractionsComponent } from './interactions/interactions.component';
+import { SummaryComponent } from './summary/summary.component';
 
 const routes: Routes = [
   {
@@ -39,6 +40,10 @@ const routes: Routes = [
   {
     path: 'a/:appId/upload',
     component: FomSubmissionComponent
+  },
+  {
+    path: 'a/:appId/summary',
+    component: SummaryComponent
   }
 ];
 

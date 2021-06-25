@@ -1,0 +1,61 @@
+<div class="top-container">
+  <div class="container">
+    <div class="title-container">
+      <div class="title-container__title">
+        <h1>Summary for FOM ID: {{project?.id}}</h1>
+      </div>
+    </div>
+  </div>
+</div>
+  
+<div class="bottom-container">
+  <div class="container">
+    <section class="summary-container">
+      <section class="project-info">
+        <div>
+          <h4>Name</h4>
+          {{project?.name | titlecase}}
+        </div>
+
+        <div>
+          <h4>Description</h4>
+          {{project?.description}}
+        </div>
+
+        <div>
+          <h4>Details</h4>
+          <ul class="nv-list">
+            <li>
+              <span class="name">FOM Holder:</span>
+              <span
+                class="value">
+                {{project?.forestClient?.name}}
+              </span>
+            </li>
+            <li>
+              <span class="name">District:</span>
+              <span class="value">
+                {{project?.district?.name}}
+              </span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="project-relations">
+        <div>
+          <h4>Comments</h4>
+        </div>
+        <div *ngIf="publicComments">
+        <app-comments-summary 
+          [publicComments]="publicComments"
+          [requestError]="publicCommentsReqError">
+        </app-comments-summary>
+        </div>
+
+      </section>
+    </section>
+  </div>
+</div>
+
+  

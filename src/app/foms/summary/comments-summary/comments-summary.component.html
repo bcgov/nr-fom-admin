@@ -1,0 +1,46 @@
+<mat-accordion multi>
+  <mat-expansion-panel hideToggle [disabled]="requestError">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Comments
+      </mat-panel-title>
+      <mat-panel-description>
+        <span [ngStyle]="requestError && {'color': 'red'}">
+          {{requestError? 'Request encountered error. Please try later.': ''}}
+        </span>
+      </mat-panel-description>
+      <span class="material-icons">
+        comment
+      </span>
+    </mat-expansion-panel-header>
+    <mat-card *ngFor="let comment of publicComments">
+      <div class="row">
+        <div class="col-md-3 bold">Name: </div>
+        <div class="col-md-3">{{comment.name || 'Anonymous'}}</div>
+        <div class="col-md-2 bold">Date: </div>
+        <div class="col-md-4">{{comment.createTimestamp | date:'medium'}}</div>
+      </div>
+      <div class="row">
+        <div class="col-md-3 bold">Commenting On: </div>
+        <div class="col-md-9">
+          {{comment.commentScope.description}} 
+          {{ (commentScopeCodes.CUT_BLOCK.code === comment.commentScope.code)? '#'+ comment.scopeCutBlockId: 
+            ((commentScopeCodes.ROAD_SECTION.code === comment.commentScope.code)? '#'+ comment.scopeRoadSectionId:
+            '')
+          }}
+          {{ comment.scopeFeatureName? ' - '+ comment.scopeFeatureName: ''}}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3 bold">Feedback: </div>
+        <div class="col-md-9" [innerHTML]="comment.feedback | newlines"></div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3 bold">Response: </div>
+        <div class="col-md-9" [innerHTML]="comment.responseDetails | newlines"></div>
+      </div>
+    </mat-card>
+  </mat-expansion-panel>
+</mat-accordion>
