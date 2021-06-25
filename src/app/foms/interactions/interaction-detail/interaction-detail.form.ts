@@ -9,7 +9,7 @@ export class InteractionDetailForm implements Pick<InteractionRequest, typeof UP
   stakeholder: string = '';
 
   @prop()
-  communicationDate: string = '';
+  communicationDate: string = new Date().toISOString();
 
   @required()
   @minLength({value: 1})
