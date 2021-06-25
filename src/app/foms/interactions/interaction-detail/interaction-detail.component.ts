@@ -70,7 +70,7 @@ export class InteractionDetailComponent implements OnInit {
   }
 
   isValid(controlName: string): boolean {
-    return this.interactionFormGroup.controls['controlName']?.errors != null;
+    return this.interactionFormGroup.controls[controlName]?.errors == null;
   }
 
 }
