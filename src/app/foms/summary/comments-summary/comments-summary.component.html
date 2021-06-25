@@ -10,9 +10,8 @@
           {{requestError? 'Request encountered error. Please try later.': ''}}
         </span>
       </mat-panel-description>
-      <span class="material-icons">
-        comment
-      </span>
+      <mat-icon matBadge="{{addressedPcs.length}}" matBadgePosition="above before" 
+              matBadgeColor="accent" matBadgeSize="small">comment</mat-icon>
     </mat-expansion-panel-header>
     <mat-card *ngFor="let comment of addressedPcs">
       <ng-container [ngTemplateOutlet]="comment_fields_template"
@@ -32,9 +31,8 @@
           {{requestError? 'Request encountered error. Please try later.': ''}}
         </span>
       </mat-panel-description>
-      <span class="material-icons">
-        comment
-      </span>
+      <mat-icon matBadge="{{consideredPcs.length}}" matBadgePosition="above before" 
+              matBadgeColor="accent" matBadgeSize="small">comment</mat-icon>
     </mat-expansion-panel-header>
     <mat-card *ngFor="let comment of consideredPcs">
       <ng-container [ngTemplateOutlet]="comment_fields_template"
@@ -54,9 +52,8 @@
             {{requestError? 'Request encountered error. Please try later.': ''}}
           </span>
         </mat-panel-description>
-        <span class="material-icons">
-          comment
-        </span>
+        <mat-icon matBadge="{{irrelevantPcs.length}}" matBadgePosition="above before" 
+                  matBadgeColor="accent" matBadgeSize="small">comment</mat-icon>
       </mat-expansion-panel-header>
       <mat-card *ngFor="let comment of irrelevantPcs">
         <ng-container [ngTemplateOutlet]="comment_fields_template"
@@ -76,9 +73,8 @@
             {{requestError? 'Request encountered error. Please try later.': ''}}
           </span>
         </mat-panel-description>
-        <span class="material-icons">
-          comment
-        </span>
+        <mat-icon matBadge="{{noResponsePcs.length}}" matBadgePosition="above before" 
+                  matBadgeColor="accent" matBadgeSize="small">comment</mat-icon>
       </mat-expansion-panel-header>
       <mat-card *ngFor="let comment of noResponsePcs">
         <ng-container [ngTemplateOutlet]="comment_fields_template"

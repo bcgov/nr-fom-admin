@@ -11,6 +11,7 @@ import { MatTableModule } from '@angular/material/table'
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCardModule } from '@angular/material/card';
+import { MatBadgeModule } from '@angular/material/badge';
 
 // components
 import {FomDetailComponent} from './fom-detail/fom-detail.component';
@@ -27,6 +28,7 @@ import { DetailsMapComponent } from './details-map/details-map.component';
 import { InteractionsComponent } from './interactions/interactions.component';
 import { InteractionDetailComponent } from './interactions/interaction-detail/interaction-detail.component';
 import { SummaryComponent } from './summary/summary.component';
+import { MatIconModule } from '@angular/material/icon';
 import { CommentsSummaryComponent } from './summary/comments-summary/comments-summary.component';
 // services
 // import { ExportService } from 'core/services/export.service';
@@ -47,7 +49,9 @@ import { CommentsSummaryComponent } from './summary/comments-summary/comments-su
         MatTableModule, 
         MatSlideToggleModule,
         MatExpansionModule,
-        MatCardModule
+        MatCardModule,
+        MatIconModule,
+        MatBadgeModule
     ],
   declarations: [
     FomDetailComponent,

@@ -11,3 +11,9 @@ table {
         padding-bottom: 0.4rem;
     }
 }
+
+// This is important or will not reach .mat-content to select
+::ng-deep span.mat-content {
+    height: 40px !important;
+    align-items: center !important;
+}
