@@ -41,7 +41,7 @@ export class InteractionDetailComponent implements OnInit {
   @Input() set selectedInteraction(interaction: InteractionResponse) {
     this.interaction = interaction;
     const interactionForm = new InteractionDetailForm(interaction)
-    this.interactionFormGroup = this.formBuilder.group(interactionForm);
+    this.interactionFormGroup = this.formBuilder.formGroup(interactionForm);
     if (!this.editMode) {
       this.interactionFormGroup.disable();
     }
@@ -68,6 +68,11 @@ export class InteractionDetailComponent implements OnInit {
   getAttachmentUrl(id: number): string {
     return id ? this.configSvc.getApiBasePath()+ '/api/attachment/file/' + id : '';
   }
+
+  isValid(controlName: string): boolean {
+    return this.interactionFormGroup.controls[controlName]?.errors == null;
+  }
+
 }
 
 
