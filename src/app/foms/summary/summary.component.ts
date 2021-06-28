@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { InteractionResponse, InteractionService, ProjectResponse, ProjectService, PublicCommentAdminResponse, PublicCommentService, SpatialFeaturePublicResponse, SpatialFeatureService } from 'core/api';
+import { AttachmentResponse, AttachmentService, InteractionResponse, InteractionService, ProjectResponse, ProjectService, PublicCommentAdminResponse, PublicCommentService, SpatialFeaturePublicResponse, SpatialFeatureService } from 'core/api';
+import { ConfigService } from 'core/services/config.service';
 
 @Component({
   selector: 'app-summary',
@@ -18,6 +19,8 @@ export class SummaryComponent implements OnInit {
   spatialDetailReqError: boolean;
   interactions: InteractionResponse[]
   interactionsReqError: boolean;
+  attachments: AttachmentResponse[];
+  attachmentsReqError: boolean;
 
   constructor(    
     private route: ActivatedRoute,
@@ -25,6 +28,8 @@ export class SummaryComponent implements OnInit {
     private commentSvc: PublicCommentService,
     private spatialFeatureSvc: SpatialFeatureService,
     private interactionSvc: InteractionService,
+    private attachmentSvc: AttachmentService,
+    private configSvc: ConfigService,
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -33,6 +38,7 @@ export class SummaryComponent implements OnInit {
     this.getpublicComments(this.projectId);
     this.getSpatialDetails(this.projectId);
     this.getProjectInteractions(this.projectId);
+    this.getProjectAttachments(this.projectId);
   }
 
   private async getProject(projectId: number) {
@@ -81,6 +87,22 @@ export class SummaryComponent implements OnInit {
         this.interactionsReqError = true;
       }
     );
+  }
+
+  private async getProjectAttachments(projectId: number) {
+    this.attachmentSvc.attachmentControllerFind(projectId).toPromise()
+    .then(
+      (result) => {this.attachments = result;},
+      (error) => {
+        console.error(`Error retrieving Project Attachments for Summary Report:`, error);
+        this.attachments = undefined;
+        this.attachmentsReqError = true;
+      }
+    );
+  }
+
+  getAttachmentUrl(id: number): string {
+    return id ? this.configSvc.getApiBasePath()+ '/api/attachment/file/' + id : '';
   }
 
 }
