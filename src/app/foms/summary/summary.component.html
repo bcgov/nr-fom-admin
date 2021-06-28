@@ -66,16 +66,29 @@
       </section>
 
       <section class="project-relations">
-        <div>
-          <h4>Comments</h4>
-        </div>
-        <div *ngIf="publicComments">
-        <app-comments-summary 
-          [publicCommentDetails]="publicComments"
-          [requestError]="publicCommentsReqError">
-        </app-comments-summary>
-        </div>
+        <section>
+          <div>
+            <h4>Comments</h4>
+          </div>
+          <div *ngIf="publicComments">
+            <app-comments-summary 
+              [publicCommentDetails]="publicComments"
+              [requestError]="publicCommentsReqError">
+            </app-comments-summary>
+          </div>
+        </section>
 
+        <section>
+          <div>
+            <h4>Stakeholder Engagements</h4>
+          </div>
+          <div *ngIf="interactions">
+            <app-interactions-summary 
+              [interactionDetails]="interactions"
+              [requestError]="interactionsReqError">
+            </app-interactions-summary>
+          </div>
+        </section>
       </section>
     </section>
   </div>

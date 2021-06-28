@@ -30,6 +30,7 @@ import { InteractionDetailComponent } from './interactions/interaction-detail/in
 import { SummaryComponent } from './summary/summary.component';
 import { MatIconModule } from '@angular/material/icon';
 import { CommentsSummaryComponent } from './summary/comments-summary/comments-summary.component';
+import { InteractionsSummaryComponent } from './summary/interactions-summary/interactions-summary.component';
 // services
 // import { ExportService } from 'core/services/export.service';
 
@@ -64,7 +65,8 @@ import { CommentsSummaryComponent } from './summary/comments-summary/comments-su
     InteractionsComponent,
     InteractionDetailComponent,
     SummaryComponent,
-    CommentsSummaryComponent
+    CommentsSummaryComponent,
+    InteractionsSummaryComponent
   ],
   exports: [
     FomDetailComponent,
