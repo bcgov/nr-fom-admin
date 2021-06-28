@@ -67,7 +67,7 @@
                   <button type="button" title="Save this engagement"
                           class="btn btn-sm btn-primary btn-container"
                           *ngIf="canModifyInteraction()"
-                          [disabled]="loading"
+                          [disabled]="loading || interactionDetailForm.interactionFormGroup?.invalid"
                           (click)="saveInteraction(interactionDetailForm.interactionFormGroup.value, interactionDetailForm.interaction)">
                     Save interaction
                   </button>

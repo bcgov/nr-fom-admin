@@ -9,6 +9,9 @@ import {FomRoutingModule} from './fom-routing.module';
 import {InlineSVGModule} from 'ng-inline-svg';
 import { MatTableModule } from '@angular/material/table'
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatCardModule } from '@angular/material/card';
+import { MatBadgeModule } from '@angular/material/badge';
 
 // components
 import {FomDetailComponent} from './fom-detail/fom-detail.component';
@@ -24,6 +27,9 @@ import { ShapeInfoComponent } from './shape-info/shape-info.component';
 import { DetailsMapComponent } from './details-map/details-map.component';
 import { InteractionsComponent } from './interactions/interactions.component';
 import { InteractionDetailComponent } from './interactions/interaction-detail/interaction-detail.component';
+import { SummaryComponent } from './summary/summary.component';
+import { MatIconModule } from '@angular/material/icon';
+import { CommentsSummaryComponent } from './summary/comments-summary/comments-summary.component';
 // services
 // import { ExportService } from 'core/services/export.service';
 
@@ -41,7 +47,11 @@ import { InteractionDetailComponent } from './interactions/interaction-detail/in
         BrowserAnimationsModule,
         BsDatepickerModule.forRoot(),
         MatTableModule, 
-        MatSlideToggleModule
+        MatSlideToggleModule,
+        MatExpansionModule,
+        MatCardModule,
+        MatIconModule,
+        MatBadgeModule
     ],
   declarations: [
     FomDetailComponent,
@@ -52,7 +62,9 @@ import { InteractionDetailComponent } from './interactions/interaction-detail/in
     FomSubmissionComponent,
     ShapeInfoComponent,
     InteractionsComponent,
-    InteractionDetailComponent
+    InteractionDetailComponent,
+    SummaryComponent,
+    CommentsSummaryComponent
   ],
   exports: [
     FomDetailComponent,
