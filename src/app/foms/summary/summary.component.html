@@ -38,21 +38,57 @@
                 {{project?.district?.name}}
               </span>
             </li>
+            <li>
+              <span class="name">Commenting Open Date:</span>
+              <span class="value">
+                {{project?.commentingOpenDate}}
+              </span>
+            </li>
+            <li>
+              <span class="name">Commenting Closed Date:</span>
+              <span class="value">
+                {{project?.commentingClosedDate}}
+              </span>
+            </li>
           </ul>
         </div>
       </section>
 
-      <section class="project-relations">
-        <div>
-          <h4>Comments</h4>
-        </div>
-        <div *ngIf="publicComments">
-        <app-comments-summary 
-          [publicCommentDetails]="publicComments"
-          [requestError]="publicCommentsReqError">
-        </app-comments-summary>
-        </div>
+      <section>
+        <div>Geographic Shape Information:</div>
+        <app-details-map
+          [projectSpatialDetail]="spatialDetail">
+        </app-details-map>
 
+        <app-shape-info
+          [spatialDetail]="spatialDetail">
+        </app-shape-info>
+      </section>
+
+      <section class="project-relations">
+        <section>
+          <div>
+            <h4>Comments</h4>
+          </div>
+          <div *ngIf="publicComments">
+            <app-comments-summary 
+              [publicCommentDetails]="publicComments"
+              [requestError]="publicCommentsReqError">
+            </app-comments-summary>
+          </div>
+        </section>
+
+        <section>
+          <div>
+            <h4>Stakeholder Engagements</h4>
+          </div>
+          <div *ngIf="interactions">
+            <app-interactions-summary 
+              [interactionDetails]="interactions"
+              [requestError]="interactionsReqError">
+            </app-interactions-summary>
+          </div>
+        </section>
       </section>
     </section>
   </div>

@@ -3,15 +3,6 @@
     <div class="title-container">
       <div class="title-container__title">
         <h1>FOM ID: {{project.id}}</h1>
-        <div>
-          <span class="vert-pipe">&nbsp;</span>
-          <button class="btn btn-icon" title="FOM Summary"
-                [routerLink]="['/a', project.id, 'summary']">
-            <i class="material-icons" style="padding-bottom: 5px;">
-              subject
-            </i>
-          </button>
-        </div>
       </div>
       <div class="title-container__actions">
         <div class="btn-container">
@@ -54,6 +45,15 @@
 <!--             [inlineSVG]="'assets/images/baseline-refresh-24px.svg'">-->
 <!--          </i>-->
 <!--        </button>-->
+
+        <span class="vert-pipe">&nbsp;</span>
+        <button class="btn btn-icon" title="FOM Summary"
+              [routerLink]="['/a', project.id, 'summary']">
+          <i class="material-icons" style="padding-bottom: 5px;">
+            subject
+          </i>
+        </button>
+
         <span class="vert-pipe" *ngIf="canWithdraw()">&nbsp;</span>
         <button class="btn btn-icon" title="Remove this FOM"
                 *ngIf="canWithdraw()"
