@@ -344,12 +344,8 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   validateClosedDate(value: Date): void {
     if ( this.originalProjectResponse.workflowState.code === WorkflowStateEnum.CommentOpen) {
       let date = value.toISOString();
-      console.log('onValuechange: ', date);
-      console.log('originalDate: ', this.originalProjectResponse.commentingClosedDate);
-      console.log('filteredDate: ', date);
       let result = moment(date)
         .diff(moment(this.originalProjectResponse.commentingClosedDate), 'days');
-      console.log('result: ', result);
       if (result < 0 ) {
         this.modalSvc.openDialog({
           data: {
