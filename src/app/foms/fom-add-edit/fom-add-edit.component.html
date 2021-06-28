@@ -84,6 +84,7 @@
                 id="commentingClosedDate"
                 name="commentingClosedDate"
                 formControlName="commentingClosedDate"
+                (bsValueChange)="validateClosedDate($event)"
                 [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD', adaptivePosition: true,
                 containerClass: 'theme-dark-blue', showWeekNumbers: false  }"
                 [appFormControl]="fg.get('commentingClosedDate')"
