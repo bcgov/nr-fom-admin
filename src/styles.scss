@@ -53,6 +53,9 @@
   position: relative;
   font-weight: 600;
   color: #dc3545;
+}
 
-
+.required:after {
+  content:" *";
+  color: red;
 }
