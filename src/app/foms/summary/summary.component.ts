@@ -72,9 +72,9 @@ export class SummaryComponent implements OnInit {
   }
 
   private async getProjectInteractions(projectId: number) {
-    this.interactionSvc.interactionControllerFind(this.projectId).toPromise()
+    this.interactionSvc.interactionControllerFind(projectId).toPromise()
     .then(
-      (result) => {this.interactions = result; console.log(this.interactions)},
+      (result) => {this.interactions = result;},
       (error) => {
         console.error(`Error retrieving Project Interactions for Summary Report:`, error);
         this.interactions = undefined;
