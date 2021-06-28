@@ -16,7 +16,6 @@ import {AppComponent} from 'app/app.component';
 import {HomeComponent} from 'app/home/home.component';
 import {SearchComponent} from 'app/search/search.component';
 import {ListComponent} from 'app/list/list.component';
-import {ConfirmComponent} from 'app/confirm/confirm.component';
 import {HeaderComponent} from 'app/header/header.component';
 import {FooterComponent} from 'app/footer/footer.component';
 
@@ -48,7 +47,6 @@ const apiConfig = new Configuration({
     AppComponent,
     HomeComponent,
     SearchComponent,
-    ConfirmComponent,
     HeaderComponent,
     FooterComponent,
     NotAuthorizedComponent,
@@ -92,7 +90,6 @@ const apiConfig = new Configuration({
     ConfigService,
     CanDeactivateGuard
   ],
-  entryComponents: [ConfirmComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {

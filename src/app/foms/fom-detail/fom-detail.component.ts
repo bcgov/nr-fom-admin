@@ -208,4 +208,9 @@ export class FomDetailComponent implements OnInit, OnDestroy {
             .includes(workflowStateCode as WorkflowStateEnum);
   }
 
+  public isSubmissionAllowed(){
+    return this.project.workflowState.code === WorkflowStateEnum.Initial
+      || this.project.workflowState.code === WorkflowStateEnum.CommentClosed ;
+  }
+
 }
