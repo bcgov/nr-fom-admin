@@ -90,6 +90,46 @@
           </div>
         </section>
       </section>
+
+      <section>
+        <h4>Attachments</h4>
+        <div *ngIf="attachments?.length > 0; else noAttachment">
+          <table id="table-card" class="table-cards">
+            <thead>
+              <tr>
+                <th style="width: 10%;">Date Uploaded</th>
+                <th>File Name</th>
+                <th style="width: 10%;">Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let attachment of attachments">
+                <td>
+                  <span>{{attachment.createTimestamp | date: 'medium'}}</span>
+                </td>
+                <td data-label="File Name">
+                  <a id="attachment-link"
+                    [href]="getAttachmentUrl(attachment.id)" 
+                    [title]="attachment.fileName || ''" 
+                    target="_blank" rel="noopener">
+                    {{attachment.fileName}}
+                  </a>
+                </td>
+                <td data-label="Type">
+                  <span>{{attachment.attachmentType.description}}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noAttachment>
+          <div>
+            {{ attachmentsReqError? 'Request encountered error. Please try later.': 'No Attachment' }}.
+          </div>
+        </ng-template>
+      </section>
+
     </section>
   </div>
 </div>
