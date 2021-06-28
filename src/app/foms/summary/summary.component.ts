@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ProjectResponse, ProjectService, PublicCommentAdminResponse, PublicCommentService, SpatialFeaturePublicResponse, SpatialFeatureService } from 'core/api';
+import { InteractionResponse, InteractionService, ProjectResponse, ProjectService, PublicCommentAdminResponse, PublicCommentService, SpatialFeaturePublicResponse, SpatialFeatureService } from 'core/api';
 
 @Component({
   selector: 'app-summary',
@@ -16,12 +16,15 @@ export class SummaryComponent implements OnInit {
   publicCommentsReqError: boolean;
   spatialDetail: SpatialFeaturePublicResponse[];
   spatialDetailReqError: boolean;
-  
+  interactions: InteractionResponse[]
+  interactionsReqError: boolean;
+
   constructor(    
     private route: ActivatedRoute,
     private projectSvc: ProjectService,
     private commentSvc: PublicCommentService,
-    private spatialFeatureService: SpatialFeatureService
+    private spatialFeatureSvc: SpatialFeatureService,
+    private interactionSvc: InteractionService,
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -29,12 +32,13 @@ export class SummaryComponent implements OnInit {
     this.getProject(this.projectId); 
     this.getpublicComments(this.projectId);
     this.getSpatialDetails(this.projectId);
+    this.getProjectInteractions(this.projectId);
   }
 
   private async getProject(projectId: number) {
     this.projectSvc.projectControllerFindOne(projectId).toPromise()
         .then(
-          (result) => {this.project = result; console.log(this.project)},
+          (result) => {this.project = result;},
           (error) => {
             console.error(`Error retrieving Project for Summary Report:`, error);
             this.project = undefined;
@@ -46,7 +50,7 @@ export class SummaryComponent implements OnInit {
   private async getpublicComments(projectId: number) {
     this.commentSvc.publicCommentControllerFind(projectId).toPromise()
         .then(
-          (result) => {this.publicComments = result; },
+          (result) => {this.publicComments = result;},
           (error) => {
             console.error(`Error retrieving Public Comments for Summary Report:`, error);
             this.publicComments = undefined;
@@ -56,9 +60,9 @@ export class SummaryComponent implements OnInit {
   }
 
   private async getSpatialDetails(projectId: number) {
-    this.spatialFeatureService.spatialFeatureControllerGetForProject(projectId).toPromise()
+    this.spatialFeatureSvc.spatialFeatureControllerGetForProject(projectId).toPromise()
     .then(
-      (result) => {this.spatialDetail = result; },
+      (result) => {this.spatialDetail = result;},
       (error) => {
         console.error(`Error retrieving Spatil Details for Summary Report:`, error);
         this.spatialDetail = undefined;
@@ -67,6 +71,17 @@ export class SummaryComponent implements OnInit {
     );
   }
 
+  private async getProjectInteractions(projectId: number) {
+    this.interactionSvc.interactionControllerFind(this.projectId).toPromise()
+    .then(
+      (result) => {this.interactions = result; console.log(this.interactions)},
+      (error) => {
+        console.error(`Error retrieving Project Interactions for Summary Report:`, error);
+        this.interactions = undefined;
+        this.interactionsReqError = true;
+      }
+    );
+  }
 
 }
 
