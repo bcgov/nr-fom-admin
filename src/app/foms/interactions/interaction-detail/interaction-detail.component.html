@@ -51,14 +51,18 @@
     </div>
 
     <div id="communicationDetailsDiv" class="form-group col-md">
-      <label for="description">Description</label>
+      <label for="description" class="control-label required">Description</label>
       <textarea id="description"
-            name="description"
+            name="communicationDetails"
             class="form-control col-md-12"
             rows="5"
+            [ngClass]="{'is-invalid': interactionFormGroup.touched && !isValid('communicationDetails')}"
             maxlength="4000"
             formControlName="communicationDetails">
-      </textarea>       
+      </textarea>
+      <div class="invalid-feedback" *ngIf="interactionFormGroup.touched && !isValid('communicationDetails')">
+        Please provide description.
+      </div>
     </div>
 
     <div id="communicationDetailsDiv" class="form-group col-md"

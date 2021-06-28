@@ -169,6 +169,14 @@ ngb-alert {
   }
 }
 
+.title-container__title {
+  @include flex-box();
+
+  h1 {
+    padding: 3px;
+  }
+}
+
 .title-container__actions .btn-container {
   display: inline-block;
 }
