@@ -148,7 +148,6 @@ export class UploadBoxComponent implements OnInit {
     }
 
     if (this.files.length > 1 && !this.multipleFiles){
-      console.log('files: ', this.files)
       this.invalidTypeText = 'Only one document is allowed';
       this.onRemove(event);
     }

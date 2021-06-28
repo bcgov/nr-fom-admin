@@ -3,9 +3,9 @@ import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 
 import {MatSnackBar, MatSnackBarRef, SimpleSnackBar} from '@angular/material/snack-bar';
 import {ActivatedRoute, Router} from '@angular/router';
-import {NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import {Observable, of, Subject} from 'rxjs';
 import {switchMap, takeUntil, tap} from 'rxjs/operators';
+import * as moment from 'moment';
 
 import {
   DistrictResponse,
@@ -42,7 +42,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   districts: DistrictResponse[] = this.stateSvc.getCodeTable('district');
   forestClients: ForestClientResponse[] = [];
-  public project: ProjectResponse = null;
+  // public project: ProjectResponse = null;
   public supportingDocuments: any[] = [];
   public initialPublicDocument: any[] = [];
   private scrollToFragment: string = null;
@@ -237,8 +237,9 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
           buttons: {confirm: {text: 'OK'}}
         }
       })
-
     }
+
+
     return this.fg.valid;
   }
 
@@ -334,6 +335,29 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.descriptionValue = e.target.value;
     if(!this.descriptionValue && !this.isCreate){
       this.fg.get('description').setErrors({incorrect: true})
+    }
+  }
+
+  /*
+  * Closed Date cannot be shortened if FOM status is in 'Commenting Open"
+  */
+  validateClosedDate(value: Date): void {
+    if ( this.originalProjectResponse.workflowState.code === WorkflowStateEnum.CommentOpen) {
+      let date = value.toISOString();
+      let result = moment(date)
+        .diff(moment(this.originalProjectResponse.commentingClosedDate), 'days');
+      if (result < 0 ) {
+        this.modalSvc.openDialog({
+          data: {
+            message: 'Date cannot be shortened when FOM is in "Commenting Open" state',
+            title: '',
+            width: '340px',
+            height: '200px',
+            buttons: {confirm: {text: 'OK'}}
+          }
+        })
+        this.fg.get('commentingClosedDate').setValue(this.originalProjectResponse.commentingClosedDate);
+      }
     }
   }
 }

@@ -13,10 +13,7 @@ import {AppRoutingModule} from 'app/app-routing.module';
 
 // components
 import {AppComponent} from 'app/app.component';
-import {HomeComponent} from 'app/home/home.component';
 import {SearchComponent} from 'app/search/search.component';
-import {ListComponent} from 'app/list/list.component';
-import {ConfirmComponent} from 'app/confirm/confirm.component';
 import {HeaderComponent} from 'app/header/header.component';
 import {FooterComponent} from 'app/footer/footer.component';
 
@@ -46,14 +43,10 @@ const apiConfig = new Configuration({
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
     SearchComponent,
-    ConfirmComponent,
     HeaderComponent,
     FooterComponent,
-    NotAuthorizedComponent,
-    ListComponent
-
+    NotAuthorizedComponent
   ],
   imports: [
     BrowserModule,
@@ -92,7 +85,6 @@ const apiConfig = new Configuration({
     ConfigService,
     CanDeactivateGuard
   ],
-  entryComponents: [ConfirmComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {

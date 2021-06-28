@@ -227,7 +227,7 @@
           </div>
         </div>
 
-        <div class="aside-card">
+        <div *ngIf="isSubmissionAllowed()" class="aside-card">
           <h3 class="title">FOM Spatial Upload</h3>
           <div class="body">
             <span  *ngIf="spatialDetail.length === 0" class="invalid-type-msg"> Proposed FOM Spatial Upload Required </span>
