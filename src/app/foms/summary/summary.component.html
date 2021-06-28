@@ -38,8 +38,31 @@
                 {{project?.district?.name}}
               </span>
             </li>
+            <li>
+              <span class="name">Commenting Open Date:</span>
+              <span class="value">
+                {{project?.commentingOpenDate}}
+              </span>
+            </li>
+            <li>
+              <span class="name">Commenting Closed Date:</span>
+              <span class="value">
+                {{project?.commentingClosedDate}}
+              </span>
+            </li>
           </ul>
         </div>
+      </section>
+
+      <section>
+        <div>Geographic Shape Information:</div>
+        <app-details-map
+          [projectSpatialDetail]="spatialDetail">
+        </app-details-map>
+
+        <app-shape-info
+          [spatialDetail]="spatialDetail">
+        </app-shape-info>
       </section>
 
       <section class="project-relations">
