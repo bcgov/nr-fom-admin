@@ -23,6 +23,8 @@ import {StateService} from 'core/services/state.service';
 import {ModalService} from 'core/services/modal.service';
 import {AttachmentUploadService} from "../../../core/utils/attachmentUploadService";
 import { AttachmentTypeEnum } from "../../../core/models/attachmentTypeEnum";
+import {User} from "../../../core/services/user";
+import {KeycloakService} from "../../../core/services/keycloak.service";
 
 export type ApplicationPageType = 'create' | 'edit';
 
@@ -56,6 +58,7 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   supportingDocContent: any;
   public isSubmitSaveClicked = false;
   public descriptionValue: string = null;
+  public user: User;
   public fileTypesParentInitial: string[] =
     ['image/png', 'image/jpeg', 'image/jpg', 'image/tiff',
       'image/x-tiff', 'application/pdf']
@@ -78,7 +81,6 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-
     public snackBar: MatSnackBar,
     private projectSvc: ProjectService,
     private attachmentSvc: AttachmentService,
@@ -87,8 +89,10 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     public stateSvc: StateService,
     private modalSvc: ModalService,
     private datePipe: DatePipe,
-    private  forestSvc: ForestClientService
+    private  forestSvc: ForestClientService,
+    private keycloakService: KeycloakService
   ) {
+    this.user = this.keycloakService.getUser();
   }
 
   // check for unsaved changes before navigating away from current route (ie, this page)
@@ -339,17 +343,19 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /*
-  * Closed Date cannot be shortened if FOM status is in 'Commenting Open"
+  * Closed Date cannot be shortened if FOM status is in 'Commenting Open", unless
+  * the user is Ministry.
   */
   validateClosedDate(value: Date): void {
-    if ( this.originalProjectResponse.workflowState.code === WorkflowStateEnum.CommentOpen) {
+    if ( this.originalProjectResponse.workflowState.code === WorkflowStateEnum.CommentOpen
+      && !this.user.isMinistry) {
       let date = value.toISOString();
       let result = moment(date)
         .diff(moment(this.originalProjectResponse.commentingClosedDate), 'days');
       if (result < 0 ) {
         this.modalSvc.openDialog({
           data: {
-            message: 'Date cannot be shortened when FOM is in "Commenting Open" state',
+            message: 'Closed Date cannot be shortened when FOM is in "Commenting Open" state',
             title: '',
             width: '340px',
             height: '200px',
@@ -359,5 +365,11 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
         this.fg.get('commentingClosedDate').setValue(this.originalProjectResponse.commentingClosedDate);
       }
     }
+  }
+
+  public isCreateAttachmentAllowed() {
+    return this.originalProjectResponse.workflowState.code === WorkflowStateEnum.Initial
+    || this.originalProjectResponse.workflowState.code === WorkflowStateEnum.CommentOpen
+    || this.originalProjectResponse.workflowState.code === WorkflowStateEnum.CommentClosed
   }
 }
