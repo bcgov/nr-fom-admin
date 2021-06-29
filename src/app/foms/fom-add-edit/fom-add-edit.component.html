@@ -165,7 +165,7 @@
           >
           </textarea>
         </div>
-        <div class="form-group mb-0" *ngIf="!this.isCreate">
+        <div class="form-group mb-0" *ngIf="!this.isCreate && isCreateAttachmentAllowed()">
           <legend>Initial Public Notice</legend>
 
           <app-upload-box [multipleFiles]="false" [files]="initialPublicDocument"
@@ -179,7 +179,7 @@
         </div>
       </fieldset>
 
-      <fieldset *ngIf="!this.isCreate">
+      <fieldset *ngIf="!this.isCreate && isCreateAttachmentAllowed()">
         <div class="form-group mb-0" >
           <legend>FOM Supporting Documents</legend>
 

@@ -17,6 +17,7 @@ import { KeycloakService } from 'core/services/keycloak.service';
 import { User } from 'core/services/user';
 import { ModalService } from 'core/services/modal.service';
 import * as moment from 'moment';
+import {AttachmentTypeEnum} from "../../../core/models/attachmentTypeEnum";
 
 
 @Component({
@@ -36,7 +37,6 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   public attachments: AttachmentResponse[] = [];
   public user: User;
   public daysRemaining: number = null;
-  public isPublishingReady = false;
   private workflowStateChangeRequest: ProjectWorkflowStateChangeRequest = <ProjectWorkflowStateChangeRequest>{};
   private now = new Date();
   private today = new Date(this.now.getFullYear(), this.now.getMonth(), this.now.getDate());
@@ -211,6 +211,19 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   public isSubmissionAllowed(){
     return this.project.workflowState.code === WorkflowStateEnum.Initial
       || this.project.workflowState.code === WorkflowStateEnum.CommentClosed ;
+  }
+
+  /*
+  * Only allows Supporting_Doc to be deleted in the defined states
+  */
+  public isDeleteAttachmentAllowed(attachment: AttachmentResponse) {
+
+    if(attachment.attachmentType.code === AttachmentTypeEnum.SUPPORTING_DOC){
+      return this.project.workflowState.code === WorkflowStateEnum.Initial
+        || this.project.workflowState.code === WorkflowStateEnum.CommentOpen
+        || this.project.workflowState.code === WorkflowStateEnum.CommentClosed
+    }
+    return false;
   }
 
 }
