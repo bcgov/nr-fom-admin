@@ -4,7 +4,6 @@ import {RouterModule, Routes} from '@angular/router';
 import {NotAuthorizedComponent} from './not-authorized/not-authorized.component';
 import {SearchComponent} from './search/search.component';
 import {CanDeactivateGuard} from 'core/services/can-deactivate-guard.service';
-import {ListComponent} from './list/list.component';
 
 const routes: Routes = [
   {
@@ -15,10 +14,6 @@ const routes: Routes = [
     // default route
     path: 'admin',
     component: SearchComponent
-  },
-  { // TODO: Get rid of this.
-    path: 'list',
-    component: ListComponent
   },
   {
     path: 'search',

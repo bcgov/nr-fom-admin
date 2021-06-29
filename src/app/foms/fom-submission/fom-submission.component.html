@@ -82,7 +82,9 @@
 
           <app-upload-box [multipleFiles]="false" [files]="applicationFiles" [fileTypes]="fileTypesParent"
                           (fileUploaded)="addNewFiles($event)"
-                          (outputFileContent)="getContentFileFromUpload($event)"></app-upload-box>
+                          (outputFileContent)="getContentFileFromUpload($event)">
+          </app-upload-box>
+          <div class="fileTypes"> <em>json, txt</em></div>
         </div>
       </fieldset>
     </form>
