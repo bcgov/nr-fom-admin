@@ -26,7 +26,7 @@ export class CommentsSummaryComponent implements OnInit {
 
   @Input() set publicCommentDetails(publicComments: PublicCommentAdminResponse[]) {
     this.publicComments = publicComments;
-    this.publicComments.forEach((comment)=> {
+    this.publicComments?.forEach((comment)=> {
       const item = Object.assign({}, comment); // JSON.parse(JSON.stringify(comment))
       if (comment.response?.code === ResponseCodeEnum.Addressed) {
         this.addressedPcs.push(item);
