@@ -10,7 +10,7 @@
           {{requestError? 'Request encountered error. Please try later.': ''}}
         </span>
       </mat-panel-description>
-      <mat-icon matBadge="{{addressedPcs.length}}" matBadgePosition="above before" 
+      <mat-icon matBadge="{{addressedPcs?.length}}" matBadgePosition="above before" 
               matBadgeColor="accent" matBadgeSize="small">comment</mat-icon>
     </mat-expansion-panel-header>
     <mat-card *ngFor="let comment of addressedPcs">
@@ -31,7 +31,7 @@
           {{requestError? 'Request encountered error. Please try later.': ''}}
         </span>
       </mat-panel-description>
-      <mat-icon matBadge="{{consideredPcs.length}}" matBadgePosition="above before" 
+      <mat-icon matBadge="{{consideredPcs?.length}}" matBadgePosition="above before" 
               matBadgeColor="accent" matBadgeSize="small">comment</mat-icon>
     </mat-expansion-panel-header>
     <mat-card *ngFor="let comment of consideredPcs">
@@ -52,7 +52,7 @@
             {{requestError? 'Request encountered error. Please try later.': ''}}
           </span>
         </mat-panel-description>
-        <mat-icon matBadge="{{irrelevantPcs.length}}" matBadgePosition="above before" 
+        <mat-icon matBadge="{{irrelevantPcs?.length}}" matBadgePosition="above before" 
                   matBadgeColor="accent" matBadgeSize="small">comment</mat-icon>
       </mat-expansion-panel-header>
       <mat-card *ngFor="let comment of irrelevantPcs">
@@ -73,7 +73,7 @@
             {{requestError? 'Request encountered error. Please try later.': ''}}
           </span>
         </mat-panel-description>
-        <mat-icon matBadge="{{noResponsePcs.length}}" matBadgePosition="above before" 
+        <mat-icon matBadge="{{noResponsePcs?.length}}" matBadgePosition="above before" 
                   matBadgeColor="accent" matBadgeSize="small">comment</mat-icon>
       </mat-expansion-panel-header>
       <mat-card *ngFor="let comment of noResponsePcs">

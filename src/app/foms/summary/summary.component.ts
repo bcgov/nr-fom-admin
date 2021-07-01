@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AttachmentResponse, AttachmentService, InteractionResponse, InteractionService, ProjectResponse, ProjectService, PublicCommentAdminResponse, PublicCommentService, SpatialFeaturePublicResponse, SpatialFeatureService } from 'core/api';
+import { AttachmentResponse, AttachmentService, InteractionResponse, InteractionService, 
+        ProjectResponse, ProjectService, PublicCommentAdminResponse, PublicCommentService, 
+        SpatialFeaturePublicResponse, SpatialFeatureService } from 'core/api';
 import { ConfigService } from 'core/services/config.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-summary',
@@ -92,7 +95,9 @@ export class SummaryComponent implements OnInit {
   private async getProjectAttachments(projectId: number) {
     this.attachmentSvc.attachmentControllerFind(projectId).toPromise()
     .then(
-      (result) => {this.attachments = result;},
+      (result) => {
+        this.attachments =  _.orderBy(result, ['attachmentType.code'],['asc']);
+      },
       (error) => {
         console.error(`Error retrieving Project Attachments for Summary Report:`, error);
         this.attachments = undefined;
