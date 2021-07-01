@@ -121,9 +121,6 @@
             </select>
           </div>
         </div>
-        <!-- <legend>Application Details</legend> -->
-        <div class="form-row">
-        </div>
         <div class="form-row">
           <div class="form-group col">
             <label>FOM Name</label>
@@ -150,32 +147,45 @@
               disabled
               [value]="originalProjectResponse.forestClient.name"
             />
+         </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md">
+            <label>Description</label>
+            <textarea (keyup)="changeDescription($event)"
+              class="form-control" [ngClass]="{'is-invalid': !descriptionValue && isSubmitSaveClicked && !isCreate}"
+              rows="3"
+              id="description"
+              name="description"
+              formControlName="description"
+              [appFormControl]="fg.get('description')"
+            >
+            </textarea>
           </div>
-
         </div>
-        <div class="form-group">
-          <label>Description</label>
-          <textarea (keyup)="changeDescription($event)"
-            class="form-control" [ngClass]="{'is-invalid': !descriptionValue && isSubmitSaveClicked && !isCreate}"
-            rows="3"
-            id="description"
-            name="description"
-            formControlName="description"
-            [appFormControl]="fg.get('description')"
-          >
-          </textarea>
+        <div class="row">
+          <div class="form-group col-md-6">
+            <strong>Initial Public Notice</strong>
+          </div>
+          <div class="col-md-6">
+              <strong>Attachments</strong>
+          </div>
         </div>
-        <div class="form-group mb-0" *ngIf="!this.isCreate && isCreateAttachmentAllowed()">
-          <legend>Initial Public Notice</legend>
+        <div class="form-row">
+          <div class="form-group col-md" *ngIf="!this.isCreate && isCreateAttachmentAllowed()">
+            <app-upload-box [multipleFiles]="false" [files]="initialPublicDocument"
+                            [isBlob]="true"
+                            [fileTypes]="fileTypesParentInitial"
+                            (fileUploaded)="addNewFileInitialPublic($event)"
+                            (outputFileContent)="getContentFileFromUpload($event)"
+            ></app-upload-box>
+            <!--          <app-upload-box [multipleFiles]="true" [files]="applicationFiles" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>-->
+            <div class="fileTypes"> <em>png, jpeg, jpg, tif, pdf </em></div>
+          </div>
+          <div class="form-group  col-md d-flex justify-content-center"> blah blah
 
-          <app-upload-box [multipleFiles]="false" [files]="initialPublicDocument"
-                          [isBlob]="true"
-                          [fileTypes]="fileTypesParentInitial"
-                          (fileUploaded)="addNewFileInitialPublic($event)"
-                          (outputFileContent)="getContentFileFromUpload($event)"
-          ></app-upload-box>
-          <!--          <app-upload-box [multipleFiles]="true" [files]="applicationFiles" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>-->
-          <div class="fileTypes"> <em>png, jpeg, jpg, tif, pdf </em></div>
+
+          </div>
         </div>
       </fieldset>
 
