@@ -9,7 +9,7 @@
             {{requestError? 'Request encountered error. Please try later.': ''}}
           </span>
         </mat-panel-description>
-        <mat-icon matBadge="{{interactions.length}}" matBadgePosition="above before" 
+        <mat-icon matBadge="{{interactions?.length}}" matBadgePosition="above before" 
                 matBadgeColor="accent" matBadgeSize="small">reply</mat-icon>
       </mat-expansion-panel-header>
       <mat-card *ngFor="let interaction of interactions">
@@ -24,15 +24,27 @@
   <!-- Comment item display template -->
   <ng-template #comment_fields_template let-interaction="interaction">
     <div class="row">
-      <div class="col-md-3 bold">Stakeholder: </div>
-      <div class="col-md-3">{{interaction?.stakeholder || 'Anonymous'}}</div>
+      <div class="col-md-2 bold">Stakeholder: </div>
+      <div class="col-md-4">{{interaction?.stakeholder || 'Anonymous'}}</div>
       <div class="col-md-2 bold">Engagement Date: </div>
       <div class="col-md-4">{{interaction?.communicationDate | date:'mediumDate'}}</div>
     </div>
   
     <div class="row">
-      <div class="col-md-3 bold">Description: </div>
-      <div class="col-md-9" [innerHTML]="interaction?.communicationDetails | newlines"></div>
+      <div class="col-md-2 bold">Description: </div>
+      <div class="col-md-10" [innerHTML]="interaction?.communicationDetails | newlines"></div>
     </div>
+
+    <div class="row">
+      <div class="col-md-2 bold">Attachment: </div>
+      <div class="col-md-10">
+        <a id="attachment-link"
+          [href]="getAttachmentUrl(interaction?.attachmentId)" 
+          [title]="interaction?.fileName || ''" 
+          target="_blank" rel="noopener">
+          {{interaction?.fileName}}
+        </a>
+      </div>
+    </div>  
     <hr>
   </ng-template>
