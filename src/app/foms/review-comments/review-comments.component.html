@@ -2,10 +2,10 @@
 <ng-container *ngIf="data$ | async as data">
   <div class="top-container">
     <div class="container">
-      <!-- <div class="breadcrumb-container">
-        <a *ngIf="project" [routerLink]="['/a', data?.project?.id]">
-          <i class="material-icons md-18">arrow_back </i> Back to Fom Details</a>
-      </div> -->
+      <div class="breadcrumb-container">
+        <a [routerLink]="['/a', projectId]">
+          <i class="material-icons">arrow_back </i> Back to FOM Details</a>
+      </div>
       <div class="title-container">
         <div class="title-container__title">
           <h1>Review Comments for FOM ID : {{projectId}}</h1>
@@ -49,11 +49,14 @@
         </div>
         <div class="review-comments__detail panel">
           <div class="panel-scroll">
-            <app-comment-detail #commentDetailForm="commentForm" [responseCodes]="responseCodes">
+            <app-comment-detail #commentDetailForm="commentForm" 
+                [responseCodes]="responseCodes"
+                [canReplyComment]="canReplyComment()">
               <div class="row">
                 <button type="button" title="Save this comment response"
                         class="btn btn-sm btn-primary btn-container"
                         [disabled]="loading"
+                        [hidden]="!canReplyComment()"
                         (click)="saveComment(commentDetailForm.commentFormGroup.value, commentDetailForm.comment)">
                   Save response
                 </button>

@@ -137,6 +137,12 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.searched = false;
   }
 
+  public canAccessComments(project: ProjectResponse): boolean {
+    const userCanView = this.user.isMinistry || this.user.isAuthorizedForClientId(project.forestClient.id);
+    return userCanView && (project.workflowState['code'] !== 'INITIAL' 
+                          && project.workflowState['code'] !== 'PUBLISHED');
+  }
+
   ngOnDestroy() {
     if (this.snackBarRef) {
       this.snackBarRef.dismiss();

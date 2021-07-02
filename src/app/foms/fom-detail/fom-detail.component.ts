@@ -183,9 +183,8 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   */
   public canWithdraw() {
     const workflowStateCode = this.project.workflowState.code;
-    const userCanModify = this.user.clientIds.includes(this.project.forestClient.id);
     if (WorkflowStateEnum.Initial === workflowStateCode) {
-      return this.user.isForestClient && userCanModify;
+      return this.user.isAuthorizedForClientId(this.project.forestClient.id);
     }
     else if (!this.user.isMinistry) {
       return false;
@@ -193,6 +192,16 @@ export class FomDetailComponent implements OnInit, OnDestroy {
 
     return [WorkflowStateEnum.CommentClosed, WorkflowStateEnum.Finalized, WorkflowStateEnum.Expired]
             .includes(workflowStateCode as WorkflowStateEnum);
+  }
+
+  public canAccessComments(): boolean {
+    const userCanView = this.user.isMinistry || this.user.isAuthorizedForClientId(this.project.forestClient.id);
+    return userCanView && (this.project.workflowState.code !== WorkflowStateEnum.Initial 
+                        && this.project.workflowState.code !== WorkflowStateEnum.Published);
+  }
+
+  public canAccessInteractions(): boolean {
+    return this.canAccessComments(); // same as comments for access/viewing.
   }
 
   public isSubmissionAllowed(){

@@ -2,7 +2,7 @@ import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core
 import {ActivatedRoute} from '@angular/router';
 import {Observable, Subject} from 'rxjs';
 
-import {PublicCommentAdminResponse} from 'core/api';
+import {ProjectResponse, ProjectService, PublicCommentAdminResponse} from 'core/api';
 import {
   PublicCommentService,
   PublicCommentAdminUpdateRequest
@@ -11,6 +11,8 @@ import {ModalService} from 'core/services/modal.service';
 import {StateService} from 'core/services/state.service';
 import { CommentDetailComponent } from './comment-detail/comment-detail.component';
 import { takeUntil } from 'rxjs/operators';
+import { KeycloakService } from 'core/services/keycloak.service';
+import { User } from 'core/services/user';
 
 // TODO: Not sure why we use this for error message...
 export const ERROR_DIALOG = {
@@ -40,8 +42,10 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
   public responseCodes = this.stateSvc.getCodeTable('responseCode')
   public loading = false;
   public projectId: number;
+  public project: ProjectResponse;
   public selectedItem: PublicCommentAdminResponse;
-
+  public user: User;
+  
   public data$: Observable<PublicCommentAdminResponse[]>;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
   private commentSaved$ = new Subject(); // To notify when 'save' happen.
@@ -50,8 +54,11 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private modalSvc: ModalService,
     private commentSvc: PublicCommentService,
-    private stateSvc: StateService
+    private stateSvc: StateService,
+    private projectSvc: ProjectService,
+    private keycloakService: KeycloakService
   ) {
+    this.user = this.keycloakService.getUser();
   }
 
   ngOnInit() {
@@ -60,6 +67,9 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     }
     
     this.projectId = this.route.snapshot.params.appId;
+    this.projectSvc.projectControllerFindOne(this.projectId).toPromise()
+        .then((result) => {this.project = result;});
+
     this.data$ = this.getProjectComments();
 
     this.commentSaved$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
@@ -94,11 +104,19 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
+  canReplyComment() {
+    const userCanModify = this.user.isAuthorizedForClientId(this.project.forestClient.id);
+    return userCanModify && (this.project.workflowState['code'] === 'COMMENT_OPEN'
+                            || this.project.workflowState['code'] === 'COMMENT_CLOSED');
+  }
+
   async saveComment(update: PublicCommentAdminUpdateRequest, selectedComment: PublicCommentAdminResponse) {
+    if (!this.canReplyComment()) {
+      return;
+    }
     const {id} = selectedComment;
     update.revisionCount = selectedComment.revisionCount;
 
-    // TODO: error handling seems not quite right, need to revise it later.
     try {
       this.loading = true;
       const result = await this.commentSvc.publicCommentControllerUpdate(id, update).toPromise();
@@ -120,7 +138,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
         this.loading = false;
       }
     } catch (err) {
-      this.modalSvc.openDialog({data: {...ERROR_DIALOG, message: 'Failed to update', title: ''}})
+      console.error("Failed to update.", err)
       this.loading = false;
     }
   }
