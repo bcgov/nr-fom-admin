@@ -5,19 +5,17 @@ import {of, Subject, throwError} from 'rxjs';
 // @ts-ignore
 import {concat, mergeMap, takeUntil, tap} from 'rxjs/operators';
 import {
-  AttachmentService,
   AttachmentResponse,
   WorkflowStateEnum,
   ProjectWorkflowStateChangeRequest, SubmissionService
 } from "core/api";
-import {ConfigService} from "../../../core/services/config.service";
 
 import {ProjectResponse, ProjectService, SpatialFeaturePublicResponse} from 'core/api';
 import { KeycloakService } from 'core/services/keycloak.service';
 import { User } from 'core/services/user';
 import { ModalService } from 'core/services/modal.service';
 import * as moment from 'moment';
-import {AttachmentTypeEnum} from "../../../core/models/attachmentTypeEnum";
+import {AttachmentResolverSvc} from "../../../core/services/AttachmentResolverSvc";
 
 
 @Component({
@@ -46,10 +44,9 @@ export class FomDetailComponent implements OnInit, OnDestroy {
     private router: Router,
     private modalSvc: ModalService,
     public projectService: ProjectService, // also used in template
-    public attachmentService: AttachmentService,
     private submissionSvc: SubmissionService,
-    public configSvc: ConfigService,
-    private keycloakService: KeycloakService
+    private keycloakService: KeycloakService,
+    public attachmentResolverSvc: AttachmentResolverSvc
   ) {
     this.user = this.keycloakService.getUser();
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
@@ -73,12 +70,11 @@ export class FomDetailComponent implements OnInit, OnDestroy {
 
       this.spatialDetail = data.spatialDetail;
       this.calculateDaysRemaining();
-
-      this.getAttachments()
+      this.attachmentResolverSvc.getAttachments(this.project.id)
         .then( (result) => {
           this.attachments = result;
         }).catch((error) => {
-          console.log('Error: ', error);
+        console.log('Error: ', error);
       });
     });
 
@@ -88,14 +84,6 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
-  }
-
-  public async getAttachments() {
-    return await this.attachmentService.attachmentControllerFind(this.project.id).toPromise()
-  }
-
-  getAttachmentUrl(id: number): string {
-    return id ? this.configSvc.getApiBasePath()+ '/api/attachment/file/' + id : '';
   }
 
   public deleteAttachment(id: number) {
@@ -110,7 +98,7 @@ export class FomDetailComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe((confirm) => {
       if (confirm) {
-        let result = this.attachmentService.attachmentControllerRemove(id).toPromise();
+        let result = this.attachmentResolverSvc.attachmentControllerRemove(id);
         result.then( () => {
           return this.onSuccess();
         }).catch( (error) => {
@@ -118,7 +106,6 @@ export class FomDetailComponent implements OnInit, OnDestroy {
         })
       }
     })
-
   }
 
   onSuccess() {
@@ -217,13 +204,7 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   * Only allows Supporting_Doc to be deleted in the defined states
   */
   public isDeleteAttachmentAllowed(attachment: AttachmentResponse) {
-
-    if(attachment.attachmentType.code === AttachmentTypeEnum.SUPPORTING_DOC){
-      return this.project.workflowState.code === WorkflowStateEnum.Initial
-        || this.project.workflowState.code === WorkflowStateEnum.CommentOpen
-        || this.project.workflowState.code === WorkflowStateEnum.CommentClosed
-    }
-    return false;
+    return this.attachmentResolverSvc.isDeleteAttachmentAllowed(this.project.workflowState.code, attachment);
   }
 
 }

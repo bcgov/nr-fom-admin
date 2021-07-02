@@ -35,7 +35,7 @@
       <div class="row">
         <legend>Application Details</legend>
       </div>
-      <fieldset>
+
         <div class="form-row" >
           <div class="form-group col-md-2" *ngIf="!this.isCreate">
             <label>ID</label>
@@ -163,16 +163,16 @@
             </textarea>
           </div>
         </div>
-        <div class="row">
+        <div class="row" *ngIf="!this.isCreate && isCreateAttachmentAllowed()">
           <div class="form-group col-md-6">
             <strong>Initial Public Notice</strong>
           </div>
-          <div class="col-md-6">
-              <strong>Attachments</strong>
+          <div class="form-group col-md-6">
+              <strong>Attachment</strong>
           </div>
         </div>
-        <div class="form-row">
-          <div class="form-group col-md" *ngIf="!this.isCreate && isCreateAttachmentAllowed()">
+        <div class="form-row" *ngIf="!this.isCreate && isCreateAttachmentAllowed()">
+          <div class="form-group col-md" >
             <app-upload-box [multipleFiles]="false" [files]="initialPublicDocument"
                             [isBlob]="true"
                             [fileTypes]="fileTypesParentInitial"
@@ -182,26 +182,70 @@
             <!--          <app-upload-box [multipleFiles]="true" [files]="applicationFiles" (fileBlobsUploaded)="addNewFiles($event)"></app-upload-box>-->
             <div class="fileTypes"> <em>png, jpeg, jpg, tif, pdf </em></div>
           </div>
-          <div class="form-group  col-md d-flex justify-content-center"> Working on it....
-
-
+          <div class="form-group col-md d-flex justify-content-center">
+            <div class=" form-row"
+                 *ngFor="let attachment of attachmentsInitialNotice" style="width: 25rem;">
+                <a class="doc-list__item form-row"
+                   [href]="attachmentResolverSvc.getAttachmentUrl(attachment.id)"
+                   [title]="attachment.fileName || ''"
+                   target="_blank" rel="noopener">
+                  <div class="cell doc-list__item-icon">
+                    <i class="material-icons">
+                      insert_drive_file
+                    </i>
+                  </div>
+                  <div class="cell doc-list__item-name">{{attachment.fileName}} &nbsp;</div>
+                  <div style="text-align: right;margin-right: 5px;">({{attachment.attachmentType.description}})</div>
+                </a>
+            </div>
           </div>
         </div>
-      </fieldset>
+      <hr *ngIf="!this.isCreate && isCreateAttachmentAllowed()">
+        <div class="form-row" *ngIf="!this.isCreate && isCreateAttachmentAllowed()">
 
-      <fieldset *ngIf="!this.isCreate && isCreateAttachmentAllowed()">
-        <div class="form-group mb-0" >
-          <legend>FOM Supporting Documents</legend>
+          <div class="form-group col-md-6">
+            <strong>FOM Supporting Documents</strong>
+          </div>
+          <div class="col-md-6">
+            <strong>Attachments</strong>
+          </div>
+          <div class="form-group col-md">
 
-          <app-upload-box [multipleFiles]="false" [files]="supportingDocuments"
-                          [isBlob]="true"
-                          [fileTypes]="fileTypesParentSupporting"
-                          (fileUploaded)="addNewFileSupporting($event)"
-                          (outputFileContent)="getContentFileSupportingDoc($event)">
-          </app-upload-box>
-          <div class="fileTypes"> <em>png, jpeg, jpg, tif, pdf, txt, csv, doc, docx, xls, xlsx </em></div>
+            <app-upload-box [multipleFiles]="false" [files]="supportingDocuments"
+                            [isBlob]="true"
+                            [fileTypes]="fileTypesParentSupporting"
+                            (fileUploaded)="addNewFileSupporting($event)"
+                            (outputFileContent)="getContentFileSupportingDoc($event)">
+            </app-upload-box>
+            <div class="fileTypes"> <em>png, jpeg, jpg, tif, pdf, txt, csv, doc, docx, xls, xlsx </em></div>
+          </div>
+          <div class="form-group col-md">
+          <div class="doc-list row"
+               *ngFor="let attachment of attachments" style="width: 25rem;">
+            <a class="doc-list__item"
+               [href]="attachmentResolverSvc.getAttachmentUrl(attachment.id)"
+               [title]="attachment.fileName || ''"
+               target="_blank" rel="noopener">
+              <div class="cell doc-list__item-icon">
+                <i class="material-icons">
+                  insert_drive_file
+                </i>
+              </div>
+              <div class="cell doc-list__item-name">{{attachment.fileName}}</div>
+              <div style="text-align: right;margin-right: 5px;">({{attachment.attachmentType.description}})</div>
+            </a>
+            <span *ngIf="isDeleteAttachmentAllowed(attachment)" class="vert-pipe">&nbsp;</span>
+            <button *ngIf="isDeleteAttachmentAllowed(attachment)" class="btn btn-icon row doc-list__item" title="Delete this attachment"
+                    (click)="deleteAttachment(attachment.id)"
+                    [disabled]="isDeleting">
+              <i class="material-icons">
+                delete
+              </i>
+            </button>
+          </div>
+          </div>
         </div>
-      </fieldset>
+
     </form>
   </div>
 </div>
