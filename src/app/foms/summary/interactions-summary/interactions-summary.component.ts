@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { MatAccordion } from '@angular/material/expansion';
 import { InteractionResponse } from 'core/api';
 import { ConfigService } from 'core/services/config.service';
 
@@ -13,6 +14,9 @@ export class InteractionsSummaryComponent implements OnInit {
 
   @Input() 
   requestError: boolean
+  
+  @ViewChild(MatAccordion) 
+  accordion: MatAccordion;
   
   constructor(private configSvc: ConfigService) { }
 
