@@ -32,6 +32,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CommentsSummaryComponent } from './summary/comments-summary/comments-summary.component';
 import { InteractionsSummaryComponent } from './summary/interactions-summary/interactions-summary.component';
 import { NgxPrintModule } from 'ngx-print';
+import {AttachmentResolverSvc} from "../../core/services/AttachmentResolverSvc";
 // services
 // import { ExportService } from 'core/services/export.service';
 
@@ -48,7 +49,7 @@ import { NgxPrintModule } from 'ngx-print';
         LeafletModule,
         BrowserAnimationsModule,
         BsDatepickerModule.forRoot(),
-        MatTableModule, 
+        MatTableModule,
         MatSlideToggleModule,
         MatExpansionModule,
         MatCardModule,
@@ -80,7 +81,8 @@ import { NgxPrintModule } from 'ngx-print';
     ShapeInfoComponent
   ],
   providers: [
-    AttachmentUploadService
+    AttachmentUploadService,
+    AttachmentResolverSvc
   ]
 })
 export class FomModule {

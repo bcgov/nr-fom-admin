@@ -74,6 +74,13 @@
                   <h2>Details</h2>
                   <ul class="nv-list">
                     <li>
+                      <span class="name">FSP ID:</span>
+                      <span
+                        class="value">
+                        {{project.fspId}}
+                      </span>
+                    </li>
+                    <li>
                       <span class="name">FOM Holder:</span>
                       <span
                         class="value">
@@ -94,7 +101,7 @@
                 <section *ngIf="attachments.length > 0">
                  <div class="doc-list row" *ngFor="let attachment of attachments" style="width: 25rem;">
                     <a class="doc-list__item"
-                       [href]="getAttachmentUrl(attachment.id)"
+                       [href]="attachmentResolverSvc.getAttachmentUrl(attachment.id)"
                        [title]="attachment.fileName || ''"
                        target="_blank" rel="noopener">
                       <div class="cell doc-list__item-icon">
