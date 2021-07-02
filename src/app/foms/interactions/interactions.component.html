@@ -1,6 +1,10 @@
 <ng-container *ngIf="data$ | async as data">
     <div class="top-container">
       <div class="container">
+        <div class="breadcrumb-container">
+          <a [routerLink]="['/a', projectId]">
+            <i class="material-icons">arrow_back </i> Back to FOM Details</a>
+        </div>
         <div class="title-container">
           <div class="title-container__title">
             <h1>Stakeholder Engagements for FOM #:{{projectId}}</h1>

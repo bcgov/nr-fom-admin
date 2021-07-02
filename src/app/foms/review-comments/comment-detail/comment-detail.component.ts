@@ -19,11 +19,15 @@ export class CommentDetailComponent {
   comment: PublicCommentAdminResponse;
 
   @Input() responseCodes: ResponseCode[];
+  @Input() canReplyComment: boolean;
 
   @Input() set selectedComment(comment: PublicCommentAdminResponse) {
     this.comment = comment;
     const commentFormGroup = new CommentDetailForm(comment)
     this.commentFormGroup = this.formBuilder.formGroup(commentFormGroup);
+    if (!this.canReplyComment) {
+      this.commentFormGroup.disable();
+    }
   };
 
   constructor(private formBuilder: RxFormBuilder, private stateSvc: StateService) {
