@@ -49,11 +49,14 @@
         </div>
         <div class="review-comments__detail panel">
           <div class="panel-scroll">
-            <app-comment-detail #commentDetailForm="commentForm" [responseCodes]="responseCodes">
+            <app-comment-detail #commentDetailForm="commentForm" 
+                [responseCodes]="responseCodes"
+                [canReplyComment]="canReplyComment()">
               <div class="row">
                 <button type="button" title="Save this comment response"
                         class="btn btn-sm btn-primary btn-container"
                         [disabled]="loading"
+                        [hidden]="!canReplyComment()"
                         (click)="saveComment(commentDetailForm.commentFormGroup.value, commentDetailForm.comment)">
                   Save response
                 </button>

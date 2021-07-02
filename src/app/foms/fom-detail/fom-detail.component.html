@@ -177,8 +177,11 @@
               </li>
             </ul>
             <div class="btn-container" *ngIf="project">
-              <button class="cta-btn btn btn-sm btn-outline-primary" type="button" title="Review comments"
+              <button class="cta-btn btn btn-sm btn-outline-primary" 
+                      type="button" 
+                      title="Review comments"
                       [disabled]="isDeleting"
+                      [hidden]="!canAccessComments()"
                       [routerLink]="['/comments', project.id]">
                 Review Comments
               </button>
@@ -186,7 +189,8 @@
           </div>
         </div>
 
-        <div class="aside-card">
+        <div class="aside-card" 
+            [hidden]="!canAccessInteractions()">
           <h3 class="title">Stakeholder Engagement</h3>
           <div class="body">
             <div>

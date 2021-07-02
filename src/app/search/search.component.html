@@ -148,7 +148,8 @@
                       <i class="material-icons">public</i>
                       GeoSpatial Submissions
                     </button>
-                    <button class="dropdown-item" type="button" [routerLink]="['/comments', project.id]">
+                    <button class="dropdown-item" type="button" [routerLink]="['/comments', project.id]"
+                      [hidden]="!canAccessComments(project)">
                       <i class="material-icons">mode_comment</i>
                       Review Comments
                     </button>
