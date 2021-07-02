@@ -31,6 +31,7 @@ import { SummaryComponent } from './summary/summary.component';
 import { MatIconModule } from '@angular/material/icon';
 import { CommentsSummaryComponent } from './summary/comments-summary/comments-summary.component';
 import { InteractionsSummaryComponent } from './summary/interactions-summary/interactions-summary.component';
+import {AttachmentResolverSvc} from "../../core/services/AttachmentResolverSvc";
 // services
 // import { ExportService } from 'core/services/export.service';
 
@@ -47,7 +48,7 @@ import { InteractionsSummaryComponent } from './summary/interactions-summary/int
         LeafletModule,
         BrowserAnimationsModule,
         BsDatepickerModule.forRoot(),
-        MatTableModule, 
+        MatTableModule,
         MatSlideToggleModule,
         MatExpansionModule,
         MatCardModule,
@@ -78,7 +79,8 @@ import { InteractionsSummaryComponent } from './summary/interactions-summary/int
     ShapeInfoComponent
   ],
   providers: [
-    AttachmentUploadService
+    AttachmentUploadService,
+    AttachmentResolverSvc
   ]
 })
 export class FomModule {

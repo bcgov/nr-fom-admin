@@ -14,7 +14,7 @@ import {
   ForestClientResponse,
   ForestClientService,
   AttachmentService,
-  ProjectCreateRequest, WorkflowStateEnum
+  ProjectCreateRequest, WorkflowStateEnum, AttachmentResponse
 } from 'core/api';
 import {RxFormBuilder, RxFormGroup} from '@rxweb/reactive-form-validators';
 import { DatePipe } from '@angular/common';
@@ -25,6 +25,7 @@ import {AttachmentUploadService} from "../../../core/utils/attachmentUploadServi
 import { AttachmentTypeEnum } from "../../../core/models/attachmentTypeEnum";
 import {User} from "../../../core/services/user";
 import {KeycloakService} from "../../../core/services/keycloak.service";
+import {AttachmentResolverSvc} from "../../../core/services/AttachmentResolverSvc";
 
 export type ApplicationPageType = 'create' | 'edit';
 
@@ -59,6 +60,9 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
   public isSubmitSaveClicked = false;
   public descriptionValue: string = null;
   public user: User;
+  public attachments: AttachmentResponse[] = [];
+  public attachmentsInitialNotice: AttachmentResponse[] = [];
+  public isDeleting = false;
   public fileTypesParentInitial: string[] =
     ['image/png', 'image/jpeg', 'image/jpg', 'image/tiff',
       'image/x-tiff', 'application/pdf']
@@ -83,14 +87,14 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     public snackBar: MatSnackBar,
     private projectSvc: ProjectService,
-    private attachmentSvc: AttachmentService,
+    public attachmentResolverSvc: AttachmentResolverSvc,
     private attachmentUploadSvc: AttachmentUploadService,
     private formBuilder: RxFormBuilder,
     public stateSvc: StateService,
     private modalSvc: ModalService,
     private datePipe: DatePipe,
     private  forestSvc: ForestClientService,
-    private keycloakService: KeycloakService
+    private keycloakService: KeycloakService,
   ) {
     this.user = this.keycloakService.getUser();
   }
@@ -133,6 +137,18 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
         this.forestClientSelect = this.originalProjectResponse.forestClient.id;
 
         this.isPublishState = this.originalProjectResponse.workflowState.code === WorkflowStateEnum.Published;
+
+        this.attachmentResolverSvc.getAttachments(this.originalProjectResponse.id)
+          .then( (result) => {
+            for(const attachmentResponse of result ) {
+              if(attachmentResponse.attachmentType.code === AttachmentTypeEnum.PUBLIC_NOTICE)
+                this.attachmentsInitialNotice.push(attachmentResponse);
+              else
+                this.attachments.push(attachmentResponse);
+            }
+          }).catch((error) => {
+          console.log('Error: ', error);
+        });
       }
       const form = new FomAddEditForm(data);
       this.fg = <RxFormGroup>this.formBuilder.formGroup(form);
@@ -372,4 +388,43 @@ export class FomAddEditComponent implements OnInit, AfterViewInit, OnDestroy {
     || this.originalProjectResponse.workflowState.code === WorkflowStateEnum.CommentOpen
     || this.originalProjectResponse.workflowState.code === WorkflowStateEnum.CommentClosed
   }
+
+  public deleteAttachment(id: number) {
+    const dialogRef = this.modalSvc.openDialog({
+      data: {
+        message: `You are about to delete this attachment. Are you sure?`,
+        title: 'Delete Attachment',
+        width: '340px',
+        height: '200px',
+        buttons: {confirm: {text: 'OK'}, cancel: { text: 'cancel' }}
+      }
+    });
+    dialogRef.afterClosed().subscribe((confirm) => {
+      if (confirm) {
+        let result = this.attachmentResolverSvc.attachmentControllerRemove(id);
+        result.then( () => {
+          return this.onSuccessAttachment(this.originalProjectResponse.id);
+        }).catch( (error) => {
+          console.log('Error:', error);
+        })
+      }
+    })
+  }
+
+  onSuccessAttachment(id: number) {
+    this.router.navigate([`a/${id}/edit`])
+      .then( () => {
+        window.location.reload();
+      })
+
+  }
+
+  /*
+* Only allows Supporting_Doc to be deleted in the defined states
+*/
+  public isDeleteAttachmentAllowed(attachment: AttachmentResponse) {
+    return this.attachmentResolverSvc.isDeleteAttachmentAllowed(this.originalProjectResponse.workflowState.code, attachment);
+  }
+
+
 }

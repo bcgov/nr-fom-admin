@@ -40,6 +40,19 @@ form {
   }
 }
 
+.vert-pipe {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  display: inline-block;
+  width: 1px;
+  border-left: 1px solid #999;
+  vertical-align: middle;
+
+  &.first-pipe {
+    margin-left: 1.2rem;
+  }
+}
+
 // Title Button Variants
 .publish-btn {
   width: 9rem;
