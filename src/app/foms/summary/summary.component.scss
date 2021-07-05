@@ -83,18 +83,24 @@
 
 
 @media print {
-  :host ::ng-deep {
-      .bottom-container {
-          overflow: visible;
-          page-break-after: always;
-      }
-  
-      button {
-          display: none;
-      }
+  .bottom-container {
+      overflow: visible;
+      page-break-after: always;
+  }
 
-      .project-relations {
-          page-break-before: always;
-      }
+  .project-info {
+    overflow: visible;
+  }
+
+  button {
+      display: none;
+  }
+
+  #sifeatureList {
+    display: none;
+  }
+
+  a {
+    display: none;
   }
 }
