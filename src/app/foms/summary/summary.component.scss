@@ -80,3 +80,21 @@
     font-weight: 600;
   }
 }
+
+
+@media print {
+  :host ::ng-deep {
+      .bottom-container {
+          overflow: visible;
+          page-break-after: always;
+      }
+  
+      button {
+          display: none;
+      }
+
+      .project-relations {
+          page-break-before: always;
+      }
+  }
+}
