@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { MatAccordion } from '@angular/material/expansion';
 import { PublicCommentAdminResponse, ResponseCodeEnum } from 'core/api';
 import { StateService } from 'core/services/state.service';
 import * as _ from 'lodash';
@@ -20,6 +21,9 @@ export class CommentsSummaryComponent implements OnInit {
   @Input() 
   requestError: boolean
 
+  @ViewChild(MatAccordion) 
+  accordion: MatAccordion;
+  
   constructor(private stateSvc: StateService) { }
 
   ngOnInit(): void { }

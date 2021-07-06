@@ -57,7 +57,9 @@ export class InteractionDetailComponent implements OnInit {
 
   getFileContent(fileContent: any) {
     this.fileContent = fileContent;
-    this.interactionFormGroup.get('fileContent').setValue(fileContent);
+    // Convert to proper Blob type for adding attachment to FormData.
+    const fileContentAsBlob = new Blob([this.fileContent], {type: this.files[0].type});
+    this.interactionFormGroup.get('fileContent').setValue(fileContentAsBlob);
   }
 
   private async retrieveAttachment(attachmentId: number) {

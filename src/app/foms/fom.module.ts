@@ -31,6 +31,7 @@ import { SummaryComponent } from './summary/summary.component';
 import { MatIconModule } from '@angular/material/icon';
 import { CommentsSummaryComponent } from './summary/comments-summary/comments-summary.component';
 import { InteractionsSummaryComponent } from './summary/interactions-summary/interactions-summary.component';
+import { NgxPrintModule } from 'ngx-print';
 import {AttachmentResolverSvc} from "../../core/services/AttachmentResolverSvc";
 // services
 // import { ExportService } from 'core/services/export.service';
@@ -53,7 +54,8 @@ import {AttachmentResolverSvc} from "../../core/services/AttachmentResolverSvc";
         MatExpansionModule,
         MatCardModule,
         MatIconModule,
-        MatBadgeModule
+        MatBadgeModule,
+        NgxPrintModule
     ],
   declarations: [
     FomDetailComponent,
