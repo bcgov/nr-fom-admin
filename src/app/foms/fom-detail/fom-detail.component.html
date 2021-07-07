@@ -99,7 +99,7 @@
                 <br />
                 <h2>Attachments</h2>
                 <section *ngIf="attachments.length > 0">
-                 <div class="doc-list row" *ngFor="let attachment of attachments" style="width: 25rem;">
+                 <div class="doc-list row" *ngFor="let attachment of attachments">
                     <a class="doc-list__item"
                        [href]="attachmentResolverSvc.getAttachmentUrl(attachment.id)"
                        [title]="attachment.fileName || ''"
@@ -184,8 +184,8 @@
               </li>
             </ul>
             <div class="btn-container" *ngIf="project">
-              <button class="cta-btn btn btn-sm btn-outline-primary" 
-                      type="button" 
+              <button class="cta-btn btn btn-sm btn-outline-primary"
+                      type="button"
                       title="Review comments"
                       [disabled]="isDeleting"
                       [hidden]="!canAccessComments()"
@@ -196,7 +196,7 @@
           </div>
         </div>
 
-        <div class="aside-card" 
+        <div class="aside-card"
             [hidden]="!canAccessInteractions()">
           <h3 class="title">Stakeholder Engagement</h3>
           <div class="body">
