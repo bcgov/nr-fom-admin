@@ -21,6 +21,15 @@
             <span>{{isPublishing ? 'Publishing' : 'Publish'}}</span>
           </button>
          </div>
+         <div class="btn-container">
+          <button class="btn btn-primary ml-1" type="button" title="Finalize FOM"
+                  [disabled]="isFinalizing"
+                  [hidden]="!canFinalize()"
+                  (click)="finalizeFOM()">
+            <i class="spinner rotating" [hidden]="!isFinalizing"></i>
+            <span>{{isFinalizing ? 'Finalizing' : 'Finalize'}}</span>
+          </button>
+         </div>         
         <span class="vert-pipe">&nbsp;</span>
         <button class="btn btn-primary ml-1" type="button" title="Summary Report"
               [routerLink]="['/a', project.id, 'summary']">
