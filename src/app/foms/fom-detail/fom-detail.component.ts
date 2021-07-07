@@ -26,6 +26,7 @@ import {AttachmentResolverSvc} from "../../../core/services/AttachmentResolverSv
 export class FomDetailComponent implements OnInit, OnDestroy {
   public isPublishing = false;
   public isDeleting = false;
+  public isFinalizing = false;
   public isRefreshing = false;
   public application: ProjectResponse = null;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
@@ -128,10 +129,51 @@ export class FomDetailComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((confirm) => {
       if (confirm) {
         this.isDeleting = true;
-        this.projectService.projectControllerRemove(this.project.id).subscribe(()=> {
-          this.isDeleting = false;
-          this.router.navigate(['/search']); // Delete successfully, back to search.
-        });
+        this.projectService.projectControllerRemove(this.project.id)
+        .subscribe(
+          ()=> {
+            this.isDeleting = false;
+            this.router.navigate(['/search']); // Delete successfully, back to search.
+          },
+          (error) => {
+            this.isDeleting = false;
+            console.error(error);
+          }
+        );
+      }
+    })
+  }
+
+  finalizeFOM() {
+    const dialogRef = this.modalSvc.openDialog({
+      data: {
+        message: `You are about to finalize FOM with id ${this.project.id}. Are you sure?`,
+        title: 'Finalize FOM',
+        width: '340px',
+        height: '200px',
+        buttons: {confirm: {text: 'OK'}, cancel: { text: 'cancel' }}
+      }
+    });
+    dialogRef.afterClosed().subscribe((confirm) => {
+      if (confirm) {
+        this.isFinalizing = true;
+        this.projectService.projectControllerStateChange(
+            this.project.id, 
+            {
+              workflowStateCode: WorkflowStateEnum.Finalized, 
+              revisionCount: this.project.revisionCount
+            }
+        )
+        .subscribe(
+          (result)=> {
+            this.isFinalizing = false;
+            this.onSuccess();
+          },
+          (error) => {
+            this.isFinalizing = false;
+            console.error(error);
+          }
+        );
       }
     })
   }
@@ -192,6 +234,10 @@ export class FomDetailComponent implements OnInit, OnDestroy {
 
     return [WorkflowStateEnum.CommentClosed, WorkflowStateEnum.Finalized, WorkflowStateEnum.Expired]
             .includes(workflowStateCode as WorkflowStateEnum);
+  }
+
+  public canFinalize() {
+    return this.project.workflowState.code === WorkflowStateEnum.CommentClosed;
   }
 
   public canAccessComments(): boolean {
