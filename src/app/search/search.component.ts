@@ -5,7 +5,7 @@ import {Location} from '@angular/common';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import * as _ from 'lodash';
-import {ProjectService} from "core/api";
+import {ProjectService, WorkflowStateEnum} from "core/api";
 import {ProjectResponse} from 'core/api';
 import { StateService } from 'core/services/state.service';
 import { KeycloakService } from 'core/services/keycloak.service';
@@ -43,7 +43,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     public snackBar: MatSnackBar,
     public searchProjectService: ProjectService,
     private modalSvc: ModalService
-  ) { 
+  ) {
     this.user = this.keycloakService.getUser();
   }
 
@@ -74,7 +74,7 @@ export class SearchComponent implements OnInit, OnDestroy {
           this.count = this.projects.length;
           const limit = 2500;
           if (this.count >= limit) {
-            this.modalSvc.openSnackBar({message: `Warning: Maximum of ${limit} search results exceeded - 
+            this.modalSvc.openSnackBar({message: `Warning: Maximum of ${limit} search results exceeded -
             not all results have been displayed. Please refine your search criteria.`, button: 'OK'});
           }
         },
@@ -139,8 +139,21 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   public canAccessComments(project: ProjectResponse): boolean {
     const userCanView = this.user.isMinistry || this.user.isAuthorizedForClientId(project.forestClient.id);
-    return userCanView && (project.workflowState['code'] !== 'INITIAL' 
+    return userCanView && (project.workflowState['code'] !== 'INITIAL'
                           && project.workflowState['code'] !== 'PUBLISHED');
+  }
+
+  public canEditFOM(project: ProjectResponse): boolean {
+    const userCanView = this.user.isForestClient || this.user.isAuthorizedForClientId(project.forestClient.id);
+    return userCanView && (project.workflowState.code !== WorkflowStateEnum.Finalized
+      && project.workflowState.code !== WorkflowStateEnum.Expired);
+  }
+
+  public canViewSubmission(project: ProjectResponse): boolean {
+    const userCanView = this.user.isForestClient
+      || this.user.isAuthorizedForClientId(project.forestClient.id);
+    return userCanView && (project.workflowState.code === WorkflowStateEnum.Initial
+      || project.workflowState.code === WorkflowStateEnum.CommentClosed);
   }
 
   ngOnDestroy() {

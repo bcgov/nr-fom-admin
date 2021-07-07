@@ -12,7 +12,7 @@
             [disabled]="searching">
             Clear
           </button>
-          <button type="submit" class="filter-btn-search btn btn-primary" 
+          <button type="submit" class="filter-btn-search btn btn-primary"
                   [disabled]="searching" title="Search for FOMs">
                   Search
             <i class="spinner-border" [hidden]="!searching"></i>
@@ -29,7 +29,7 @@
           <label for="fspIdInput" style="white-space: nowrap;">
                 FSP ID
           </label>
-          <input id="fspIdInput" name="fFspId" type="number" 
+          <input id="fspIdInput" name="fFspId" type="number"
                 min="0" step="1"
                 oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, 9);"
                 class="form-control"
@@ -59,7 +59,7 @@
                   [disabled]="searching"
                   [(ngModel)]="fStatus">
             <option [value]="undefined"></option> <!-- Note, for 'string' type use "undefined" so it can pre-selected -->
-            <option *ngFor="let status of statusCodes" 
+            <option *ngFor="let status of statusCodes"
                     [value]="status.code"
                     [selected]="status.code === fStatus">
                     {{status.description}}</option>
@@ -76,7 +76,7 @@
                   [disabled]="searching"
                   [(ngModel)]="fDistrict">
             <option [value]="null" selected></option> <!-- Note, for 'number' type use "null" so it can pre-selected -->
-            <option *ngFor="let district of districts" 
+            <option *ngFor="let district of districts"
                     [value]="district.id"
                     [selected]="district.id === fDistrict">
                     {{district.name}}</option>
@@ -129,7 +129,7 @@
               <td>
                 {{project.commentingClosedDate | date:'mediumDate'}}
               </td>
-  
+
               <td class="actions">
                 <div ngbDropdown placement="bottom-right">
                   <button ngbDropdownToggle class="btn btn-sm btn-outline-primary" type="button">
@@ -140,11 +140,13 @@
                       <i class="material-icons">insert_drive_file</i>
                       View FOM
                     </button>
-                    <button class="dropdown-item" type="button" [routerLink]="['/a', project.id, 'edit']">
+                    <button class="dropdown-item" type="button" [routerLink]="['/a', project.id, 'edit']"
+                      [hidden]="!canEditFOM(project)">
                       <i class="material-icons">edit</i>
                       Edit FOM
                     </button>
-                    <button class="dropdown-item" type="button" [routerLink]="['/a', project.id, 'upload']">
+                    <button class="dropdown-item" type="button" [routerLink]="['/a', project.id, 'upload']"
+                    [hidden]="!canViewSubmission(project)">
                       <i class="material-icons">public</i>
                       GeoSpatial Submissions
                     </button>
