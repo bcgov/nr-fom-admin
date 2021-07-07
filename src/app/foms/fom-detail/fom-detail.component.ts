@@ -119,7 +119,7 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   deleteFOM() {
     const dialogRef = this.modalSvc.openDialog({
       data: {
-        message: `You are about to withdraw FOM with id ${this.project.id}. Are you sure?`,
+        message: `You are about to withdraw FOM ${this.project.id} - ${this.project.name}. Are you sure?`,
         title: 'Withdraw FOM',
         width: '340px',
         height: '200px',
@@ -147,7 +147,7 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   finalizeFOM() {
     const dialogRef = this.modalSvc.openDialog({
       data: {
-        message: `You are about to finalize FOM with id ${this.project.id}. Are you sure?`,
+        message: `You are about to finalize FOM ${this.project.id} - ${this.project.name}. Are you sure?`,
         title: 'Finalize FOM',
         width: '340px',
         height: '200px',
