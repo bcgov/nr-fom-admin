@@ -74,6 +74,8 @@ export class FomDetailComponent implements OnInit, OnDestroy {
       this.attachmentResolverSvc.getAttachments(this.project.id)
         .then( (result) => {
           this.attachments = result;
+          //Sorting by Public Notice and Supporting Document
+          this.attachments.sort((a,b) => (a.attachmentType.code < b.attachmentType.code? -1 : 1));
         }).catch((error) => {
         console.log('Error: ', error);
       });
@@ -158,9 +160,9 @@ export class FomDetailComponent implements OnInit, OnDestroy {
       if (confirm) {
         this.isFinalizing = true;
         this.projectService.projectControllerStateChange(
-            this.project.id, 
+            this.project.id,
             {
-              workflowStateCode: WorkflowStateEnum.Finalized, 
+              workflowStateCode: WorkflowStateEnum.Finalized,
               revisionCount: this.project.revisionCount
             }
         )
@@ -184,13 +186,6 @@ export class FomDetailComponent implements OnInit, OnDestroy {
     if(this.daysRemaining < 0){
       this.daysRemaining = 0;
     }
-  }
-
-  public verifyPublishingReady(){
-      return this.project.commentingOpenDate && this.spatialDetail
-        && this.spatialDetail.length > 0
-        && this.project.workflowState.code === WorkflowStateEnum.Initial;
-
   }
 
   public async publishFOM(){
@@ -242,17 +237,39 @@ export class FomDetailComponent implements OnInit, OnDestroy {
 
   public canAccessComments(): boolean {
     const userCanView = this.user.isMinistry || this.user.isAuthorizedForClientId(this.project.forestClient.id);
-    return userCanView && (this.project.workflowState.code !== WorkflowStateEnum.Initial 
+    return userCanView && (this.project.workflowState.code !== WorkflowStateEnum.Initial
                         && this.project.workflowState.code !== WorkflowStateEnum.Published);
+  }
+
+  public canEditFOM(): boolean {
+    const userCanView = this.user.isForestClient
+      || this.user.isAuthorizedForClientId(this.project.forestClient.id);
+    return userCanView && (this.project.workflowState.code !== WorkflowStateEnum.Finalized
+      && this.project.workflowState.code !== WorkflowStateEnum.Expired);
+  }
+
+  public canViewSubmission(): boolean {
+    const userCanView = this.user.isForestClient
+      || this.user.isAuthorizedForClientId(this.project.forestClient.id);
+    return userCanView && (this.project.workflowState.code === WorkflowStateEnum.Initial
+      || this.project.workflowState.code === WorkflowStateEnum.CommentClosed);
+  }
+
+  public verifyPublishingReady(){
+    return this.project.commentingOpenDate && this.spatialDetail
+      && this.spatialDetail.length > 0
+      && this.project.workflowState.code === WorkflowStateEnum.Initial;
+
+  }
+
+  public canViewPublishing(): boolean {
+    return this.user.isForestClient
+      || this.user.isAuthorizedForClientId(this.project.forestClient.id);
+
   }
 
   public canAccessInteractions(): boolean {
     return this.canAccessComments(); // same as comments for access/viewing.
-  }
-
-  public isSubmissionAllowed(){
-    return this.project.workflowState.code === WorkflowStateEnum.Initial
-      || this.project.workflowState.code === WorkflowStateEnum.CommentClosed ;
   }
 
   /*
