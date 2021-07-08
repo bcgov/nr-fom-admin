@@ -20,7 +20,7 @@
           (click)="submit()"
           [disabled]="!fg.isModified"
         >{{ isLoading ? "Submitting" : "Submit" }}
-          <i class="spinner rotating" [hidden]="!stateSvc.loading"></i>
+          <em class="spinner rotating" [hidden]="!stateSvc.loading"></em>
         </button>
       </div>
     </div>
@@ -67,7 +67,7 @@
               <div class="input-group-append">
                 <button class="btn btn-icon"  type="button" tabindex="-1" (click)="openDate.show()"
                         [attr.aria-expanded]="openDate.isOpen">
-                  <i class="material-icons">date_range</i>
+                  <em class="material-icons">date_range</em>
                 </button>
               </div>
             </div>
@@ -92,7 +92,7 @@
               <div class="input-group-append">
                 <button class="btn btn-icon"  type="button" tabindex="-1" (click)="closedDate.show()"
                         [attr.aria-expanded]="closedDate.isOpen">
-                  <i class="material-icons">date_range</i>
+                  <em class="material-icons">date_range</em>
                 </button>
               </div>
             </div>
@@ -190,9 +190,9 @@
                      [title]="attachment.fileName || ''"
                      target="_blank" rel="noopener">
                     <div class="cell doc-list__item-icon">
-                      <i class="material-icons">
+                      <em class="material-icons">
                         insert_drive_file
-                      </i>
+                      </em>
                     </div>
                     <div class="cell doc-list__item-name">{{attachment.fileName}} &nbsp;</div>
                     <div style="text-align: right;margin-right: 5px;">({{attachment.attachmentType.description}})</div>
@@ -228,9 +228,9 @@
                  [title]="attachment.fileName || ''"
                  target="_blank" rel="noopener">
                 <div class="cell doc-list__item-icon">
-                  <i class="material-icons">
+                  <em class="material-icons">
                     insert_drive_file
-                  </i>
+                  </em>
                 </div>
                 <div class="cell doc-list__item-name">{{attachment.fileName}}</div>
                 <div style="text-align: right;margin-right: 5px;">({{attachment.attachmentType.description}})</div>
@@ -239,9 +239,9 @@
                 <button *ngIf="isDeleteAttachmentAllowed(attachment)" class="btn btn-icon row doc-list__item" title="Delete this attachment"
                       (click)="deleteAttachment(attachment.id)"
                       [disabled]="isDeleting">
-                  <i class="material-icons">
+                  <em class="material-icons">
                     delete
-                  </i>
+                  </em>
                 </button>
             </div>
           </div>
@@ -260,7 +260,7 @@
           (click)="saveApplication()"
           [disabled]="isPublishState"
   >{{ isLoading ? "Saving" : "Save" }}
-    <i class="spinner rotating" [hidden]="!stateSvc.loading"></i>
+    <em class="spinner rotating" [hidden]="!stateSvc.loading"></em>
   </button>
 
 </ng-template>

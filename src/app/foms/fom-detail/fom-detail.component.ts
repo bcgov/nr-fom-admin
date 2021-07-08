@@ -242,15 +242,13 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   }
 
   public canEditFOM(): boolean {
-    const userCanView = this.user.isForestClient
-      || this.user.isAuthorizedForClientId(this.project.forestClient.id);
-    return userCanView && (this.project.workflowState.code !== WorkflowStateEnum.Finalized
+    const userCanEdit = this.user.isAuthorizedForClientId(this.project.forestClient.id);
+    return userCanEdit && (this.project.workflowState.code !== WorkflowStateEnum.Finalized
       && this.project.workflowState.code !== WorkflowStateEnum.Expired);
   }
 
   public canViewSubmission(): boolean {
-    const userCanView = this.user.isForestClient
-      || this.user.isAuthorizedForClientId(this.project.forestClient.id);
+    const userCanView = this.user.isAuthorizedForClientId(this.project.forestClient.id);
     return userCanView && (this.project.workflowState.code === WorkflowStateEnum.Initial
       || this.project.workflowState.code === WorkflowStateEnum.CommentClosed);
   }
@@ -263,8 +261,8 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   }
 
   public canViewPublishing(): boolean {
-    return this.user.isForestClient
-      || this.user.isAuthorizedForClientId(this.project.forestClient.id);
+    return this.user.isAuthorizedForClientId(this.project.forestClient.id)
+      && this.project.workflowState.code === WorkflowStateEnum.Initial;
 
   }
 

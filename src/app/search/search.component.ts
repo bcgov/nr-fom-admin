@@ -144,14 +144,13 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 
   public canEditFOM(project: ProjectResponse): boolean {
-    const userCanView = this.user.isForestClient || this.user.isAuthorizedForClientId(project.forestClient.id);
-    return userCanView && (project.workflowState.code !== WorkflowStateEnum.Finalized
+    const userCanEdit = this.user.isAuthorizedForClientId(project.forestClient.id);
+    return userCanEdit && (project.workflowState.code !== WorkflowStateEnum.Finalized
       && project.workflowState.code !== WorkflowStateEnum.Expired);
   }
 
   public canViewSubmission(project: ProjectResponse): boolean {
-    const userCanView = this.user.isForestClient
-      || this.user.isAuthorizedForClientId(project.forestClient.id);
+    const userCanView = this.user.isAuthorizedForClientId(project.forestClient.id);
     return userCanView && (project.workflowState.code === WorkflowStateEnum.Initial
       || project.workflowState.code === WorkflowStateEnum.CommentClosed);
   }
