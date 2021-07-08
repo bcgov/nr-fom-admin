@@ -18,7 +18,7 @@
                   [disabled]="!verifyPublishingReady()"
                   [hidden]="!canViewPublishing()"
                   (click)="publishFOM()">
-            <i class="spinner rotating" [hidden]="!isPublishing"></i>
+            <em class="spinner rotating" [hidden]="!isPublishing"></em>
             <span>{{isPublishing ? 'Publishing' : 'Publish'}}</span>
           </button>
          </div>
@@ -27,7 +27,7 @@
                   [disabled]="isFinalizing"
                   [hidden]="!canFinalize()"
                   (click)="finalizeFOM()">
-            <i class="spinner rotating" [hidden]="!isFinalizing"></i>
+            <em class="spinner rotating" [hidden]="!isFinalizing"></em>
             <span>{{isFinalizing ? 'Finalizing' : 'Finalize'}}</span>
           </button>
          </div>
@@ -44,10 +44,10 @@
                 *ngIf="canWithdraw()"
                 (click)="deleteFOM()"
                 [disabled]="isDeleting">
-          <i class="spinner-border" [hidden]="!isDeleting"></i>
-          <i class="material-icons" [hidden]="isDeleting" >
+          <em class="spinner-border" [hidden]="!isDeleting"></em>
+          <em class="material-icons" [hidden]="isDeleting" >
             delete
-          </i>
+          </em>
         </button>
       </div>
     </div>
@@ -63,9 +63,9 @@
           <ul ngbNav #nav="ngbNav" class="nav-tabs">
             <li ngbNavItem [disabled]="isDeleting">
               <a ngbNavLink>
-                <i class="material-icons">
+                <em class="material-icons">
                   info
-                </i>
+                </em>
                 FOM Information
               </a>
               <ng-template ngbNavContent>
@@ -114,9 +114,9 @@
                        [title]="attachment.fileName || ''"
                        target="_blank" rel="noopener">
                       <div class="cell doc-list__item-icon">
-                        <i class="material-icons">
+                        <em class="material-icons">
                            insert_drive_file
-                        </i>
+                        </em>
                       </div>
                       <div class="cell doc-list__item-name">{{attachment.fileName}}</div>
                       <div style="text-align: right;margin-right: 5px;">({{attachment.attachmentType.description}})</div>
@@ -125,9 +125,9 @@
                     <button *ngIf="isDeleteAttachmentAllowed(attachment)" class="btn btn-icon row doc-list__item" title="Delete this attachment"
                             (click)="deleteAttachment(attachment.id)"
                             [disabled]="isDeleting">
-                      <i class="material-icons">
+                      <em class="material-icons">
                         delete
-                      </i>
+                      </em>
                     </button>
                   </div>
                 </section>
@@ -136,9 +136,9 @@
             <li ngbNavItem [disabled]="isDeleting">
 
               <a ngbNavLink>
-                <i class="material-icons">
+                <em class="material-icons">
                   pin_drop
-                </i>
+                </em>
                 Location
               </a>
 
