@@ -15,7 +15,7 @@
           <button type="submit" class="filter-btn-search btn btn-primary"
                   [disabled]="searching" title="Search for FOMs">
                   Search
-            <i class="spinner-border" [hidden]="!searching"></i>
+            <em class="spinner-border" [hidden]="!searching"></em>
           </button>
         </div>
       </div>
@@ -96,14 +96,14 @@
         <table class="table" *ngIf="count > 0">
           <thead>
           <tr>
-            <th class="disp">FOM ID</th>
-            <th class="client">FOM Name</th>
-            <th class="disp">FSP ID</th>
-            <th class="client">FOM Holder Name</th>
-            <th class="client">District</th>
-            <th class="status">FOM Status</th>
-            <th class="client">Commenting Closed Date</th>
-            <th class="actions"></th>
+            <th id="fomId" class="disp">FOM ID</th>
+            <th id="fomName" class="client">FOM Name</th>
+            <th id="fspId" class="disp">FSP ID</th>
+            <th id="fomHolder" class="client">FOM Holder Name</th>
+            <th id="district" class="client">District</th>
+            <th id="fomStatus" class="status">FOM Status</th>
+            <th id="commentClosed" class="client">Commenting Closed Date</th>
+            <th id="actions" class="actions"></th>
           </tr>
           </thead>
           <ng-template ngFor let-project [ngForOf]="projects">
@@ -137,26 +137,26 @@
                   </button>
                   <div ngbDropdownMenu>
                     <button class="dropdown-item" type="button" [routerLink]="['/a', project.id]">
-                      <i class="material-icons">insert_drive_file</i>
+                      <em class="material-icons">insert_drive_file</em>
                       View FOM
                     </button>
                     <button class="dropdown-item" type="button" [routerLink]="['/a', project.id, 'edit']"
                       [hidden]="!canEditFOM(project)">
-                      <i class="material-icons">edit</i>
+                      <em class="material-icons">edit</em>
                       Edit FOM
                     </button>
                     <button class="dropdown-item" type="button" [routerLink]="['/a', project.id, 'upload']"
                     [hidden]="!canViewSubmission(project)">
-                      <i class="material-icons">public</i>
+                      <em class="material-icons">public</em>
                       GeoSpatial Submissions
                     </button>
                     <button class="dropdown-item" type="button" [routerLink]="['/comments', project.id]"
                       [hidden]="!canAccessComments(project)">
-                      <i class="material-icons">mode_comment</i>
+                      <em class="material-icons">mode_comment</em>
                       Review Comments
                     </button>
                     <button class="dropdown-item" type="button" [routerLink]="['/a', project.id, 'summary']">
-                      <i class="material-icons">subject</i>
+                      <em class="material-icons">subject</em>
                       Summary Report
                     </button>
                   </div>

@@ -232,7 +232,8 @@ export class FomDetailComponent implements OnInit, OnDestroy {
   }
 
   public canFinalize() {
-    return this.project.workflowState.code === WorkflowStateEnum.CommentClosed;
+    return this.user.isAuthorizedForClientId(this.project.forestClient.id)
+    && this.project.workflowState.code === WorkflowStateEnum.CommentClosed;
   }
 
   public canAccessComments(): boolean {
