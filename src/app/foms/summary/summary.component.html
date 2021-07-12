@@ -3,7 +3,7 @@
     <div class="container" style="padding-top: 18px; padding-bottom: 18px;">
       <div class="breadcrumb-container">
         <a [routerLink]="['/a', projectId]">
-          <i class="material-icons">arrow_back </i> Back to FOM Details</a>
+          <em class="material-icons">arrow_back </em> Back to FOM Details</a>
       </div>
       <div class="title-container">
         <div class="title-container__title">
@@ -23,7 +23,7 @@
       </div>
     </div>
   </div>
-    
+
   <div class="bottom-container">
     <div class="container">
       <section class="summary-container">
@@ -95,7 +95,7 @@
         <section class="project-relations">
           <section>
             <div>
-              <app-comments-summary 
+              <app-comments-summary
                 [publicCommentDetails]="publicComments"
                 [requestError]="publicCommentsReqError">
               </app-comments-summary>
@@ -107,7 +107,7 @@
               <h4>Stakeholder Engagements</h4>
             </div> -->
             <div>
-              <app-interactions-summary 
+              <app-interactions-summary
                 [interactionDetails]="interactions"
                 [requestError]="interactionsReqError">
               </app-interactions-summary>
@@ -121,9 +121,9 @@
             <table id="table-card" class="table-cards">
               <thead>
                 <tr>
-                  <th style="width: 10%;">Date Uploaded</th>
-                  <th>File Name</th>
-                  <th style="width: 10%;">Type</th>
+                  <th id="dateUploaded" style="width: 10%;">Date Uploaded</th>
+                  <th id="fileName">File Name</th>
+                  <th id="type" style="width: 10%;">Type</th>
                 </tr>
               </thead>
               <tbody>
@@ -133,8 +133,8 @@
                   </td>
                   <td data-label="File Name">
                     <a id="attachment-link"
-                      [href]="getAttachmentUrl(attachment.id)" 
-                      [title]="attachment.fileName || ''" 
+                      [href]="getAttachmentUrl(attachment.id)"
+                      [title]="attachment.fileName || ''"
                       target="_blank" rel="noopener">
                       {{attachment.fileName}}
                     </a>
@@ -158,4 +158,3 @@
     </div>
   </div>
 <!-- </div> -->
-  
