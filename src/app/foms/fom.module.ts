@@ -33,6 +33,7 @@ import { CommentsSummaryComponent } from './summary/comments-summary/comments-su
 import { InteractionsSummaryComponent } from './summary/interactions-summary/interactions-summary.component';
 import { NgxPrintModule } from 'ngx-print';
 import {AttachmentResolverSvc} from "../../core/services/AttachmentResolverSvc";
+import { MatSelectModule } from '@angular/material/select';
 // services
 // import { ExportService } from 'core/services/export.service';
 
@@ -55,7 +56,8 @@ import {AttachmentResolverSvc} from "../../core/services/AttachmentResolverSvc";
         MatCardModule,
         MatIconModule,
         MatBadgeModule,
-        NgxPrintModule
+        NgxPrintModule,
+        MatSelectModule
     ],
   declarations: [
     FomDetailComponent,

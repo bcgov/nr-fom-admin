@@ -1,8 +1,8 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Observable, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 
-import {ProjectResponse, ProjectService, PublicCommentAdminResponse} from 'core/api';
+import {ProjectResponse, ProjectService, PublicCommentAdminResponse, SpatialFeaturePublicResponse, SpatialFeatureService, SpatialObjectCodeEnum} from 'core/api';
 import {
   PublicCommentService,
   PublicCommentAdminUpdateRequest
@@ -13,11 +13,10 @@ import { CommentDetailComponent } from './comment-detail/comment-detail.componen
 import { takeUntil } from 'rxjs/operators';
 import { KeycloakService } from 'core/services/keycloak.service';
 import { User } from 'core/services/user';
+import * as _ from 'lodash';
+import { COMMENT_SCOPE_CODE, ConstantUtils } from 'core/utils/constants/constantUtils';
 
-// TODO: Not sure why we use this for error message...
 export const ERROR_DIALOG = {
-  // title: 'The requested project does not exist.',
-  // message: 'Please try again.',
   width: '340px',
   height: '200px',
   buttons: {
@@ -25,6 +24,13 @@ export const ERROR_DIALOG = {
       text: 'Close'
     }
   }
+};
+
+type CommentScopeOpt = {
+  commentScopeCode: COMMENT_SCOPE_CODE,
+  desc: string,
+  name: string, 
+  scopeId: number
 };
 
 @Component({
@@ -40,13 +46,16 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
   commentDetailForm: CommentDetailComponent;
 
   public responseCodes = this.stateSvc.getCodeTable('responseCode')
+  public commentScopeCodes = _.keyBy(this.stateSvc.getCodeTable('commentScopeCode'), 'code');
   public loading = false;
   public projectId: number;
   public project: ProjectResponse;
   public selectedItem: PublicCommentAdminResponse;
   public user: User;
-  
-  public data$: Observable<PublicCommentAdminResponse[]>;
+  public commentScopeOpts :Array<CommentScopeOpt> = [];
+  public selectedScope: CommentScopeOpt;
+
+  public publicComments$: Observable<PublicCommentAdminResponse[]>;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
   private commentSaved$ = new Subject(); // To notify when 'save' happen.
 
@@ -56,6 +65,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     private commentSvc: PublicCommentService,
     private stateSvc: StateService,
     private projectSvc: ProjectService,
+    private spatialFeatureService: SpatialFeatureService,
     private keycloakService: KeycloakService
   ) {
     this.user = this.keycloakService.getUser();
@@ -70,15 +80,43 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     this.projectSvc.projectControllerFindOne(this.projectId).toPromise()
         .then((result) => {this.project = result;});
 
-    this.data$ = this.getProjectComments();
+    this.publicComments$ = this.getProjectComments();
 
     this.commentSaved$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
-      this.data$ = this.getProjectComments();
+      this.publicComments$ = this.getProjectComments();
     });
+
+    this.spatialFeatureService.spatialFeatureControllerGetForProject(this.projectId)
+        .pipe(takeUntil(this.ngUnsubscribe)).subscribe((spatialDetails) => {
+          this.buildCommentScopeOptions(spatialDetails);
+    });
+
   }
 
   getProjectComments() {
     return this.commentSvc.publicCommentControllerFind(this.projectId);
+  }
+
+  // TODO: work in progress
+  getProjectCommentsFilterByScope(scope: CommentScopeOpt):PublicCommentAdminResponse[] {
+    let fPublicComments: PublicCommentAdminResponse[];
+    this.getProjectComments().subscribe((comments)=> {
+      fPublicComments = comments.filter((comment) => {
+        if (!scope || scope.commentScopeCode == null) {
+          return true; // No filtering on scope. everything.
+        }
+        else if (scope.commentScopeCode === COMMENT_SCOPE_CODE.OVERALL) {
+          return comment.commentScope.code === scope.commentScopeCode;
+        }
+        return comment.commentScope.code === scope.commentScopeCode &&
+                ((comment.scopeCutBlockId && comment.scopeCutBlockId == scope.scopeId) ||
+                (comment.scopeRoadSectionId && comment.scopeCutBlockId == scope.scopeId));
+      });
+    },
+    (error) => {
+      console.error(error);
+    });
+    return fPublicComments;
   }
 
   /**
@@ -97,11 +135,6 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
         this.commentListScrollContainer.nativeElement.scrollTop = pos;
       }, 150);
     }
-  }
-
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 
   canReplyComment() {
@@ -143,5 +176,41 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     }
   }
 
+  // TODO: work in progress
+  onScopeOptionChanged(selection: CommentScopeOpt) {
+    this.getProjectCommentsFilterByScope(selection);
+  }
 
+  private buildCommentScopeOptions(spatialDetails: SpatialFeaturePublicResponse[]) {
+    this.commentScopeOpts = [];
+    // Comment Scope select options
+    const allOpt = {commentScopeCode: null, desc: 'All', name: null, scopeId: null} as CommentScopeOpt;
+    const overallOpt = {
+      commentScopeCode: ConstantUtils.getCommentScopeCodeOrDesc(null, true), 
+      desc: ConstantUtils.getCommentScopeCodeOrDesc(null, false), 
+      name: null, 
+      scopeId: null} as CommentScopeOpt;     
+    this.commentScopeOpts.push(allOpt);
+    this.commentScopeOpts.push(overallOpt);
+    this.selectedScope = allOpt;
+
+    if (spatialDetails) {
+      spatialDetails
+        .filter((detail) => {
+          return ConstantUtils.getCommentScopeCodeOrDesc(detail.featureType, true);// filter out rention_area.
+        })
+        .forEach((detail) => {
+        this.commentScopeOpts.push({commentScopeCode: ConstantUtils.getCommentScopeCodeOrDesc(detail.featureType, true), 
+                                desc: ConstantUtils.getCommentScopeCodeOrDesc(detail.featureType, false),
+                                name: detail.name, 
+                                scopeId: detail.featureId} as CommentScopeOpt);
+      });
+    }
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
 }
+

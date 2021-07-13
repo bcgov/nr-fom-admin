@@ -17,6 +17,12 @@ export enum CodeType {
   COMMENT
 }
 
+export enum COMMENT_SCOPE_CODE {
+  OVERALL = 'OVERALL',
+  CUT_BLOCK = 'CUT_BLOCK',
+  ROAD_SECTION = 'ROAD_SECTION'
+};
+
 export const SpatialTypeMap = new Map<SpatialObjectCodeEnum, object>([
   [SpatialObjectCodeEnum.CutBlock, {
     source: 'cut_block',
@@ -224,5 +230,21 @@ export class ConstantUtils {
     }
 
     return codeGroup.mappedCodes;
+  }
+
+  static getCommentScopeCodeOrDesc(source: string, forCode: boolean): COMMENT_SCOPE_CODE | string {
+    switch(source) {
+      case SpatialTypeMap.get(SpatialObjectCodeEnum.CutBlock)['source'].toLowerCase():
+        return forCode? COMMENT_SCOPE_CODE.CUT_BLOCK: SpatialTypeMap.get(SpatialObjectCodeEnum.CutBlock)['desc'];
+
+      case SpatialTypeMap.get(SpatialObjectCodeEnum.RoadSection)['source'].toLowerCase():
+        return forCode? COMMENT_SCOPE_CODE.ROAD_SECTION: SpatialTypeMap.get(SpatialObjectCodeEnum.RoadSection)['desc'];
+
+      case SpatialTypeMap.get(SpatialObjectCodeEnum.Wtra)['source'].toLowerCase():
+        return null; // only can comment on CutBlock or RoadSection
+
+      default:
+        return forCode? COMMENT_SCOPE_CODE.OVERALL: 'Overall FOM';
+    }
   }
 }
