@@ -2,10 +2,9 @@ import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core
 import {ActivatedRoute} from '@angular/router';
 import {Observable, Subject} from 'rxjs';
 
-import {ProjectResponse, ProjectService, PublicCommentAdminResponse, SpatialFeaturePublicResponse, SpatialFeatureService, SpatialObjectCodeEnum} from 'core/api';
 import {
-  PublicCommentService,
-  PublicCommentAdminUpdateRequest
+  PublicCommentService, ProjectResponse, ProjectService, PublicCommentAdminResponse,
+  PublicCommentAdminUpdateRequest, SpatialFeaturePublicResponse, SpatialFeatureService
 } from 'core/api';
 import {ModalService} from 'core/services/modal.service';
 import {StateService} from 'core/services/state.service';
@@ -81,9 +80,10 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
         .then((result) => {this.project = result;});
 
     this.spatialFeatureService.spatialFeatureControllerGetForProject(this.projectId)
-        .pipe(takeUntil(this.ngUnsubscribe)).subscribe((spatialDetails) => {
-          this.buildCommentScopeOptions(spatialDetails);
-    });
+        .toPromise()
+        .then((spatialDetails) => {
+            this.buildCommentScopeOptions(spatialDetails);
+        });
 
     this.triggered$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
       this.publicComments$ = this.getProjectComments();
