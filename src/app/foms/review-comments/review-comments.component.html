@@ -4,7 +4,7 @@
     <div class="container">
       <div class="breadcrumb-container">
         <a [routerLink]="['/a', projectId]">
-          <i class="material-icons">arrow_back </i> Back to FOM Details</a>
+          <em class="material-icons">arrow_back </em> Back to FOM Details</a>
       </div>
       <div class="title-container">
         <div class="title-container__title">
@@ -63,7 +63,7 @@
         </div>
         <div class="review-comments__detail panel">
           <div class="panel-scroll">
-            <app-comment-detail #commentDetailForm="commentForm" 
+            <app-comment-detail #commentDetailForm="commentForm"
                 [responseCodes]="responseCodes"
                 [canReplyComment]="canReplyComment()">
               <div class="row">

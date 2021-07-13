@@ -2,7 +2,7 @@
 <div class="interaction-detail-container" *ngIf="!interaction">
     <em>No engagement selected</em>
 </div>
-  
+
 <div class="interaction-detail-container" *ngIf="interaction">
   <div class="title-container__title">
     <h2>&nbsp;</h2>
@@ -31,11 +31,11 @@
           containerClass: 'theme-dark-blue', showWeekNumbers: false  }"
         />
         <div class="input-group-append">
-          <button class="btn btn-icon"  type="button" tabindex="-1" 
+          <button class="btn btn-icon"  type="button" tabindex="-1"
                   (click)="communicationDate.show()"
                   [disabled]="!editMode"
                   [attr.aria-expanded]="communicationDate.isOpen">
-            <i class="material-icons">date_range</i>
+            <em class="material-icons">date_range</em>
           </button>
         </div>
       </div>
@@ -43,14 +43,14 @@
 
     <div id="stakeholderDiv" class="form-group col-md">
       <label for="stakeholder">Stakeholder</label>
-      <input id="stakeholder" type="text" 
+      <input id="stakeholder" type="text"
             name="stakeholder"
             class="form-control col-md-6"
             maxlength="55"
             formControlName="stakeholder"/>
     </div>
 
-    <div id="communicationDetailsDiv" class="form-group col-md">
+    <div id="descriptionDiv" class="form-group col-md">
       <label for="description" class="control-label required">Description</label>
       <textarea id="description"
             name="communicationDetails"
@@ -69,7 +69,7 @@
         *ngIf="editMode">
       <label for="upload">Engagement Attachment</label>
       <app-upload-box id="upload"
-                      [multipleFiles]="false" 
+                      [multipleFiles]="false"
                       [files]="files"
                       [isBlob]="true"
                       [fileTypes]="supportingFileTypes"
@@ -88,9 +88,9 @@
           [title]="attachment.fileName || ''"
           target="_blank" rel="noopener">
         <div class="cell doc-list__item-icon">
-          <i class="material-icons">
+          <em class="material-icons">
               insert_drive_file
-          </i>
+          </em>
         </div>
         <div class="cell doc-list__item-name">{{attachment.fileName}}</div>
       </a>
@@ -104,4 +104,3 @@
 
 </div>
 
-  
