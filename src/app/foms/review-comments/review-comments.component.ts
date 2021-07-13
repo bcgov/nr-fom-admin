@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 
 import {ProjectResponse, ProjectService, PublicCommentAdminResponse, SpatialFeaturePublicResponse, SpatialFeatureService, SpatialObjectCodeEnum} from 'core/api';
 import {
@@ -10,7 +10,7 @@ import {
 import {ModalService} from 'core/services/modal.service';
 import {StateService} from 'core/services/state.service';
 import { CommentDetailComponent } from './comment-detail/comment-detail.component';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { KeycloakService } from 'core/services/keycloak.service';
 import { User } from 'core/services/user';
 import * as _ from 'lodash';
@@ -57,7 +57,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
 
   public publicComments$: Observable<PublicCommentAdminResponse[]>;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
-  private commentSaved$ = new Subject(); // To notify when 'save' happen.
+  private triggered$ = new Subject(); // To notify when 'save' or scope 'select' happen.
 
   constructor(
     private route: ActivatedRoute,
@@ -80,27 +80,21 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     this.projectSvc.projectControllerFindOne(this.projectId).toPromise()
         .then((result) => {this.project = result;});
 
-    this.publicComments$ = this.getProjectComments();
-
-    this.commentSaved$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
-      this.publicComments$ = this.getProjectComments();
-    });
-
     this.spatialFeatureService.spatialFeatureControllerGetForProject(this.projectId)
         .pipe(takeUntil(this.ngUnsubscribe)).subscribe((spatialDetails) => {
           this.buildCommentScopeOptions(spatialDetails);
     });
 
+    this.triggered$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
+      this.publicComments$ = this.getProjectComments();
+    });
+
+    this.triggered$.next();
   }
 
   getProjectComments() {
-    return this.commentSvc.publicCommentControllerFind(this.projectId);
-  }
-
-  // TODO: work in progress
-  getProjectCommentsFilterByScope(scope: CommentScopeOpt):PublicCommentAdminResponse[] {
-    let fPublicComments: PublicCommentAdminResponse[];
-    this.getProjectComments().subscribe((comments)=> {
+    const filterData = (scope: CommentScopeOpt) => map((comments: PublicCommentAdminResponse[]) => {
+      let fPublicComments: PublicCommentAdminResponse[];
       fPublicComments = comments.filter((comment) => {
         if (!scope || scope.commentScopeCode == null) {
           return true; // No filtering on scope. everything.
@@ -112,11 +106,15 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
                 ((comment.scopeCutBlockId && comment.scopeCutBlockId == scope.scopeId) ||
                 (comment.scopeRoadSectionId && comment.scopeCutBlockId == scope.scopeId));
       });
-    },
-    (error) => {
-      console.error(error);
+      return fPublicComments;
     });
-    return fPublicComments;
+
+    return this.commentSvc.publicCommentControllerFind(this.projectId)
+               .pipe(filterData(this.selectedScope));
+  }
+
+  onScopeOptionChanged(selection: CommentScopeOpt) {
+    this.triggered$.next();
   }
 
   /**
@@ -159,7 +157,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
 
         // Comment is saved successfully, so triggering service to retrieve comment list 
         // from backend for consistent state of the list at frontend.
-        this.commentSaved$.next();
+        this.triggered$.next();
         this.selectedItem = result; // updated selected.
         this.loading = false;
         setTimeout(() => {
@@ -174,11 +172,6 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
       console.error("Failed to update.", err)
       this.loading = false;
     }
-  }
-
-  // TODO: work in progress
-  onScopeOptionChanged(selection: CommentScopeOpt) {
-    this.getProjectCommentsFilterByScope(selection);
   }
 
   private buildCommentScopeOptions(spatialDetails: SpatialFeaturePublicResponse[]) {
