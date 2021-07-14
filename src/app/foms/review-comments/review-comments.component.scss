@@ -57,6 +57,10 @@
   @include flex-box();
   @include flex(0 0 auto);
 
+  flex-direction: column;
+  padding-bottom: 0 !important;
+  align-items: baseline;
+
   padding: 1rem;
   border-bottom: 1px solid #ddd;
 
@@ -103,7 +107,7 @@
 .review-comments__list {
   @include flex(0 0 auto);
 
-  width: 23rem;
+  width: 27rem;
   border-right: 1px solid #ddd;
   background: #f7f8fa;
 }
@@ -234,4 +238,8 @@
   i {
     margin-top: -0.1rem;
   }
+}
+
+.material-icons {
+  vertical-align: middle;
 }

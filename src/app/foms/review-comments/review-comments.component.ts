@@ -2,22 +2,20 @@ import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core
 import {ActivatedRoute} from '@angular/router';
 import {Observable, Subject} from 'rxjs';
 
-import {ProjectResponse, ProjectService, PublicCommentAdminResponse} from 'core/api';
 import {
-  PublicCommentService,
-  PublicCommentAdminUpdateRequest
+  PublicCommentService, ProjectResponse, ProjectService, PublicCommentAdminResponse,
+  PublicCommentAdminUpdateRequest, SpatialFeaturePublicResponse, SpatialFeatureService
 } from 'core/api';
 import {ModalService} from 'core/services/modal.service';
 import {StateService} from 'core/services/state.service';
 import { CommentDetailComponent } from './comment-detail/comment-detail.component';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { KeycloakService } from 'core/services/keycloak.service';
 import { User } from 'core/services/user';
+import * as _ from 'lodash';
+import { COMMENT_SCOPE_CODE, ConstantUtils } from 'core/utils/constants/constantUtils';
 
-// TODO: Not sure why we use this for error message...
 export const ERROR_DIALOG = {
-  // title: 'The requested project does not exist.',
-  // message: 'Please try again.',
   width: '340px',
   height: '200px',
   buttons: {
@@ -25,6 +23,13 @@ export const ERROR_DIALOG = {
       text: 'Close'
     }
   }
+};
+
+type CommentScopeOpt = {
+  commentScopeCode: COMMENT_SCOPE_CODE,
+  desc: string,
+  name: string, 
+  scopeId: number
 };
 
 @Component({
@@ -40,15 +45,18 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
   commentDetailForm: CommentDetailComponent;
 
   public responseCodes = this.stateSvc.getCodeTable('responseCode')
+  public commentScopeCodes = _.keyBy(this.stateSvc.getCodeTable('commentScopeCode'), 'code');
   public loading = false;
   public projectId: number;
   public project: ProjectResponse;
   public selectedItem: PublicCommentAdminResponse;
   public user: User;
-  
-  public data$: Observable<PublicCommentAdminResponse[]>;
+  public commentScopeOpts :Array<CommentScopeOpt> = [];
+  public selectedScope: CommentScopeOpt;
+
+  public publicComments$: Observable<PublicCommentAdminResponse[]>;
   private ngUnsubscribe: Subject<boolean> = new Subject<boolean>();
-  private commentSaved$ = new Subject(); // To notify when 'save' happen.
+  private triggered$ = new Subject(); // To notify when 'save' or scope 'select' happen.
 
   constructor(
     private route: ActivatedRoute,
@@ -56,6 +64,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     private commentSvc: PublicCommentService,
     private stateSvc: StateService,
     private projectSvc: ProjectService,
+    private spatialFeatureService: SpatialFeatureService,
     private keycloakService: KeycloakService
   ) {
     this.user = this.keycloakService.getUser();
@@ -70,15 +79,42 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     this.projectSvc.projectControllerFindOne(this.projectId).toPromise()
         .then((result) => {this.project = result;});
 
-    this.data$ = this.getProjectComments();
+    this.spatialFeatureService.spatialFeatureControllerGetForProject(this.projectId)
+        .toPromise()
+        .then((spatialDetails) => {
+            this.buildCommentScopeOptions(spatialDetails);
+        });
 
-    this.commentSaved$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
-      this.data$ = this.getProjectComments();
+    this.triggered$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
+      this.publicComments$ = this.getProjectComments();
     });
+
+    this.triggered$.next();
   }
 
   getProjectComments() {
-    return this.commentSvc.publicCommentControllerFind(this.projectId);
+    const filterData = (scope: CommentScopeOpt) => map((comments: PublicCommentAdminResponse[]) => {
+      let fPublicComments: PublicCommentAdminResponse[];
+      fPublicComments = comments.filter((comment) => {
+        if (!scope || scope.commentScopeCode == null) {
+          return true; // No filtering on scope. everything.
+        }
+        else if (scope.commentScopeCode === COMMENT_SCOPE_CODE.OVERALL) {
+          return comment.commentScope.code === scope.commentScopeCode;
+        }
+        return comment.commentScope.code === scope.commentScopeCode &&
+                ((comment.scopeCutBlockId && comment.scopeCutBlockId == scope.scopeId) ||
+                (comment.scopeRoadSectionId && comment.scopeCutBlockId == scope.scopeId));
+      });
+      return fPublicComments;
+    });
+
+    return this.commentSvc.publicCommentControllerFind(this.projectId)
+               .pipe(filterData(this.selectedScope));
+  }
+
+  onScopeOptionChanged(selection: CommentScopeOpt) {
+    this.triggered$.next();
   }
 
   /**
@@ -97,11 +133,6 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
         this.commentListScrollContainer.nativeElement.scrollTop = pos;
       }, 150);
     }
-  }
-
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
   }
 
   canReplyComment() {
@@ -126,7 +157,7 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
 
         // Comment is saved successfully, so triggering service to retrieve comment list 
         // from backend for consistent state of the list at frontend.
-        this.commentSaved$.next();
+        this.triggered$.next();
         this.selectedItem = result; // updated selected.
         this.loading = false;
         setTimeout(() => {
@@ -143,5 +174,36 @@ export class ReviewCommentsComponent implements OnInit, OnDestroy {
     }
   }
 
+  private buildCommentScopeOptions(spatialDetails: SpatialFeaturePublicResponse[]) {
+    this.commentScopeOpts = [];
+    // Comment Scope select options
+    const allOpt = {commentScopeCode: null, desc: 'All', name: null, scopeId: null} as CommentScopeOpt;
+    const overallOpt = {
+      commentScopeCode: ConstantUtils.getCommentScopeCodeOrDesc(null, true), 
+      desc: ConstantUtils.getCommentScopeCodeOrDesc(null, false), 
+      name: null, 
+      scopeId: null} as CommentScopeOpt;     
+    this.commentScopeOpts.push(allOpt);
+    this.commentScopeOpts.push(overallOpt);
+    this.selectedScope = allOpt;
 
+    if (spatialDetails) {
+      spatialDetails
+        .filter((detail) => {
+          return ConstantUtils.getCommentScopeCodeOrDesc(detail.featureType, true);// filter out rention_area.
+        })
+        .forEach((detail) => {
+        this.commentScopeOpts.push({commentScopeCode: ConstantUtils.getCommentScopeCodeOrDesc(detail.featureType, true), 
+                                desc: ConstantUtils.getCommentScopeCodeOrDesc(detail.featureType, false),
+                                name: detail.name, 
+                                scopeId: detail.featureId} as CommentScopeOpt);
+      });
+    }
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
 }
+
