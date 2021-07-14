@@ -20,7 +20,7 @@
       <div class="review-comments">
         <div class="review-comments__list panel">
           <div class="panel-header">
-            <h2 style="margin: 0;">Comments ({{(publicComments$ | async)?.length}})</h2>
+            <h2 style="margin: 0;">Comments ({{data?.length}})</h2>
             <div>
               <!-- <mat-label>Commenting Scope</mat-label> -->
               <mat-form-field [style.width.px]=320>
@@ -34,8 +34,8 @@
             </div>
           </div>
           <div class="panel-scroll" #commentListScrollContainer>
-            <ng-container *ngIf="publicComments$  | async as result">
-              <div class="comment-item" *ngFor="let item of result" [class.active]="item?.id === selectedItem?.id"
+            <ng-container *ngIf="data">
+              <div class="comment-item" *ngFor="let item of data" [class.active]="item?.id === selectedItem?.id"
                     (click)="onReviewItemClicked(item, null)">
                 <div class="comment-item-header">
                   <div class="comment-author">
